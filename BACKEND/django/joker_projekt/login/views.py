@@ -8,7 +8,21 @@ from .serializers import LoginSerializer
 
 
 class LoginAPIView(APIView):
-    """API endpoint that allows users to obtain an auth token."""
+    """
+    API endpoint providing JWT authentication tokens to clients.
+    This POST endpoint accepts user credentials and issues both access and refresh tokens.
+    Usage example:
+        POST /login/ with JSON payload:
+            {
+                "email": "user@example.com",
+                "password": "secure_password"
+            }
+    Returns:
+        JSON object containing:
+            - access: Short-lived access token for authenticated requests.
+            - refresh: Long-lived refresh token for obtaining new access tokens.
+    """
+    
 
     permission_classes = [AllowAny]
 

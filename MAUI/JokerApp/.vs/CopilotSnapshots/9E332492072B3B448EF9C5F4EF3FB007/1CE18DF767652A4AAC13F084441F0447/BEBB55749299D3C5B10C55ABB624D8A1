@@ -1,0 +1,66 @@
+﻿using Microsoft.AspNetCore.Components.WebView.Maui;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Maui.Controls.Hosting;
+using Microsoft.Maui.Hosting;
+using System.Net.Http.Headers;
+
+namespace JokerApp;
+
+public class AuthHandler : DelegatingHandler
+{
+    private readonly ITokenStore _tokens;
+    public AuthHandler(ITokenStore tokens) => _tokens = tokens;
+
+    protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage req, CancellationToken ct)
+    {
+        // Skip adding Authorization header for token endpoints (login/register)
+        if (req.RequestUri != null)
+        {
+            var path = req.RequestUri.AbsolutePath?.ToLowerInvariant() ?? string.Empty;
+            if (path.Contains("/api/login") || path.Contains("/api/register") || path.Contains("/token"))
+            {
+                return await base.SendAsync(req, ct);
+            }
+        }
+
+        var access = await _tokens.GetAccessAsync();
+        if (!string.IsNullOrWhiteSpace(access))
+            req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", access);
+
+        var resp = await base.SendAsync(req, ct);
+
+        // If unauthorized, clear tokens so stale/expired tokens won't be reused.
+        if (resp.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            await _tokens.ClearAsync();
+        }
+
+        return resp;
+    }
+}
+
+public static class MauiProgram
+{
+    public static MauiApp CreateMauiApp()
+    {
+        var builder = MauiApp.CreateBuilder()
+            .UseMauiApp<App>()
+            .ConfigureFonts(f => f.AddFont("OpenSans-Regular.ttf", "OpenSansRegular"));
+
+        builder.Services.AddMauiBlazorWebView();
+#if DEBUG
+        builder.Services.AddBlazorWebViewDeveloperTools();
+#endif
+
+        // 🔗 Adres Twojego Django backendu
+        var apiBase = "http://localhost/";
+
+        builder.Services.AddSingleton<ITokenStore, SecureStorageTokenStore>();
+        builder.Services.AddTransient<AuthHandler>();
+        builder.Services.AddHttpClient("Api", c => c.BaseAddress = new Uri(apiBase))
+                        .AddHttpMessageHandler<AuthHandler>();
+        builder.Services.AddScoped<IAuthService, AuthService>();
+
+        return builder.Build();
+    }
+}

@@ -1,0 +1,327 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\dawid\\source\\repos\\JokerApp\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{1BC05574-91DD-4E14-86A6-7129556CDD3C}|JokerApp\\JokerApp.csproj|c:\\users\\dawid\\source\\repos\\jokerapp\\jokerapp\\jokerapp.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|",
+      "RelativeMoniker": "D:0:0:{1BC05574-91DD-4E14-86A6-7129556CDD3C}|JokerApp\\JokerApp.csproj|solutionrelative:jokerapp\\jokerapp.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1BC05574-91DD-4E14-86A6-7129556CDD3C}|JokerApp\\JokerApp.csproj|c:\\users\\dawid\\source\\repos\\jokerapp\\jokerapp\\jokerapp.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{1BC05574-91DD-4E14-86A6-7129556CDD3C}|JokerApp\\JokerApp.csproj|solutionrelative:jokerapp\\jokerapp.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1BC05574-91DD-4E14-86A6-7129556CDD3C}|JokerApp\\JokerApp.csproj|c:\\users\\dawid\\source\\repos\\jokerapp\\jokerapp\\services\\browsertokenstore.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1BC05574-91DD-4E14-86A6-7129556CDD3C}|JokerApp\\JokerApp.csproj|solutionrelative:jokerapp\\services\\browsertokenstore.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1BC05574-91DD-4E14-86A6-7129556CDD3C}|JokerApp\\JokerApp.csproj|c:\\users\\dawid\\source\\repos\\jokerapp\\jokerapp\\services\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1BC05574-91DD-4E14-86A6-7129556CDD3C}|JokerApp\\JokerApp.csproj|solutionrelative:jokerapp\\services\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1BC05574-91DD-4E14-86A6-7129556CDD3C}|JokerApp\\JokerApp.csproj|c:\\users\\dawid\\source\\repos\\jokerapp\\jokerapp\\services\\tokenstore.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1BC05574-91DD-4E14-86A6-7129556CDD3C}|JokerApp\\JokerApp.csproj|solutionrelative:jokerapp\\services\\tokenstore.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1BC05574-91DD-4E14-86A6-7129556CDD3C}|JokerApp\\JokerApp.csproj|c:\\users\\dawid\\source\\repos\\jokerapp\\jokerapp\\mauiprogram.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1BC05574-91DD-4E14-86A6-7129556CDD3C}|JokerApp\\JokerApp.csproj|solutionrelative:jokerapp\\mauiprogram.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1BC05574-91DD-4E14-86A6-7129556CDD3C}|JokerApp\\JokerApp.csproj|c:\\users\\dawid\\source\\repos\\jokerapp\\jokerapp\\pages\\login.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{1BC05574-91DD-4E14-86A6-7129556CDD3C}|JokerApp\\JokerApp.csproj|solutionrelative:jokerapp\\pages\\login.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1BC05574-91DD-4E14-86A6-7129556CDD3C}|JokerApp\\JokerApp.csproj|c:\\users\\dawid\\source\\repos\\jokerapp\\jokerapp\\pages\\settings.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{1BC05574-91DD-4E14-86A6-7129556CDD3C}|JokerApp\\JokerApp.csproj|solutionrelative:jokerapp\\pages\\settings.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1BC05574-91DD-4E14-86A6-7129556CDD3C}|JokerApp\\JokerApp.csproj|c:\\users\\dawid\\source\\repos\\jokerapp\\jokerapp\\pages\\approot.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{1BC05574-91DD-4E14-86A6-7129556CDD3C}|JokerApp\\JokerApp.csproj|solutionrelative:jokerapp\\pages\\approot.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1BC05574-91DD-4E14-86A6-7129556CDD3C}|JokerApp\\JokerApp.csproj|c:\\users\\dawid\\source\\repos\\jokerapp\\jokerapp\\pages\\register.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{1BC05574-91DD-4E14-86A6-7129556CDD3C}|JokerApp\\JokerApp.csproj|solutionrelative:jokerapp\\pages\\register.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1BC05574-91DD-4E14-86A6-7129556CDD3C}|JokerApp\\JokerApp.csproj|c:\\users\\dawid\\source\\repos\\jokerapp\\jokerapp\\mainpage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1BC05574-91DD-4E14-86A6-7129556CDD3C}|JokerApp\\JokerApp.csproj|solutionrelative:jokerapp\\mainpage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1BC05574-91DD-4E14-86A6-7129556CDD3C}|JokerApp\\JokerApp.csproj|c:\\users\\dawid\\source\\repos\\jokerapp\\jokerapp\\wwwroot\\css\\app.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{1BC05574-91DD-4E14-86A6-7129556CDD3C}|JokerApp\\JokerApp.csproj|solutionrelative:jokerapp\\wwwroot\\css\\app.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1BC05574-91DD-4E14-86A6-7129556CDD3C}|JokerApp\\JokerApp.csproj|c:\\users\\dawid\\source\\repos\\jokerapp\\jokerapp\\mainpage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{1BC05574-91DD-4E14-86A6-7129556CDD3C}|JokerApp\\JokerApp.csproj|solutionrelative:jokerapp\\mainpage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1BC05574-91DD-4E14-86A6-7129556CDD3C}|JokerApp\\JokerApp.csproj|c:\\users\\dawid\\source\\repos\\jokerapp\\jokerapp\\wwwroot\\index.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{1BC05574-91DD-4E14-86A6-7129556CDD3C}|JokerApp\\JokerApp.csproj|solutionrelative:jokerapp\\wwwroot\\index.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1BC05574-91DD-4E14-86A6-7129556CDD3C}|JokerApp\\JokerApp.csproj|c:\\users\\dawid\\source\\repos\\jokerapp\\jokerapp\\app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{1BC05574-91DD-4E14-86A6-7129556CDD3C}|JokerApp\\JokerApp.csproj|solutionrelative:jokerapp\\app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1BC05574-91DD-4E14-86A6-7129556CDD3C}|JokerApp\\JokerApp.csproj|c:\\users\\dawid\\source\\repos\\jokerapp\\jokerapp\\app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1BC05574-91DD-4E14-86A6-7129556CDD3C}|JokerApp\\JokerApp.csproj|solutionrelative:jokerapp\\app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\dawid\\source\\repos\\JokerApp\\JokerApp\\obj\\Debug\\net9.0-windows10.0.19041.0\\win10-x64\\Platforms\\Windows\\App.g.i.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:JokerApp\\obj\\Debug\\net9.0-windows10.0.19041.0\\win10-x64\\Platforms\\Windows\\App.g.i.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\dawid\\.nuget\\packages\\microsoft.maui.resizetizer\\9.0.111\\buildTransitive\\Microsoft.Maui.Resizetizer.After.targets||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1BC05574-91DD-4E14-86A6-7129556CDD3C}|JokerApp\\JokerApp.csproj|c:\\users\\dawid\\source\\repos\\jokerapp\\jokerapp\\components\\pages\\home.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{1BC05574-91DD-4E14-86A6-7129556CDD3C}|JokerApp\\JokerApp.csproj|solutionrelative:jokerapp\\components\\pages\\home.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "JokerApp",
+              "DocumentMoniker": "C:\\Users\\dawid\\source\\repos\\JokerApp\\JokerApp\\JokerApp.csproj",
+              "RelativeDocumentMoniker": "JokerApp\\JokerApp.csproj",
+              "ToolTip": "C:\\Users\\dawid\\source\\repos\\JokerApp\\JokerApp\\JokerApp.csproj",
+              "RelativeToolTip": "JokerApp\\JokerApp.csproj",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-11-11T23:06:02.555Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "JokerApp.csproj",
+              "DocumentMoniker": "C:\\Users\\dawid\\source\\repos\\JokerApp\\JokerApp\\JokerApp.csproj",
+              "RelativeDocumentMoniker": "JokerApp\\JokerApp.csproj",
+              "ToolTip": "C:\\Users\\dawid\\source\\repos\\JokerApp\\JokerApp\\JokerApp.csproj",
+              "RelativeToolTip": "JokerApp\\JokerApp.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-11-11T23:04:40.511Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "BrowserTokenStore.cs",
+              "DocumentMoniker": "C:\\Users\\dawid\\source\\repos\\JokerApp\\JokerApp\\Services\\BrowserTokenStore.cs",
+              "RelativeDocumentMoniker": "JokerApp\\Services\\BrowserTokenStore.cs",
+              "ToolTip": "C:\\Users\\dawid\\source\\repos\\JokerApp\\JokerApp\\Services\\BrowserTokenStore.cs",
+              "RelativeToolTip": "JokerApp\\Services\\BrowserTokenStore.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-11T22:49:15.001Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "MainPage.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\dawid\\source\\repos\\JokerApp\\JokerApp\\MainPage.xaml.cs",
+              "RelativeDocumentMoniker": "JokerApp\\MainPage.xaml.cs",
+              "ToolTip": "C:\\Users\\dawid\\source\\repos\\JokerApp\\JokerApp\\MainPage.xaml.cs",
+              "RelativeToolTip": "JokerApp\\MainPage.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-11T20:32:57.34Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "MainPage.xaml",
+              "DocumentMoniker": "C:\\Users\\dawid\\source\\repos\\JokerApp\\JokerApp\\MainPage.xaml",
+              "RelativeDocumentMoniker": "JokerApp\\MainPage.xaml",
+              "ToolTip": "C:\\Users\\dawid\\source\\repos\\JokerApp\\JokerApp\\MainPage.xaml",
+              "RelativeToolTip": "JokerApp\\MainPage.xaml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAABJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-11-11T20:32:54.272Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "Register.razor",
+              "DocumentMoniker": "C:\\Users\\dawid\\source\\repos\\JokerApp\\JokerApp\\Pages\\Register.razor",
+              "RelativeDocumentMoniker": "JokerApp\\Pages\\Register.razor",
+              "ToolTip": "C:\\Users\\dawid\\source\\repos\\JokerApp\\JokerApp\\Pages\\Register.razor",
+              "RelativeToolTip": "JokerApp\\Pages\\Register.razor",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAADQAAABUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-11-11T21:10:47.745Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "AppRoot.razor",
+              "DocumentMoniker": "C:\\Users\\dawid\\source\\repos\\JokerApp\\JokerApp\\Pages\\AppRoot.razor",
+              "RelativeDocumentMoniker": "JokerApp\\Pages\\AppRoot.razor",
+              "ToolTip": "C:\\Users\\dawid\\source\\repos\\JokerApp\\JokerApp\\Pages\\AppRoot.razor",
+              "RelativeToolTip": "JokerApp\\Pages\\AppRoot.razor",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-11-11T21:27:42.647Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "TokenStore.cs",
+              "DocumentMoniker": "C:\\Users\\dawid\\source\\repos\\JokerApp\\JokerApp\\Services\\TokenStore.cs",
+              "RelativeDocumentMoniker": "JokerApp\\Services\\TokenStore.cs",
+              "ToolTip": "C:\\Users\\dawid\\source\\repos\\JokerApp\\JokerApp\\Services\\TokenStore.cs",
+              "RelativeToolTip": "JokerApp\\Services\\TokenStore.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-11T21:07:13.328Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "AuthService.cs",
+              "DocumentMoniker": "C:\\Users\\dawid\\source\\repos\\JokerApp\\JokerApp\\Services\\AuthService.cs",
+              "RelativeDocumentMoniker": "JokerApp\\Services\\AuthService.cs",
+              "ToolTip": "C:\\Users\\dawid\\source\\repos\\JokerApp\\JokerApp\\Services\\AuthService.cs",
+              "RelativeToolTip": "JokerApp\\Services\\AuthService.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAA9wBQAAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-11T21:08:25.719Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "MauiProgram.cs",
+              "DocumentMoniker": "C:\\Users\\dawid\\source\\repos\\JokerApp\\JokerApp\\MauiProgram.cs",
+              "RelativeDocumentMoniker": "JokerApp\\MauiProgram.cs",
+              "ToolTip": "C:\\Users\\dawid\\source\\repos\\JokerApp\\JokerApp\\MauiProgram.cs",
+              "RelativeToolTip": "JokerApp\\MauiProgram.cs",
+              "ViewState": "AgIAAJEAAAAAAAAAAAAcwKQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-11T20:33:58.602Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Settings.razor",
+              "DocumentMoniker": "C:\\Users\\dawid\\source\\repos\\JokerApp\\JokerApp\\Pages\\Settings.razor",
+              "RelativeDocumentMoniker": "JokerApp\\Pages\\Settings.razor",
+              "ToolTip": "C:\\Users\\dawid\\source\\repos\\JokerApp\\JokerApp\\Pages\\Settings.razor",
+              "RelativeToolTip": "JokerApp\\Pages\\Settings.razor",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-11-11T22:12:23.238Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Login.razor",
+              "DocumentMoniker": "C:\\Users\\dawid\\source\\repos\\JokerApp\\JokerApp\\Pages\\Login.razor",
+              "RelativeDocumentMoniker": "JokerApp\\Pages\\Login.razor",
+              "ToolTip": "C:\\Users\\dawid\\source\\repos\\JokerApp\\JokerApp\\Pages\\Login.razor",
+              "RelativeToolTip": "JokerApp\\Pages\\Login.razor",
+              "ViewState": "AgIAAB4AAAAAAAAAAAD4vyUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-11-11T21:10:19.117Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "App.xaml",
+              "DocumentMoniker": "C:\\Users\\dawid\\source\\repos\\JokerApp\\JokerApp\\App.xaml",
+              "RelativeDocumentMoniker": "JokerApp\\App.xaml",
+              "ToolTip": "C:\\Users\\dawid\\source\\repos\\JokerApp\\JokerApp\\App.xaml",
+              "RelativeToolTip": "JokerApp\\App.xaml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-11-11T20:33:02.202Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "index.html",
+              "DocumentMoniker": "C:\\Users\\dawid\\source\\repos\\JokerApp\\JokerApp\\wwwroot\\index.html",
+              "RelativeDocumentMoniker": "JokerApp\\wwwroot\\index.html",
+              "ToolTip": "C:\\Users\\dawid\\source\\repos\\JokerApp\\JokerApp\\wwwroot\\index.html",
+              "RelativeToolTip": "JokerApp\\wwwroot\\index.html",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2025-11-11T20:33:16.332Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "app.css",
+              "DocumentMoniker": "C:\\Users\\dawid\\source\\repos\\JokerApp\\JokerApp\\wwwroot\\css\\app.css",
+              "RelativeDocumentMoniker": "JokerApp\\wwwroot\\css\\app.css",
+              "ToolTip": "C:\\Users\\dawid\\source\\repos\\JokerApp\\JokerApp\\wwwroot\\css\\app.css",
+              "RelativeToolTip": "JokerApp\\wwwroot\\css\\app.css",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2025-11-11T20:33:27.602Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "App.g.i.cs",
+              "DocumentMoniker": "C:\\Users\\dawid\\source\\repos\\JokerApp\\JokerApp\\obj\\Debug\\net9.0-windows10.0.19041.0\\win10-x64\\Platforms\\Windows\\App.g.i.cs",
+              "RelativeDocumentMoniker": "JokerApp\\obj\\Debug\\net9.0-windows10.0.19041.0\\win10-x64\\Platforms\\Windows\\App.g.i.cs",
+              "ToolTip": "C:\\Users\\dawid\\source\\repos\\JokerApp\\JokerApp\\obj\\Debug\\net9.0-windows10.0.19041.0\\win10-x64\\Platforms\\Windows\\App.g.i.cs",
+              "RelativeToolTip": "JokerApp\\obj\\Debug\\net9.0-windows10.0.19041.0\\win10-x64\\Platforms\\Windows\\App.g.i.cs",
+              "ViewState": "AgIAADEAAAAAAAAAAAAowEQAAABEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-11T20:48:20.29Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "Microsoft.Maui.Resizetizer.After.targets",
+              "DocumentMoniker": "C:\\Users\\dawid\\.nuget\\packages\\microsoft.maui.resizetizer\\9.0.111\\buildTransitive\\Microsoft.Maui.Resizetizer.After.targets",
+              "RelativeDocumentMoniker": "..\\..\\..\\.nuget\\packages\\microsoft.maui.resizetizer\\9.0.111\\buildTransitive\\Microsoft.Maui.Resizetizer.After.targets",
+              "ToolTip": "C:\\Users\\dawid\\.nuget\\packages\\microsoft.maui.resizetizer\\9.0.111\\buildTransitive\\Microsoft.Maui.Resizetizer.After.targets",
+              "RelativeToolTip": "..\\..\\..\\.nuget\\packages\\microsoft.maui.resizetizer\\9.0.111\\buildTransitive\\Microsoft.Maui.Resizetizer.After.targets",
+              "ViewState": "AgIAAIABAAAAAAAAAAApwJoBAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003801|",
+              "WhenOpened": "2025-11-11T20:55:05.891Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "App.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\dawid\\source\\repos\\JokerApp\\JokerApp\\App.xaml.cs",
+              "RelativeDocumentMoniker": "JokerApp\\App.xaml.cs",
+              "ToolTip": "C:\\Users\\dawid\\source\\repos\\JokerApp\\JokerApp\\App.xaml.cs",
+              "RelativeToolTip": "JokerApp\\App.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-11T20:32:52.455Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "Home.razor",
+              "DocumentMoniker": "C:\\Users\\dawid\\source\\repos\\JokerApp\\JokerApp\\Components\\Pages\\Home.razor",
+              "RelativeDocumentMoniker": "JokerApp\\Components\\Pages\\Home.razor",
+              "ToolTip": "C:\\Users\\dawid\\source\\repos\\JokerApp\\JokerApp\\Components\\Pages\\Home.razor",
+              "RelativeToolTip": "JokerApp\\Components\\Pages\\Home.razor",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-11-11T20:32:31.267Z"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

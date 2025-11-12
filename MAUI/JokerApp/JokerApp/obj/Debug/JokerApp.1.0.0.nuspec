@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>JokerApp</id>
+    <version>1.0.0</version>
+    <authors>JokerApp</authors>
+    <description>Package Description</description>
+    <repository type="git" />
+    <dependencies>
+      <group targetFramework="net9.0-android35.0">
+        <dependency id="CommunityToolkit.Mvvm" version="8.4.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.AspNetCore.Components.WebView.Maui" version="9.0.111" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Http" version="10.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Logging.Debug" version="9.0.8" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Maui.Controls" version="9.0.111" exclude="Build,Analyzers" />
+        <dependency id="System.Net.Http.Json" version="10.0.0" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework="net9.0-ios26.0">
+        <dependency id="CommunityToolkit.Mvvm" version="8.4.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.AspNetCore.Components.WebView.Maui" version="9.0.111" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Http" version="10.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Logging.Debug" version="9.0.8" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Maui.Controls" version="9.0.111" exclude="Build,Analyzers" />
+        <dependency id="System.Net.Http.Json" version="10.0.0" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework="net9.0-maccatalyst26.0">
+        <dependency id="CommunityToolkit.Mvvm" version="8.4.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.AspNetCore.Components.WebView.Maui" version="9.0.111" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Http" version="10.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Logging.Debug" version="9.0.8" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Maui.Controls" version="9.0.111" exclude="Build,Analyzers" />
+        <dependency id="System.Net.Http.Json" version="10.0.0" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework="net9.0-windows10.0.19041">
+        <dependency id="CommunityToolkit.Mvvm" version="8.4.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.AspNetCore.Components.WebView.Maui" version="9.0.111" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Http" version="10.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Logging.Debug" version="9.0.8" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Maui.Controls" version="9.0.111" exclude="Build,Analyzers" />
+        <dependency id="System.Net.Http.Json" version="10.0.0" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="C:\Users\dawid\source\repos\JokerApp\JokerApp\bin\Debug\net9.0-android\JokerApp.runtimeconfig.json" target="lib\net9.0-android35.0\JokerApp.runtimeconfig.json" />
+    <file src="C:\Users\dawid\source\repos\JokerApp\JokerApp\bin\Debug\net9.0-android\JokerApp.dll" target="lib\net9.0-android35.0\JokerApp.dll" />
+    <file src="C:\Users\dawid\source\repos\JokerApp\JokerApp\bin\Debug\net9.0-android\JokerApp.xml" target="lib\net9.0-android35.0\JokerApp.xml" />
+    <file src="C:\Users\dawid\source\repos\JokerApp\JokerApp\bin\Debug\net9.0-ios\iossimulator-x64\JokerApp.runtimeconfig.json" target="lib\net9.0-ios26.0\JokerApp.runtimeconfig.json" />
+    <file src="C:\Users\dawid\source\repos\JokerApp\JokerApp\bin\Debug\net9.0-ios\iossimulator-x64\JokerApp.dll" target="lib\net9.0-ios26.0\JokerApp.dll" />
+    <file src="C:\Users\dawid\source\repos\JokerApp\JokerApp\bin\Debug\net9.0-maccatalyst\maccatalyst-x64\JokerApp.runtimeconfig.json" target="lib\net9.0-maccatalyst26.0\JokerApp.runtimeconfig.json" />
+    <file src="C:\Users\dawid\source\repos\JokerApp\JokerApp\bin\Debug\net9.0-maccatalyst\maccatalyst-x64\JokerApp.dll" target="lib\net9.0-maccatalyst26.0\JokerApp.dll" />
+    <file src="C:\Users\dawid\source\repos\JokerApp\JokerApp\bin\Debug\net9.0-windows10.0.19041.0\win10-x64\JokerApp.runtimeconfig.json" target="lib\net9.0-windows10.0.19041\JokerApp.runtimeconfig.json" />
+    <file src="C:\Users\dawid\source\repos\JokerApp\JokerApp\bin\Debug\net9.0-windows10.0.19041.0\win10-x64\JokerApp.dll" target="lib\net9.0-windows10.0.19041\JokerApp.dll" />
+    <file src="C:\Users\dawid\source\repos\JokerApp\JokerApp\bin\Debug\net9.0-windows10.0.19041.0\win10-x64\resources.pri" target="lib\net9.0-windows10.0.19041\resources.pri" />
+    <file src="C:\Users\dawid\source\repos\JokerApp\JokerApp\obj\Debug\net9.0-android\scopedcss\bundle\JokerApp.styles.css" target="staticwebassets\JokerApp.styles.css" />
+    <file src="C:\Users\dawid\source\repos\JokerApp\JokerApp\wwwroot\css\app.css" target="staticwebassets\css\app.css" />
+    <file src="C:\Users\dawid\source\repos\JokerApp\JokerApp\wwwroot\css\bootstrap\bootstrap.min.css" target="staticwebassets\css\bootstrap\bootstrap.min.css" />
+    <file src="C:\Users\dawid\source\repos\JokerApp\JokerApp\wwwroot\css\bootstrap\bootstrap.min.css.map" target="staticwebassets\css\bootstrap\bootstrap.min.css.map" />
+    <file src="C:\Users\dawid\source\repos\JokerApp\JokerApp\wwwroot\index.html" target="staticwebassets\index.html" />
+    <file src="C:\Users\dawid\source\repos\JokerApp\JokerApp\obj\Debug\net9.0-android\staticwebassets\msbuild.JokerApp.Microsoft.AspNetCore.StaticWebAssetEndpoints.props" target="build\Microsoft.AspNetCore.StaticWebAssetEndpoints.props" />
+    <file src="C:\Users\dawid\source\repos\JokerApp\JokerApp\obj\Debug\net9.0-android\staticwebassets\msbuild.JokerApp.Microsoft.AspNetCore.StaticWebAssets.props" target="build\Microsoft.AspNetCore.StaticWebAssets.props" />
+    <file src="C:\Users\dawid\source\repos\JokerApp\JokerApp\obj\Debug\net9.0-android\staticwebassets\msbuild.build.JokerApp.props" target="build\JokerApp.props" />
+    <file src="C:\Users\dawid\source\repos\JokerApp\JokerApp\obj\Debug\net9.0-android\staticwebassets\msbuild.buildMultiTargeting.JokerApp.props" target="buildMultiTargeting\JokerApp.props" />
+    <file src="C:\Users\dawid\source\repos\JokerApp\JokerApp\obj\Debug\net9.0-android\staticwebassets\msbuild.buildTransitive.JokerApp.props" target="buildTransitive\JokerApp.props" />
+  </files>
+</package>

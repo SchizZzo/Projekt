@@ -1,0 +1,47 @@
+﻿using Microsoft.AspNetCore.Components.WebView.Maui;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Maui.Controls.Hosting;
+using Microsoft.Maui.Hosting;
+using System.Net.Http.Headers;
+
+namespace JokerApp;
+
+public class AuthHandler : DelegatingHandler
+{
+    private readonly ITokenStore _tokens;
+    public AuthHandler(ITokenStore tokens) => _tokens = tokens;
+
+    protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage req, CancellationToken ct)
+    {
+        var access = await _tokens.GetAccessAsync();
+        if (!string.IsNullOrWhiteSpace(access))
+            req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", access);
+        return await base.SendAsync(req, ct);
+    }
+}
+
+public static class MauiProgram
+{
+    public static MauiApp CreateMauiApp()
+    {
+        var builder = MauiApp.CreateBuilder()
+            .UseMauiApp<App>()
+            .ConfigureFonts(f => f.AddFont("OpenSans-Regular.ttf", "OpenSansRegular"));
+
+        builder.Services.AddMauiBlazorWebView();
+#if DEBUG
+        builder.Services.AddBlazorWebViewDeveloperTools();
+#endif
+
+        // 🔗 Adres Twojego Django backendu
+        var apiBase = "http://localhost/";
+
+        builder.Services.AddSingleton<ITokenStore, SecureStorageTokenStore>();
+        builder.Services.AddTransient<AuthHandler>();
+        builder.Services.AddHttpClient("Api", c => c.BaseAddress = new Uri(apiBase))
+                        .AddHttpMessageHandler<AuthHandler>();
+        builder.Services.AddScoped<IAuthService, AuthService>();
+
+        return builder.Build();
+    }
+}

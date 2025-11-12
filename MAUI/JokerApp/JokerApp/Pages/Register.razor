@@ -1,0 +1,80 @@
+﻿@page "/register"
+@inject IAuthService Auth
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components.Forms
+
+<EditForm Model="_m" OnValidSubmit="OnRegister">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label>Username</label>
+        <InputText @bind-Value="_m.User" />
+        <ValidationMessage For="@(() => _m.User)" />
+    </div>
+
+    <div>
+        <label>Email</label>
+        <InputText @bind-Value="_m.Email" type="email" />
+        <ValidationMessage For="@(() => _m.Email)" />
+    </div>
+
+    <div>
+        <label>Password</label>
+        <InputText @bind-Value="_m.Pass" type="password" />
+        <ValidationMessage For="@(() => _m.Pass)" />
+    </div>
+
+    <div>
+        <label>Confirm Password</label>
+        <InputText @bind-Value="_m.ConfirmPass" type="password" />
+        <ValidationMessage For="@(() => _m.ConfirmPass)" />
+    </div>
+
+    <div>
+        <p>Zasady hasła:</p>
+        <ul>
+            <li>Minimalna długość: @PasswordMinLength</li>
+            <li>Hasło musi zawierać: małą literę, dużą literę, cyfrę i znak specjalny</li>
+        </ul>
+    </div>
+
+    <button type="submit">Zarejestruj</button>
+</EditForm>
+
+@if (_msg is not null) { <p>@_msg</p> }
+
+@code {
+    private Model _m = new();
+    private string? _msg;
+
+    private async Task OnRegister()
+    {
+        var ok = await Auth.RegisterAsync(_m.User, _m.Email, _m.Pass, _m.ConfirmPass);
+        _msg = ok ? "Użytkownik zarejestrowany." : "Błąd rejestracji.";
+    }
+
+    // Właściwości pomocnicze do widoku (odczytują stałe z Modelu)
+    private int PasswordMinLength => Model.MinLength;
+    // (Można dodać więcej opisów/ustawień jeśli zajdzie potrzeba)
+
+    class Model
+    {
+        // Polityka hasła jako stałe (można zmienić wedle potrzeb)
+        public const int MinLength = 8;
+        // Regex: co najmniej jedna mała, jedna duża litera, jedna cyfra, jeden znak specjalny, oraz minimalna długość
+        public const string Pattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$";
+
+        [Required] public string User { get; set; } = "";
+        [Required, EmailAddress] public string Email { get; set; } = "";
+
+        [Required(ErrorMessage = "Pole hasła jest wymagane.")]
+        [MinLength(MinLength, ErrorMessage = "Hasło musi mieć co najmniej {1} znaków.")]
+        [RegularExpression(Pattern, ErrorMessage = "Hasło musi zawierać małą i dużą literę, cyfrę oraz znak specjalny.")]
+        public string Pass { get; set; } = "";
+
+        [Required(ErrorMessage = "Potwierdzenie hasła jest wymagane.")]
+        [Compare(nameof(Pass), ErrorMessage = "Hasła nie są zgodne.")]
+        public string ConfirmPass { get; set; } = "";
+    }
+}

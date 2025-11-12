@@ -40,7 +40,7 @@ class LoginAPIView(APIView):
 
 
 class RegisterAPIView(APIView):
-    """API endpoint that allows users to register a new account."""
+    """Handle user registration requests, validating payload with RegisterSerializer and creating a new user via the public API endpoint."""
 
     permission_classes = [AllowAny]
 

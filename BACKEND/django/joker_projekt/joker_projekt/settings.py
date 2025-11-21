@@ -45,10 +45,12 @@ INSTALLED_APPS = [
     'django_filters',
     'rest_framework.authtoken',
     'django.contrib.gis',
-    
+
     'login',
     'joker_chat',
 ]
+
+AUTH_USER_MODEL = 'login.CustomUser'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (

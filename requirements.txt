@@ -22,3 +22,21 @@ djangorestframework-gis  # Obsługa geograficznych danych w Django REST Framewor
 channels #do obsługi websocketów (nie wiem czy sie przyda)
 channels-redis #do obsługi websocketów (nie wiem czy sie przyda)
 
+#z joker chat
+django
+django-taggit
+markdown
+django-environ #do zmiennych środowiskowych lokalnie
+#psycopg2
+psycopg2-binary
+firebase-admin
+djangorestframework
+django-cors-headers
+Pillow
+channels #do obsługi websocketów (nie wiem czy sie przyda)
+channels-redis #do obsługi websocketów (nie wiem czy sie przyda)
+django-redis
+uvicorn #zainstalowac i uruchomic aby testowac web sockety
+uvicorn[standard] #do obsługi websocketów (nie wiem czy sie przyda) lub zainstalowac websockety z innego źródła
+websockets #do obsługi websocketów (nie wiem czy sie przyda)
+

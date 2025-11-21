@@ -99,3 +99,36 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.set_password(password)
         user.save()
         return user
+
+
+class CurrentUserSerializer(serializers.ModelSerializer):
+    """Serializer used to update and return data for the currently authenticated user."""
+
+    display_name = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+
+    class Meta:
+        model = get_user_model()
+        fields = (
+            "username",
+            "email",
+            "display_name",
+            "opis",
+            "status",
+            "character",
+            "latitude",
+            "longitude",
+            "location_type",
+        )
+        read_only_fields = ("username",)
+
+    def validate_display_name(self, value):
+        user_model = self.Meta.model
+        if value:
+            qs = user_model.objects.filter(display_name__iexact=value).exclude(
+                pk=self.instance.pk if self.instance else None
+            )
+            if qs.exists():
+                raise serializers.ValidationError(
+                    _("A user with that display name already exists.")
+                )
+        return value

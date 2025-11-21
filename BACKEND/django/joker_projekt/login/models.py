@@ -11,7 +11,7 @@ from django.contrib.gis.db import models as gis_models
 class CustomUser(AbstractUser):
     
     
-    display_name = models.CharField(max_length=16, unique=True, blank=True)
+    display_name = models.CharField(max_length=16, unique=True, blank=True, null=True)
     character = models.JSONField(null=True, blank=True)
     opis = models.TextField(max_length=150, blank=True)
     STATUS_CHOICES = [
@@ -35,6 +35,8 @@ class CustomUser(AbstractUser):
     
 
     def save(self, *args, **kwargs):
+        if self.display_name == "":
+            self.display_name = None
         # Tworzymy obiekt Point tylko jeśli są dane dla szerokości i długości geograficznej
         if self.latitude is not None and self.longitude is not None:
             from django.contrib.gis.geos import Point

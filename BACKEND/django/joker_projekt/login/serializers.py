@@ -143,8 +143,7 @@ class AvailableUserSerializer(serializers.ModelSerializer):
         model = get_user_model()
         fields = (
             "id",
-            "username",
-            "email",
+            
             "display_name",
             "opis",
             "status",

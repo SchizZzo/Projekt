@@ -102,7 +102,7 @@ ASGI_APPLICATION = 'joker_projekt.asgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': os.getenv('POSTGRES_DB', 'gis'),
         'USER': os.getenv('POSTGRES_USER', 'postgres'),
         'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'postgres'),

@@ -61,7 +61,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ("email", "password", "password_confirm")
+        fields = ("username", "email", "password", "password_confirm")
 
     def validate_email(self, value):
         user_model = self.Meta.model
@@ -143,6 +143,8 @@ class AvailableUserSerializer(serializers.ModelSerializer):
         model = get_user_model()
         fields = (
             "id",
+
+            "username",
             
             "display_name",
             "opis",

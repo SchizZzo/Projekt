@@ -152,21 +152,21 @@ class FriendshipViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        if friend.bot:
-            friendship = Friendship.objects.create(
-                user=request.user,
-                friend=friend,
-                friend_message=serializer.validated_data.get('friend_message', ''),
-                accepted=True
-            )
-        else:
-            # Tworzymy zaproszenie, ustawiając zalogowanego użytkownika jako nadawcę.
-            friendship = Friendship.objects.create(
-                user=request.user,
-                friend=friend,
-                friend_message=serializer.validated_data.get('friend_message', ''),
-                accepted=False
-            )
+        # if friend.bot:
+        #     friendship = Friendship.objects.create(
+        #         user=request.user,
+        #         friend=friend,
+        #         friend_message=serializer.validated_data.get('friend_message', ''),
+        #         accepted=True
+        #     )
+        # else:
+        # Tworzymy zaproszenie, ustawiając zalogowanego użytkownika jako nadawcę.
+        friendship = Friendship.objects.create(
+            user=request.user,
+            friend=friend,
+            friend_message=serializer.validated_data.get('friend_message', ''),
+            accepted=False
+        )
         output_serializer = self.get_serializer(friendship)
         headers = self.get_success_headers(output_serializer.data)
         return Response(output_serializer.data, status=status.HTTP_201_CREATED, headers=headers)

@@ -19,5 +19,6 @@ from django.urls import include, path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('login.urls', namespace='login')),
+    path('joker-login-api/', include('login.urls', namespace='login')),
+    path('joker-chat-api/', include('joker_chat.urls')),
 ]

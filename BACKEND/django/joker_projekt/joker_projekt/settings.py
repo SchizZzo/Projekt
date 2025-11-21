@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.gis',
     
     'login',
+    'joker_chat',
 ]
 
 REST_FRAMEWORK = {

@@ -137,6 +137,8 @@ class CurrentUserSerializer(serializers.ModelSerializer):
 class AvailableUserSerializer(serializers.ModelSerializer):
     """Read-only serializer exposing public data for available users."""
 
+    distance = serializers.SerializerMethodField()
+
     class Meta:
         model = get_user_model()
         fields = (
@@ -150,5 +152,12 @@ class AvailableUserSerializer(serializers.ModelSerializer):
             "latitude",
             "longitude",
             "location_type",
+            "distance",
         )
         read_only_fields = fields
+
+    def get_distance(self, obj):
+        distance = getattr(obj, "distance", None)
+        if distance is None:
+            return None
+        return distance.km

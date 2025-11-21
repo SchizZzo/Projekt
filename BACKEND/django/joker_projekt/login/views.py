@@ -1,3 +1,5 @@
+from django.contrib.gis.db.models.functions import Distance
+
 from rest_framework import status
 from rest_framework import generics
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -82,4 +84,10 @@ class AvailableUsersAPIView(generics.ListAPIView):
     serializer_class = AvailableUserSerializer
 
     def get_queryset(self):
-        return self.serializer_class.Meta.model.objects.filter(status="dostępny")
+        queryset = self.serializer_class.Meta.model.objects.filter(status="dostępny")
+        user_point = getattr(self.request.user, "punkt", None)
+
+        if user_point:
+            queryset = queryset.annotate(distance=Distance("punkt", user_point))
+
+        return queryset

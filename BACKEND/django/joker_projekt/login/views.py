@@ -1,10 +1,16 @@
 from rest_framework import status
+from rest_framework import generics
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .serializers import CurrentUserSerializer, LoginSerializer, RegisterSerializer
+from .serializers import (
+    AvailableUserSerializer,
+    CurrentUserSerializer,
+    LoginSerializer,
+    RegisterSerializer,
+)
 
 
 class LoginAPIView(APIView):
@@ -67,3 +73,13 @@ class CurrentUserAPIView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class AvailableUsersAPIView(generics.ListAPIView):
+    """List users who have their availability status set to "dostępny"."""
+
+    permission_classes = [IsAuthenticated]
+    serializer_class = AvailableUserSerializer
+
+    def get_queryset(self):
+        return self.serializer_class.Meta.model.objects.filter(status="dostępny")

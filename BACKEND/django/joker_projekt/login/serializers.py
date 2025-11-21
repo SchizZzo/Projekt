@@ -132,3 +132,23 @@ class CurrentUserSerializer(serializers.ModelSerializer):
                     _("A user with that display name already exists.")
                 )
         return value
+
+
+class AvailableUserSerializer(serializers.ModelSerializer):
+    """Read-only serializer exposing public data for available users."""
+
+    class Meta:
+        model = get_user_model()
+        fields = (
+            "id",
+            "username",
+            "email",
+            "display_name",
+            "opis",
+            "status",
+            "character",
+            "latitude",
+            "longitude",
+            "location_type",
+        )
+        read_only_fields = fields

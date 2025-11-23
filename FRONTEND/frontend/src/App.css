@@ -9,6 +9,17 @@
   --error: #f87171;
 }
 
+
+.login-graphic {
+  width: 20%;
+  height: 20%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+}
+
+
 .layout {
   display: grid;
   grid-template-columns: 3fr 2fr;

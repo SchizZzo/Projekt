@@ -1,16 +1,22 @@
 import { useMemo, useState } from 'react';
 import './App.css';
+import JokerImg from './assets/joker_logo.png'; // <- dodane
 
 const API_HOST = 'http://localhost';
-const LOGIN_ENDPOINT = `${API_HOST}/joker-login-api/login/`;
+const LOGIN_PATH = '/joker-login-api/login/';
+const LOGIN_ENDPOINT = `${API_HOST}${LOGIN_PATH}`;
 
 function App() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [status, setStatus] = useState({ type: 'info', message: 'Wprowadź dane logowania.' });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [tokens, setTokens] = useState({ access: null, refresh: null });
 
-  const isFormValid = useMemo(() => email.trim() !== '' && password.trim() !== '', [email, password]);
+  const isFormValid = useMemo(
+    () => email.trim() !== '' && password.trim() !== '',
+    [email, password]
+  );
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -26,13 +32,22 @@ function App() {
         body: JSON.stringify({ email, password }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error('Nieprawidłowe dane logowania.');
+        throw new Error(data?.message || 'Nieprawidłowe dane logowania.');
       }
 
-      const data = await response.json();
-      const detail = data?.message || 'Zalogowano pomyślnie!';
-      setStatus({ type: 'success', message: detail });
+      const { access, refresh } = data;
+
+      if (access && refresh) {
+        localStorage.setItem('accessToken', access);
+        localStorage.setItem('refreshToken', refresh);
+        setTokens({ access, refresh });
+        setStatus({ type: 'success', message: 'Zalogowano. Tokeny zapisane.' });
+      } else {
+        setStatus({ type: 'warning', message: 'Brak tokenów w odpowiedzi.' });
+      }
     } catch (error) {
       setStatus({ type: 'error', message: error.message || 'Wystąpił błąd podczas logowania.' });
     } finally {
@@ -44,6 +59,7 @@ function App() {
     <div className="layout">
       <div className="login-card">
         <div className="login-card__header">
+          <img src={JokerImg} alt="Login graphic" className="login-graphic" /> {/* grafika */}
           <p className="badge">Nowy ekran logowania</p>
           <h1>Zaloguj się</h1>
           <p className="subtitle">Uzyskaj dostęp do panelu Joker, korzystając z dedykowanego API.</p>
@@ -58,7 +74,7 @@ function App() {
                 name="email"
                 autoComplete="email"
                 value={email}
-                onChange={(event) => setEmail(event.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="Wpisz adres e-mail"
                 required
               />
@@ -71,7 +87,7 @@ function App() {
                 name="password"
                 autoComplete="current-password"
                 value={password}
-                onChange={(event) => setPassword(event.target.value)}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="Wpisz hasło"
                 required
               />
@@ -86,19 +102,27 @@ function App() {
             <span>{status.message}</span>
             <small>Endpoint: {LOGIN_ENDPOINT}</small>
           </div>
+
+          {tokens.access && (
+            <div className="tokens">
+              <p><strong>Access:</strong> {tokens.access}</p>
+              <p><strong>Refresh:</strong> {tokens.refresh}</p>
+            </div>
+          )}
         </div>
       </div>
 
       <aside className="info-panel">
         <div className="info-panel__title">Szybkie informacje</div>
         <ul>
-          <li>
-            Zmienna hosta API:
-            <strong>{API_HOST}</strong>
-          </li>
-          <li>Adres logowania: <strong>/joker-login-api/login/</strong></li>
-          <li>Żądanie wysyłane metodą <strong>POST</strong> w formacie JSON.</li>
-          <li>Komunikaty o błędach i sukcesie prezentowane są poniżej formularza.</li>
+          <li>Host API: <strong>{API_HOST}</strong></li>
+          <li>Ścieżka logowania: <strong>{LOGIN_PATH}</strong></li>
+          <li>Pełny endpoint: <strong>{LOGIN_ENDPOINT}</strong></li>
+          <li>Formularz poprawny: <strong>{isFormValid ? 'Tak' : 'Nie'}</strong></li>
+          <li>W trakcie wysyłania: <strong>{isSubmitting ? 'Tak' : 'Nie'}</strong></li>
+          <li>Tokeny zapisane: <strong>{tokens.access ? 'Tak' : 'Nie'}</strong></li>
+          <li>Oczekiwane pola odpowiedzi: <strong>access</strong>, <strong>refresh</strong></li>
+          <li>Magazyn tokenów: <strong>localStorage</strong></li>
         </ul>
       </aside>
     </div>

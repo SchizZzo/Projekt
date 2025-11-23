@@ -5,12 +5,12 @@ const API_HOST = 'http://localhost';
 const LOGIN_ENDPOINT = `${API_HOST}/joker-login-api/login/`;
 
 function App() {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [status, setStatus] = useState({ type: 'info', message: 'Wprowadź dane logowania.' });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const isFormValid = useMemo(() => username.trim() !== '' && password.trim() !== '', [username, password]);
+  const isFormValid = useMemo(() => email.trim() !== '' && password.trim() !== '', [email, password]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -23,7 +23,7 @@ function App() {
       const response = await fetch(LOGIN_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ email, password }),
       });
 
       if (!response.ok) {
@@ -52,13 +52,14 @@ function App() {
         <div className="login-card__body">
           <form className="login-form" onSubmit={handleSubmit}>
             <label className="field">
-              <span>Login</span>
+              <span>Email</span>
               <input
-                name="username"
-                autoComplete="username"
-                value={username}
-                onChange={(event) => setUsername(event.target.value)}
-                placeholder="Wpisz login"
+                type="email"
+                name="email"
+                autoComplete="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                placeholder="Wpisz adres e-mail"
                 required
               />
             </label>

@@ -41,15 +41,6 @@ function SettingsPage() {
     wlosy: 9,
   };
 
-  const controlLabels = {
-    kolorSkory: 'Kolor skóry',
-    kolorWlosow: 'Kolor włosów',
-    usta: 'Usta',
-    dodatek: 'Dodatek',
-    twarz: 'Twarz',
-    wlosy: 'Włosy',
-  };
-
   useEffect(() => {
     const fetchUserAvatar = async () => {
       // Symulacja pobierania danych jak w aplikacji Flutter.
@@ -58,7 +49,7 @@ function SettingsPage() {
       const mockUser = {
         user_id: 'demo-user',
         poziom: 4,
-        display_name: 'mordeczki4.riv',
+        display_name: 'Mordeczka',
         opis: 'Tworzę swoje alter ego na podstawie Rive.',
         notifications: true,
         character: {
@@ -146,7 +137,7 @@ function SettingsPage() {
   return (
     <div className="card">
       <p className="badge">Ustawienia</p>
-      <h1>Panel kreatora mordeczki4.riv</h1>
+      <h1>Panel kreatora Mordeczki</h1>
       <p className="subtitle">
         Odwzoruj logikę znaną z aplikacji Flutter: edytuj avatar, opis oraz opcje dodatkowe.
       </p>
@@ -193,7 +184,7 @@ function SettingsPage() {
 
         <section className="setting-block">
           <div className="setting-header">
-            <h3>mordeczki4.riv</h3>
+            <h3>Mordeczka</h3>
             <p>Zmiana cech poprzez inkrementację wartości tak jak w sterowaniu StateMachine.</p>
           </div>
 
@@ -221,15 +212,7 @@ function SettingsPage() {
                 onClick={() => handleCycle(key)}
                 disabled={isLoading}
               >
-                <div className="control-copy">
-                  <span className="control-label">{controlLabels[key] ?? key}</span>
-                  <small className="control-hint">Stuknij, aby przełączyć wariant</small>
-                </div>
-                <span className="control-counter">
-                  {character[key] + 1}
-                  <span className="control-divider">/</span>
-                  {limit}
-                </span>
+                {key} ({character[key] + 1}/{limit})
               </button>
             ))}
           </div>

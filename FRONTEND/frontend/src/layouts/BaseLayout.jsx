@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, useLocation } from 'react-router-dom';
 
 const menuItems = [
   { path: '/map', label: 'Mapa' },
@@ -7,6 +7,9 @@ const menuItems = [
 ];
 
 function BaseLayout() {
+  const location = useLocation();
+  const isMapPage = location.pathname.startsWith('/map');
+
   return (
     <div className="app-shell">
       <header className="app-header">
@@ -28,7 +31,7 @@ function BaseLayout() {
         </div>
       </header>
 
-      <main className="app-content">
+      <main className={isMapPage ? 'app-content app-content--full' : 'app-content'}>
         <Outlet />
       </main>
     </div>

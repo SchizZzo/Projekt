@@ -15,11 +15,17 @@ const history = {
   3: [{ from: 'Charlie', content: 'Możemy dodać kolejny punkt.', time: '10:22' }],
 };
 
+const panelLimits = {
+  contacts: { min: 220, max: 420 },
+  preferences: { min: 260, max: 520 },
+};
+
 function ChatPage() {
   const [selected, setSelected] = useState(contacts[0].id);
   const [draft, setDraft] = useState('');
   const [quickReplies, setQuickReplies] = useState(['Jestem na mapie', 'Potwierdzam odbiór', 'Dodaję punkt']);
   const [newReply, setNewReply] = useState('');
+  const [panelSizes, setPanelSizes] = useState({ contacts: 260, preferences: 320 });
   const [preferences, setPreferences] = useState({
     notifications: true,
     sound: true,
@@ -43,6 +49,39 @@ function ChatPage() {
     }));
   };
 
+  const startResize = (panel) => (event) => {
+    event.preventDefault();
+    const startX = event.clientX;
+    const startWidth = panel === 'contacts' ? panelSizes.contacts : panelSizes.preferences;
+    const limits = panelLimits[panel];
+
+    const onMouseMove = (moveEvent) => {
+      const delta = moveEvent.clientX - startX;
+      const nextWidth = Math.min(limits.max, Math.max(limits.min, startWidth + delta));
+
+      setPanelSizes((prev) => ({
+        ...prev,
+        [panel]: nextWidth,
+      }));
+    };
+
+    const onMouseUp = () => {
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+    };
+
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+  };
+
+  const layoutStyle = useMemo(
+    () => ({
+      '--contacts-width': `${panelSizes.contacts}px`,
+      '--preferences-width': `${panelSizes.preferences}px`,
+    }),
+    [panelSizes],
+  );
+
   const addQuickReply = (event) => {
     event.preventDefault();
     if (!newReply.trim()) return;
@@ -51,8 +90,8 @@ function ChatPage() {
   };
 
   return (
-    <div className="chat-layout">
-      <aside className="contacts">
+    <div className="chat-layout" style={layoutStyle}>
+      <aside className="contacts resizable-panel">
         <div className="contacts__header">Kontakty</div>
         <ul>
           {contacts.map((contact) => (
@@ -71,6 +110,10 @@ function ChatPage() {
           ))}
         </ul>
       </aside>
+
+      <div className="resize-handle" aria-hidden="true" onMouseDown={startResize('contacts')}>
+        <span className="handle-line" />
+      </div>
 
       <section className="chat-window">
         <header className="chat-header">
@@ -126,7 +169,11 @@ function ChatPage() {
         </div>
       </section>
 
-      <aside className="chat-preferences">
+      <div className="resize-handle" aria-hidden="true" onMouseDown={startResize('preferences')}>
+        <span className="handle-line" />
+      </div>
+
+      <aside className="chat-preferences resizable-panel">
         <div className="pref-header">
           <div>
             <p className="muted">Ustawienia czatu</p>

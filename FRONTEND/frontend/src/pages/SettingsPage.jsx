@@ -41,6 +41,15 @@ function SettingsPage() {
     wlosy: 9,
   };
 
+  const controlLabels = {
+    kolorSkory: 'Kolor skóry',
+    kolorWlosow: 'Kolor włosów',
+    usta: 'Usta',
+    dodatek: 'Dodatek',
+    twarz: 'Twarz',
+    wlosy: 'Włosy',
+  };
+
   useEffect(() => {
     const fetchUserAvatar = async () => {
       // Symulacja pobierania danych jak w aplikacji Flutter.
@@ -212,7 +221,8 @@ function SettingsPage() {
                 onClick={() => handleCycle(key)}
                 disabled={isLoading}
               >
-                {key} ({character[key] + 1}/{limit})
+                <span className="control-label">{controlLabels[key]}</span>
+                <span className="control-meta">{character[key] + 1} z {limit}</span>
               </button>
             ))}
           </div>

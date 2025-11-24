@@ -18,15 +18,17 @@ function MapPage() {
   ];
 
   return (
-    <div className="card">
-      <p className="badge">Mapa</p>
-      <h1>Podgląd lokalizacji</h1>
-      <p className="subtitle">
-        Na stronie mapa znajduje się mapa OpenStreetMap — możesz tu śledzić infrastrukturę i statusy zespołów w
-        terenie.
-      </p>
+    <div className="map-page">
+      <div className="map-hero">
+        <p className="badge">Mapa</p>
+        <h1>Podgląd lokalizacji</h1>
+        <p className="subtitle">
+          Na stronie mapa znajduje się mapa OpenStreetMap — możesz tu śledzić infrastrukturę i statusy zespołów w
+          terenie.
+        </p>
+      </div>
 
-      <div className="map-layout">
+      <div className="map-workspace">
         <div className="map-frame">
           <iframe
             title="OpenStreetMap"

@@ -648,6 +648,51 @@ input:checked + .slider:before { transform: translateX(18px); }
   gap: 0.75rem;
 }
 
+.rive-widget {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 1rem;
+  display: grid;
+  gap: 0.75rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.rive-widget__header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  justify-content: space-between;
+}
+
+.rive-widget__header h3 {
+  margin: 0;
+}
+
+.rive-widget__player {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: radial-gradient(circle at 20% 20%, rgba(124, 58, 237, 0.2), transparent 40%),
+    radial-gradient(circle at 80% 0%, rgba(59, 130, 246, 0.18), transparent 40%),
+    rgba(255, 255, 255, 0.02);
+  min-height: 260px;
+}
+
+.rive-widget__player canvas,
+.rive-widget__player div {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.rive-widget__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
 .location-top {
   display: flex;
   justify-content: space-between;

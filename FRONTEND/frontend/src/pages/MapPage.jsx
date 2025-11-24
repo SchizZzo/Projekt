@@ -1,3 +1,5 @@
+import RiveVehiclesWidget from '../components/RiveVehiclesWidget.jsx';
+
 function MapPage() {
   const locations = [
     {
@@ -93,6 +95,8 @@ function MapPage() {
               ))}
             </ul>
           </div>
+
+          <RiveVehiclesWidget />
         </div>
       </div>
     </div>

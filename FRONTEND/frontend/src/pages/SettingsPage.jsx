@@ -89,6 +89,15 @@ function SettingsPage() {
     }));
   };
 
+  const handleRiveChange = (key, nextValue) => {
+    if (typeof optionLimits[key] !== 'number') return;
+
+    setCharacter((prev) => ({
+      ...prev,
+      [key]: nextValue % optionLimits[key],
+    }));
+  };
+
   const saveNotificationPreference = (value) => {
     setNotificationsEnabled(value);
     localStorage.setItem('notificationsEnabled', value ? 'true' : 'false');
@@ -209,7 +218,12 @@ function SettingsPage() {
 
           <div className="avatar-player">
             <p className="subtitle">Podgląd z oryginalnego pliku Rive (mordeczki4.riv)</p>
-            <MordeczkiAnimation />
+            <MordeczkiAnimation
+              values={character}
+              onChange={handleRiveChange}
+              labels={controlLabels}
+              disabled={isLoading}
+            />
           </div>
 
           <div className="controls-grid">

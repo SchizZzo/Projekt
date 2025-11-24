@@ -1,10 +1,10 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useRive, useStateMachineInput } from '@rive-app/react-canvas';
 import MordeczkiAsset from '../assets/mordeczki4.riv';
 
 const STATE_MACHINE_NAME = 'State Machine 1';
 
-function MordeczkiAnimation() {
+function MordeczkiAnimation({ values = {}, onChange, labels = {}, disabled }) {
   const { rive, RiveComponent } = useRive({
     src: MordeczkiAsset,
     stateMachines: STATE_MACHINE_NAME,
@@ -27,30 +27,48 @@ function MordeczkiAnimation() {
     useStateMachineInput(rive, STATE_MACHINE_NAME, name, 0),
   );
 
+  useEffect(() => {
+    controls.forEach(({ name }, index) => {
+      const input = inputs[index];
+      const nextValue = values[name];
+
+      if (typeof nextValue === 'number' && input && input.value !== nextValue) {
+        input.value = nextValue;
+      }
+    });
+  }, [controls, inputs, values]);
+
   const cycleInput = (index, limit) => {
     const input = inputs[index];
     if (!input) return;
 
     const current = typeof input.value === 'number' ? input.value : 0;
-    input.value = (current + 1) % limit;
+    const next = (current + 1) % limit;
+
+    input.value = next;
+    const name = controls[index].name;
+    onChange?.(name, next);
   };
 
   return (
-    <div className="mordeczki-player" data-state="ready">
+    <div className="mordeczki-player" data-state={disabled ? 'loading' : 'ready'}>
       <div className="mordeczki-player__canvas" role="img" aria-label="Animacja Mordeczki">
         <RiveComponent style={{ width: 480, height: 360 }} />
       </div>
 
       <div className="mordeczki-player__controls" aria-label="Sterowanie Mordeczki">
-        {controls.map(({ label, limit }, index) => (
+        {controls.map(({ label, limit, name }, index) => (
           <button
             key={label}
             type="button"
             onClick={() => cycleInput(index, limit)}
-            disabled={!inputs[index]}
+            disabled={!inputs[index] || disabled}
             className="mordeczki-player__control"
           >
-            {label}
+            <span className="control-label">{labels[name] ?? label}</span>
+            <span className="control-meta">
+              {(typeof values[name] === 'number' ? values[name] : 0) + 1} z {limit}
+            </span>
           </button>
         ))}
       </div>

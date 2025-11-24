@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import MordeczkiAnimation from '../components/MordeczkiAnimation';
 
 const defaultCharacter = {
   kolorSkory: 0,
@@ -69,16 +70,11 @@ function SettingsPage() {
     fetchUserAvatar();
   }, []);
 
-  const handleStep = (key, delta) => {
-    setCharacter((prev) => {
-      const limit = optionLimits[key];
-      const nextValue = (prev[key] + delta + limit) % limit;
-
-      return {
-        ...prev,
-        [key]: nextValue,
-      };
-    });
+  const handleAnimationChange = (name, value) => {
+    setCharacter((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const saveNotificationPreference = (value) => {
@@ -176,38 +172,35 @@ function SettingsPage() {
           <div className="setting-header">
             <h3>Mordeczka</h3>
             <p>
-              Zmień cechy korzystając z przycisków poniżej. Podgląd został usunięty, aby skupić się na
-              samych kontrolkach znanych z aplikacji mobilnej.
+              Od teraz możesz sterować Mordeczką bezpośrednio z podglądem Rive. Przyciski pod animacją
+              zachowują nazewnictwo i limity znane z aplikacji Flutter.
             </p>
           </div>
 
-          <div className="controls-grid">
-            {Object.entries(optionLimits).map(([key, limit]) => (
-              <div key={key} className="status" data-variant="info">
-                <div className="setting-header">
-                  <h4>{controlLabels[key]}</h4>
-                  <p>Wybrana wartość: {character[key] + 1} z {limit}</p>
-                </div>
-                <div className="actions-row">
-                  <button
-                    className="ghost-button"
-                    type="button"
-                    onClick={() => handleStep(key, -1)}
-                    disabled={isLoading}
-                  >
-                    Poprzedni
-                  </button>
-                  <button
-                    className="primary"
-                    type="button"
-                    onClick={() => handleStep(key, 1)}
-                    disabled={isLoading}
-                  >
-                    Następny
-                  </button>
-                </div>
+          <div className="mordeczki-wrapper">
+            <MordeczkiAnimation
+              values={character}
+              onChange={handleAnimationChange}
+              labels={controlLabels}
+              disabled={isLoading}
+            />
+
+            <div className="status" data-variant="info">
+              <div className="setting-header">
+                <h4>Podsumowanie wyboru</h4>
+                <p>Aktualne wartości zostaną zapisane razem z profilem.</p>
               </div>
-            ))}
+              <ul className="mordeczki-summary">
+                {Object.entries(optionLimits).map(([key, limit]) => (
+                  <li key={key}>
+                    <span>{controlLabels[key]}</span>
+                    <strong>
+                      {character[key] + 1} / {limit}
+                    </strong>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </section>
       </div>

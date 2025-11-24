@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { API_HOST, apiRequest } from '../api/client.js';
 import JokerImg from '../assets/joker_logo.png';
-import MordeczkiAnimation from '../components/MordeczkiAnimation.jsx';
 
 const LOGIN_PATH = '/joker-login-api/login/';
 const LOGIN_ENDPOINT = `${API_HOST}${LOGIN_PATH}`;
@@ -66,7 +65,6 @@ function LoginPage() {
       <div className="login-card">
         <div className="login-card__header">
           <div className="login-graphic">
-            <MordeczkiAnimation />
             <img src={JokerImg} alt="Logo Joker" className="login-graphic__badge" />
           </div>
           <p className="badge">Nowy ekran logowania</p>

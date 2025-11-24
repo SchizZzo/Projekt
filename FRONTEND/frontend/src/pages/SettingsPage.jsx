@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import MordeczkiAnimation from '../components/MordeczkiAnimation';
 
 const defaultCharacter = {
   kolorSkory: 0,
@@ -195,6 +196,11 @@ function SettingsPage() {
               <div className="avatar-accent" />
             </div>
             {isLoading && <div className="avatar-loading">Wczytywanie...</div>}
+          </div>
+
+          <div className="avatar-player">
+            <p className="subtitle">Podgląd z oryginalnego pliku Rive (mordeczki4.riv)</p>
+            <MordeczkiAnimation />
           </div>
 
           <div className="controls-grid">

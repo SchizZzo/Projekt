@@ -437,71 +437,24 @@ body {
 }
 
 .control-button {
-  padding: 1rem 1.15rem;
-  border-radius: 14px;
-  border: 1px solid rgba(124, 58, 237, 0.4);
-  background:
-    linear-gradient(120deg, rgba(124, 58, 237, 0.18), rgba(59, 130, 246, 0.1)),
-    rgba(255, 255, 255, 0.04);
-  color: #e5e7eb;
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.04);
+  color: #fff;
   font-weight: 700;
   text-transform: capitalize;
   cursor: pointer;
-  transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease, border-color 120ms ease;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  text-align: left;
+  transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
 }
 
 .control-button:hover:enabled {
   transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(124, 58, 237, 0.25);
-  background:
-    linear-gradient(120deg, rgba(124, 58, 237, 0.24), rgba(59, 130, 246, 0.18)),
-    rgba(255, 255, 255, 0.06);
-  border-color: rgba(124, 58, 237, 0.55);
+  box-shadow: 0 10px 30px rgba(124, 58, 237, 0.2);
+  background: rgba(124, 58, 237, 0.12);
 }
 
 .control-button:disabled { opacity: 0.6; cursor: not-allowed; }
-
-.control-copy {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
-.control-label {
-  letter-spacing: 0.01em;
-  font-size: 1rem;
-}
-
-.control-hint {
-  color: #cbd5e1;
-  opacity: 0.85;
-  font-size: 0.82rem;
-  font-weight: 600;
-}
-
-.control-counter {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  min-width: 78px;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #fff;
-  border-radius: 10px;
-  padding: 0.4rem 0.75rem;
-  font-weight: 800;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-}
-
-.control-divider {
-  opacity: 0.6;
-}
 
 .actions-row {
   display: flex;

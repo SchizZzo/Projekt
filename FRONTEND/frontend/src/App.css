@@ -245,12 +245,58 @@ body {
 .login-card__body { position: relative; z-index: 1; }
 
 .login-graphic {
-  width: 20%;
-  height: 20%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0 auto;
+  position: relative;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 1.5rem;
+  padding: 1rem;
+  background: radial-gradient(circle at 10% 10%, rgba(124, 58, 237, 0.18), transparent 45%),
+    radial-gradient(circle at 90% 20%, rgba(59, 130, 246, 0.18), transparent 45%),
+    rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 20px 40px rgba(0, 0, 0, 0.28);
+}
+
+.login-graphic__badge {
+  position: absolute;
+  bottom: 0.9rem;
+  right: 0.9rem;
+  width: 64px;
+  height: 64px;
+  padding: 0.35rem;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: rgba(11, 16, 33, 0.7);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.mordeczki-player {
+  position: relative;
+  width: min(520px, 100%);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.02), rgba(124, 58, 237, 0.08));
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.mordeczki-player canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+}
+
+.mordeczki-placeholder {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  gap: 0.35rem;
+  background: linear-gradient(135deg, rgba(11, 16, 33, 0.75), rgba(11, 16, 33, 0.9));
+  color: var(--muted);
+  text-align: center;
+  font-weight: 600;
 }
 
 .login-form { display: grid; gap: 1rem; }

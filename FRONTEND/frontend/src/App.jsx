@@ -1,131 +1,27 @@
-import { useMemo, useState } from 'react';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import BaseLayout from './layouts/BaseLayout.jsx';
+import ChatPage from './pages/ChatPage.jsx';
+import LoginPage from './pages/LoginPage.jsx';
+import MapPage from './pages/MapPage.jsx';
+import RegisterPage from './pages/RegisterPage.jsx';
+import SettingsPage from './pages/SettingsPage.jsx';
 import './App.css';
-import JokerImg from './assets/joker_logo.png'; // <- dodane
-
-const API_HOST = 'http://localhost';
-const LOGIN_PATH = '/joker-login-api/login/';
-const LOGIN_ENDPOINT = `${API_HOST}${LOGIN_PATH}`;
 
 function App() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [status, setStatus] = useState({ type: 'info', message: 'Wprowadź dane logowania.' });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [tokens, setTokens] = useState({ access: null, refresh: null });
-
-  const isFormValid = useMemo(
-    () => email.trim() !== '' && password.trim() !== '',
-    [email, password]
-  );
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    if (!isFormValid || isSubmitting) return;
-
-    setIsSubmitting(true);
-    setStatus({ type: 'info', message: 'Trwa logowanie...' });
-
-    try {
-      const response = await fetch(LOGIN_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data?.message || 'Nieprawidłowe dane logowania.');
-      }
-
-      const { access, refresh } = data;
-
-      if (access && refresh) {
-        localStorage.setItem('accessToken', access);
-        localStorage.setItem('refreshToken', refresh);
-        setTokens({ access, refresh });
-        setStatus({ type: 'success', message: 'Zalogowano. Tokeny zapisane.' });
-      } else {
-        setStatus({ type: 'warning', message: 'Brak tokenów w odpowiedzi.' });
-      }
-    } catch (error) {
-      setStatus({ type: 'error', message: error.message || 'Wystąpił błąd podczas logowania.' });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   return (
-    <div className="layout">
-      <div className="login-card">
-        <div className="login-card__header">
-          <img src={JokerImg} alt="Login graphic" className="login-graphic" /> {/* grafika */}
-          <p className="badge">Nowy ekran logowania</p>
-          <h1>Zaloguj się</h1>
-          <p className="subtitle">Uzyskaj dostęp do panelu Joker, korzystając z dedykowanego API.</p>
-        </div>
-
-        <div className="login-card__body">
-          <form className="login-form" onSubmit={handleSubmit}>
-            <label className="field">
-              <span>Email</span>
-              <input
-                type="email"
-                name="email"
-                autoComplete="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Wpisz adres e-mail"
-                required
-              />
-            </label>
-
-            <label className="field">
-              <span>Hasło</span>
-              <input
-                type="password"
-                name="password"
-                autoComplete="current-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Wpisz hasło"
-                required
-              />
-            </label>
-
-            <button type="submit" className="primary" disabled={!isFormValid || isSubmitting}>
-              {isSubmitting ? 'Logowanie...' : 'Zaloguj się'}
-            </button>
-          </form>
-
-          <div className="status" data-variant={status.type}>
-            <span>{status.message}</span>
-            <small>Endpoint: {LOGIN_ENDPOINT}</small>
-          </div>
-
-          {tokens.access && (
-            <div className="tokens">
-              <p><strong>Access:</strong> {tokens.access}</p>
-              <p><strong>Refresh:</strong> {tokens.refresh}</p>
-            </div>
-          )}
-        </div>
-      </div>
-
-      <aside className="info-panel">
-        <div className="info-panel__title">Szybkie informacje</div>
-        <ul>
-          <li>Host API: <strong>{API_HOST}</strong></li>
-          <li>Ścieżka logowania: <strong>{LOGIN_PATH}</strong></li>
-          <li>Pełny endpoint: <strong>{LOGIN_ENDPOINT}</strong></li>
-          <li>Formularz poprawny: <strong>{isFormValid ? 'Tak' : 'Nie'}</strong></li>
-          <li>W trakcie wysyłania: <strong>{isSubmitting ? 'Tak' : 'Nie'}</strong></li>
-          <li>Tokeny zapisane: <strong>{tokens.access ? 'Tak' : 'Nie'}</strong></li>
-          <li>Oczekiwane pola odpowiedzi: <strong>access</strong>, <strong>refresh</strong></li>
-          <li>Magazyn tokenów: <strong>localStorage</strong></li>
-        </ul>
-      </aside>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<BaseLayout />}> 
+          <Route index element={<Navigate to="/map" replace />} />
+          <Route path="settings" element={<SettingsPage />} />
+          <Route path="map" element={<MapPage />} />
+          <Route path="chat" element={<ChatPage />} />
+        </Route>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

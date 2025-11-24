@@ -1,5 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
-import MordeczkiAnimation from '../components/MordeczkiAnimation';
+import { useEffect, useState } from 'react';
 
 const defaultCharacter = {
   kolorSkory: 0,
@@ -19,18 +18,6 @@ function SettingsPage() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [showDialog, setShowDialog] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
-
-  const palettes = useMemo(
-    () => ({
-      kolorSkory: ['#f2d0c4', '#d1a28f', '#8d5524'],
-      kolorWlosow: ['#1f2933', '#a55728', '#d6b370', '#fed766'],
-      usta: ['#ffb4a2', '#ff7b9c', '#e84855'],
-      dodatek: ['#e0f2fe', '#c7d2fe', '#d9f99d', '#fecdd3', '#fef9c3'],
-      twarz: ['#fde68a', '#86efac', '#bfdbfe', '#fecdd3'],
-      wlosy: ['#111827', '#1f2937', '#374151', '#4b5563', '#6b7280', '#9ca3af', '#cbd5e1', '#e5e7eb', '#f3f4f6'],
-    }),
-    [],
-  );
 
   const optionLimits = {
     kolorSkory: 3,
@@ -82,20 +69,16 @@ function SettingsPage() {
     fetchUserAvatar();
   }, []);
 
-  const handleCycle = (key) => {
-    setCharacter((prev) => ({
-      ...prev,
-      [key]: (prev[key] + 1) % optionLimits[key],
-    }));
-  };
+  const handleStep = (key, delta) => {
+    setCharacter((prev) => {
+      const limit = optionLimits[key];
+      const nextValue = (prev[key] + delta + limit) % limit;
 
-  const handleRiveChange = (key, nextValue) => {
-    if (typeof optionLimits[key] !== 'number') return;
-
-    setCharacter((prev) => ({
-      ...prev,
-      [key]: nextValue % optionLimits[key],
-    }));
+      return {
+        ...prev,
+        [key]: nextValue,
+      };
+    });
   };
 
   const saveNotificationPreference = (value) => {
@@ -140,17 +123,6 @@ function SettingsPage() {
 
     localStorage.setItem('mordeczkaDraft', JSON.stringify(payload));
   };
-
-  const avatarStyle = useMemo(
-    () => ({
-      '--skin': palettes.kolorSkory[character.kolorSkory],
-      '--hair': palettes.kolorWlosow[character.kolorWlosow],
-      '--accent': palettes.dodatek[character.dodatek],
-      '--mouth': palettes.usta[character.usta],
-      '--frame': palettes.twarz[character.twarz],
-    }),
-    [character, palettes],
-  );
 
   return (
     <div className="card">
@@ -203,41 +175,38 @@ function SettingsPage() {
         <section className="setting-block">
           <div className="setting-header">
             <h3>Mordeczka</h3>
-            <p>Zmiana cech poprzez inkrementację wartości tak jak w sterowaniu StateMachine.</p>
-          </div>
-
-          <div className="avatar-preview" style={avatarStyle}>
-            <div className="avatar-frame">
-              <div className="avatar-face" />
-              <div className="avatar-mouth" />
-              <div className="avatar-hair" />
-              <div className="avatar-accent" />
-            </div>
-            {isLoading && <div className="avatar-loading">Wczytywanie...</div>}
-          </div>
-
-          <div className="avatar-player">
-            <p className="subtitle">Podgląd z oryginalnego pliku Rive (mordeczki4.riv)</p>
-            <MordeczkiAnimation
-              values={character}
-              onChange={handleRiveChange}
-              labels={controlLabels}
-              disabled={isLoading}
-            />
+            <p>
+              Zmień cechy korzystając z przycisków poniżej. Podgląd został usunięty, aby skupić się na
+              samych kontrolkach znanych z aplikacji mobilnej.
+            </p>
           </div>
 
           <div className="controls-grid">
             {Object.entries(optionLimits).map(([key, limit]) => (
-              <button
-                key={key}
-                className="control-button"
-                type="button"
-                onClick={() => handleCycle(key)}
-                disabled={isLoading}
-              >
-                <span className="control-label">{controlLabels[key]}</span>
-                <span className="control-meta">{character[key] + 1} z {limit}</span>
-              </button>
+              <div key={key} className="status" data-variant="info">
+                <div className="setting-header">
+                  <h4>{controlLabels[key]}</h4>
+                  <p>Wybrana wartość: {character[key] + 1} z {limit}</p>
+                </div>
+                <div className="actions-row">
+                  <button
+                    className="ghost-button"
+                    type="button"
+                    onClick={() => handleStep(key, -1)}
+                    disabled={isLoading}
+                  >
+                    Poprzedni
+                  </button>
+                  <button
+                    className="primary"
+                    type="button"
+                    onClick={() => handleStep(key, 1)}
+                    disabled={isLoading}
+                  >
+                    Następny
+                  </button>
+                </div>
+              </div>
             ))}
           </div>
         </section>

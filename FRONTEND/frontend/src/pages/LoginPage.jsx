@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { API_HOST, apiRequest } from '../api/client.js';
 import JokerImg from '../assets/joker_logo.png';
 
-const API_HOST = 'http://localhost';
 const LOGIN_PATH = '/joker-login-api/login/';
 const LOGIN_ENDPOINT = `${API_HOST}${LOGIN_PATH}`;
 
@@ -11,6 +12,7 @@ function LoginPage() {
   const [status, setStatus] = useState({ type: 'info', message: 'Wprowadź dane logowania.' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [tokens, setTokens] = useState({ access: null, refresh: null });
+  const navigate = useNavigate();
 
   const isFormValid = useMemo(
     () => email.trim() !== '' && password.trim() !== '',
@@ -25,11 +27,14 @@ function LoginPage() {
     setStatus({ type: 'info', message: 'Trwa logowanie...' });
 
     try {
-      const response = await fetch(LOGIN_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await apiRequest(
+        LOGIN_PATH,
+        {
+          method: 'POST',
+          body: JSON.stringify({ email, password }),
+        },
+        { useAuth: false }
+      );
 
       const data = await response.json();
 
@@ -43,7 +48,8 @@ function LoginPage() {
         localStorage.setItem('accessToken', access);
         localStorage.setItem('refreshToken', refresh);
         setTokens({ access, refresh });
-        setStatus({ type: 'success', message: 'Zalogowano. Tokeny zapisane.' });
+        setStatus({ type: 'success', message: 'Zalogowano. Przekierowuję na mapę...' });
+        navigate('/map', { replace: true });
       } else {
         setStatus({ type: 'warning', message: 'Brak tokenów w odpowiedzi.' });
       }

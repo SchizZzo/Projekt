@@ -61,15 +61,33 @@ function LoginPage() {
   };
 
   return (
-    <div className="layout">
-      <div className="login-card">
+    <div className="layout login-layout">
+      <div className="login-card card">
         <div className="login-card__header">
+          <div className="login-hero">
+            <p className="badge">Nowy ekran logowania</p>
+            <h1>Zaloguj się</h1>
+            <p className="subtitle">Uzyskaj dostęp do panelu Joker, korzystając z dedykowanego API.</p>
+
+            <div className="login-meta">
+              <div className="login-meta__item">
+                <small>Host API</small>
+                <strong>{API_HOST}</strong>
+              </div>
+              <div className="login-meta__item">
+                <small>Ścieżka logowania</small>
+                <strong>{LOGIN_PATH}</strong>
+              </div>
+              <div className="login-meta__item">
+                <small>Status formularza</small>
+                <strong className="pill pill-outline">{isFormValid ? 'Przyjmie dane' : 'Uzupełnij pola'}</strong>
+              </div>
+            </div>
+          </div>
+
           <div className="login-graphic">
             <img src={JokerImg} alt="Logo Joker" className="login-graphic__badge" />
           </div>
-          <p className="badge">Nowy ekran logowania</p>
-          <h1>Zaloguj się</h1>
-          <p className="subtitle">Uzyskaj dostęp do panelu Joker, korzystając z dedykowanego API.</p>
         </div>
 
         <div className="login-card__body">
@@ -85,6 +103,7 @@ function LoginPage() {
                 placeholder="Wpisz adres e-mail"
                 required
               />
+              <small className="field__hint">Użyj adresu powiązanego z Twoim kontem.</small>
             </label>
 
             <label className="field">
@@ -98,6 +117,7 @@ function LoginPage() {
                 placeholder="Wpisz hasło"
                 required
               />
+              <small className="field__hint">Hasło nigdy nie jest przechowywane na serwerze w postaci jawnej.</small>
             </label>
 
             <button type="submit" className="primary" disabled={!isFormValid || isSubmitting}>
@@ -105,29 +125,59 @@ function LoginPage() {
             </button>
           </form>
 
-          <div className="status" data-variant={status.type}>
-            <span>{status.message}</span>
-            <small>Endpoint: {LOGIN_ENDPOINT}</small>
+          <div className="status status--inline" data-variant={status.type}>
+            <div>
+              <p className="status__label">{status.message}</p>
+              <small>Połączenie z <strong>{LOGIN_ENDPOINT}</strong></small>
+            </div>
+            <span className="status__dot" aria-hidden />
           </div>
 
           {tokens.access && (
             <div className="tokens">
-              <p><strong>Access:</strong> {tokens.access}</p>
-              <p><strong>Refresh:</strong> {tokens.refresh}</p>
+              <div className="token-pill">
+                <p className="token-label">Access token</p>
+                <p className="token-value">{tokens.access}</p>
+              </div>
+              <div className="token-pill">
+                <p className="token-label">Refresh token</p>
+                <p className="token-value">{tokens.refresh}</p>
+              </div>
             </div>
           )}
         </div>
       </div>
 
-      <aside className="info-panel">
+      <aside className="info-panel card">
         <div className="info-panel__title">Szybkie informacje</div>
-        <ul>
-          <li>Host API: <strong>{API_HOST}</strong></li>
-          <li>Ścieżka logowania: <strong>{LOGIN_PATH}</strong></li>
-          <li>Pełny endpoint: <strong>{LOGIN_ENDPOINT}</strong></li>
-          <li>Formularz poprawny: <strong>{isFormValid ? 'Tak' : 'Nie'}</strong></li>
+        <div className="info-grid">
+          <div className="info-chip">
+            <p className="info-chip__label">Aktualny host</p>
+            <p className="info-chip__value">{API_HOST}</p>
+          </div>
+          <div className="info-chip">
+            <p className="info-chip__label">Ścieżka logowania</p>
+            <p className="info-chip__value">{LOGIN_PATH}</p>
+          </div>
+          <div className="info-chip">
+            <p className="info-chip__label">Formularz gotowy</p>
+            <p className="info-chip__value">{isFormValid ? 'Tak' : 'Nie'}</p>
+          </div>
+          <div className="info-chip">
+            <p className="info-chip__label">Tokeny w pamięci</p>
+            <p className="info-chip__value">{tokens.access ? 'Tak' : 'Nie'}</p>
+          </div>
+        </div>
+
+        <div className="callout">
+          <p className="callout__label">Pełny endpoint</p>
+          <a className="callout__link" href={LOGIN_ENDPOINT} target="_blank" rel="noreferrer">
+            {LOGIN_ENDPOINT}
+          </a>
+        </div>
+
+        <ul className="info-list">
           <li>W trakcie wysyłania: <strong>{isSubmitting ? 'Tak' : 'Nie'}</strong></li>
-          <li>Tokeny zapisane: <strong>{tokens.access ? 'Tak' : 'Nie'}</strong></li>
           <li>Oczekiwane pola odpowiedzi: <strong>access</strong>, <strong>refresh</strong></li>
           <li>Magazyn tokenów: <strong>localStorage</strong></li>
         </ul>

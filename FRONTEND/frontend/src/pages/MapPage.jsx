@@ -14,11 +14,11 @@ const MAP_DEFAULT_CENTER = {
 };
 
 const buildMapUrl = (markers, center) => {
-  const baseUrl = 'https://staticmap.openstreetmap.de/staticmap.php';
+  const baseUrl = 'https://staticmap.openstreetmap.de/osm/staticmap.php';
   const markersParam = markers
     .map(({ lat, lon, name }) => {
       const label = name?.[0]?.toUpperCase() ?? 'X';
-      return `${lat},${lon},lightblue1-${encodeURIComponent(label)}`;
+      return `${lat},${lon},blue-${encodeURIComponent(label)}`;
     })
     .join('|');
 
@@ -26,6 +26,7 @@ const buildMapUrl = (markers, center) => {
     center: `${center.lat},${center.lon}`,
     zoom: MAP_ZOOM.toString(),
     size: `${MAP_SIZE.width}x${MAP_SIZE.height}`,
+    maptype: 'mapnik',
   });
 
   if (markersParam) {
@@ -166,6 +167,7 @@ function MapPage() {
             src={mapSrc}
             alt="Mapa z oznaczonymi dostępnymi Mordeczkami"
             loading="lazy"
+            referrerPolicy="no-referrer"
             onLoad={() => {
               if (!useFallbackMap) {
                 setMapLoadError(false);

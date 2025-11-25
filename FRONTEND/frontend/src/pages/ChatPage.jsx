@@ -37,18 +37,26 @@ function ChatPage() {
   const [invitationActionState, setInvitationActionState] = useState({ status: 'idle', message: '' });
 
   const getContactKey = useCallback((contact, fallbackIndex) => {
-    return contact.id ?? contact.uuid ?? contact.friend_username ?? fallbackIndex;
+    return (
+      contact?.friend_id ??
+      contact?.friend_user_id ??
+      contact?.friend_uuid ??
+      contact?.id ??
+      contact?.uuid ??
+      contact?.friend_username ??
+      fallbackIndex
+    );
   }, []);
 
   const getContactId = useCallback((contact) => {
     if (!contact) return null;
 
     return (
-      contact.id ??
       contact.friend_id ??
+      contact.friend_user_id ??
       contact.friend_uuid ??
       contact.uuid ??
-      contact.friend_user_id ??
+      contact.id ??
       null
     );
   }, []);

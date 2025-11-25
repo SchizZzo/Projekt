@@ -17,6 +17,8 @@ function ChatPage() {
   const [socketStatus, setSocketStatus] = useState('disconnected');
   const [socketError, setSocketError] = useState('');
   const [messagesByContact, setMessagesByContact] = useState({});
+  const [messagesLoading, setMessagesLoading] = useState(false);
+  const [messagesError, setMessagesError] = useState('');
   const socketRef = useRef(null);
   const contactsRef = useRef([]);
   const [draft, setDraft] = useState('');
@@ -327,6 +329,103 @@ function ChatPage() {
     [messagesByContact, selected],
   );
 
+  const formatApiMessage = useCallback(
+    (message, contactName) => {
+      const senderId =
+        message?.nadawca ??
+        message?.sender ??
+        message?.author ??
+        message?.user ??
+        message?.user_id ??
+        message?.from ??
+        '';
+
+      const rawTimestamp =
+        message?.created_at ?? message?.created ?? message?.timestamp ?? message?.time ?? '';
+      const parsedDate = rawTimestamp ? new Date(rawTimestamp) : null;
+      const readableTime =
+        parsedDate && !Number.isNaN(parsedDate.getTime())
+          ? parsedDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          : '';
+
+      return {
+        from: senderId?.toString?.() === userId?.toString?.() ? 'Ty' : contactName,
+        content: message?.message ?? message?.content ?? message?.text ?? '',
+        time: readableTime || '—',
+      };
+    },
+    [userId],
+  );
+
+  useEffect(() => {
+    const activeKey = selected?.toString?.();
+    if (!activeKey) return undefined;
+
+    const selectedContact = getContactByKey(activeKey);
+    const contactId = getContactId(selectedContact);
+
+    if (!selectedContact || !contactId) {
+      setMessagesError('Wybrany kontakt nie ma przypisanego identyfikatora.');
+      return undefined;
+    }
+
+    const controller = new AbortController();
+    const contactName = getContactDisplayName(selectedContact, 'Nieznany znajomy');
+
+    const getMessageTimestamp = (message) => {
+      const rawTimestamp =
+        message?.created_at ?? message?.created ?? message?.timestamp ?? message?.time ?? '';
+      const parsed = rawTimestamp ? Date.parse(rawTimestamp) : Number.NaN;
+      return Number.isNaN(parsed) ? 0 : parsed;
+    };
+
+    const fetchMessages = async () => {
+      setMessagesLoading(true);
+      setMessagesError('');
+
+      try {
+        const response = await apiRequest(
+          `/joker-chat-api/joker-chat/messages/conversation/${contactId}/25/`,
+          { signal: controller.signal },
+        );
+
+        if (!response.ok) {
+          throw new Error(`Nie udało się pobrać wiadomości (${response.status}).`);
+        }
+
+        const data = await response.json();
+        const normalized = Array.isArray(data) ? data : [];
+        const sorted = normalized.slice().sort((a, b) => getMessageTimestamp(a) - getMessageTimestamp(b));
+        const formatted = sorted.map((message) => formatApiMessage(message, contactName));
+
+        setMessagesByContact((prev) => {
+          const existing = prev[activeKey] ?? [];
+          const buildKey = (message) => `${message.from}||${message.time}||${message.content}`;
+          const seen = new Set();
+          const merged = [];
+
+          [...formatted, ...existing].forEach((message) => {
+            const key = buildKey(message);
+            if (seen.has(key)) return;
+            seen.add(key);
+            merged.push(message);
+          });
+
+          return { ...prev, [activeKey]: merged };
+        });
+      } catch (error) {
+        if (error.name === 'AbortError') return;
+        setMessagesError('Nie udało się pobrać wiadomości.');
+      } finally {
+        setMessagesLoading(false);
+      }
+    };
+
+    fetchMessages();
+
+    return () => controller.abort();
+  }, [formatApiMessage, getContactByKey, getContactDisplayName, getContactId, selected]);
+
   const invitationCounters = useMemo(() => {
     const counters = {
       total: invitations.length,
@@ -552,6 +651,8 @@ function ChatPage() {
         {socketError && <p className="error-text">{socketError}</p>}
 
         <div className="messages">
+          {messagesLoading && <p className="muted">Ładowanie wiadomości...</p>}
+          {messagesError && <p className="error-text">{messagesError}</p>}
           {messages.map((message, index) => (
             <div key={index} className={message.from === 'Ty' ? 'message outgoing' : 'message incoming'}>
               <div className="message-meta">
@@ -561,7 +662,7 @@ function ChatPage() {
               <p>{message.content}</p>
             </div>
           ))}
-          {!messages.length && <p className="muted">Brak wiadomości.</p>}
+          {!messagesLoading && !messages.length && !messagesError && <p className="muted">Brak wiadomości.</p>}
         </div>
 
         <form className="message-form" onSubmit={handleSend}>

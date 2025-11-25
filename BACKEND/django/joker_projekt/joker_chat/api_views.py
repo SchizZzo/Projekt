@@ -36,13 +36,6 @@ class ChatMessageViewSet(viewsets.ModelViewSet):
             Q(nadawca_id=odbiorca_id, odbiorca_id=request.user.id)
         ).order_by('-created')
 
-        # Jeśli rozmowa zawiera mniej wiadomości niż wymagano, zwróć błąd
-        if conversation.count() < ileWiadomosciWstecz:
-            return Response(
-                {"error": "Nie ma wystarczającej liczby wiadomości w rozmowie."},
-                status=404
-            )
-
         # Pobierz żądaną liczbę wiadomości i odwróć kolejność, aby pokazać je chronologicznie
         messages = list(conversation[:ileWiadomosciWstecz])[::-1]
 

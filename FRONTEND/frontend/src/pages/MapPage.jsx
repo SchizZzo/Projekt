@@ -1,28 +1,30 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { apiRequest } from '../api/client.js';
+import CharacterMarker from '../components/CharacterMarker.jsx';
 import RiveVehiclesWidget from '../components/RiveVehiclesWidget.jsx';
 
 const AVAILABLE_USERS_ENDPOINT = '/joker-login-api/available-users/';
+const MAP_SIZE = { width: 865, height: 512 };
+const MAP_ZOOM = 13;
 
 const MAP_DEFAULT_CENTER = {
   lat: 52.22977,
   lon: 21.01178,
 };
 
-const buildMapUrl = (markers) => {
+const buildMapUrl = (markers, center) => {
   const baseUrl = 'https://staticmap.openstreetmap.de/staticmap.php';
-  const center = markers[0] ?? MAP_DEFAULT_CENTER;
   const markersParam = markers
-    .map(({ lat, lon, character }) => {
-      const label = character?.[0]?.toUpperCase() ?? 'X';
+    .map(({ lat, lon, name }) => {
+      const label = name?.[0]?.toUpperCase() ?? 'X';
       return `${lat},${lon},lightblue1-${encodeURIComponent(label)}`;
     })
     .join('|');
 
   const params = new URLSearchParams({
     center: `${center.lat},${center.lon}`,
-    zoom: '13',
-    size: '865x512',
+    zoom: MAP_ZOOM.toString(),
+    size: `${MAP_SIZE.width}x${MAP_SIZE.height}`,
   });
 
   if (markersParam) {
@@ -32,12 +34,24 @@ const buildMapUrl = (markers) => {
   return `${baseUrl}?${params.toString()}`;
 };
 
+const projectLatLon = (lat, lon) => {
+  const sinLat = Math.sin((lat * Math.PI) / 180);
+  const mapScale = 256 * 2 ** MAP_ZOOM;
+
+  const x = ((lon + 180) / 360) * mapScale;
+  const y = (0.5 - Math.log((1 + sinLat) / (1 - sinLat)) / (4 * Math.PI)) * mapScale;
+
+  return { x, y };
+};
+
 function MapPage() {
   const [availableUsers, setAvailableUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [mapLoadError, setMapLoadError] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(null);
+  const [frameSize, setFrameSize] = useState(MAP_SIZE);
+  const mapFrameRef = useRef(null);
 
   useEffect(() => {
     const fetchAvailableUsers = async () => {
@@ -72,18 +86,54 @@ function MapPage() {
         lon: Number(user.longitude),
         name: user.display_name || user.username,
         opis: user.opis,
-        character: user.character,
+        character: user.character ?? user.charakter,
       }))
       .filter((marker) => Number.isFinite(marker.lat) && Number.isFinite(marker.lon));
 
     return markers;
   }, [availableUsers]);
 
-  const mapImageUrl = useMemo(() => buildMapUrl(availableMarkers), [availableMarkers]);
+  const mapCenter = useMemo(() => availableMarkers[0] ?? MAP_DEFAULT_CENTER, [availableMarkers]);
+  const mapImageUrl = useMemo(() => buildMapUrl(availableMarkers, mapCenter), [availableMarkers, mapCenter]);
 
   useEffect(() => {
     setMapLoadError(false);
   }, [mapImageUrl]);
+
+  useEffect(() => {
+    if (!mapFrameRef.current || typeof ResizeObserver === 'undefined') return undefined;
+
+    const observer = new ResizeObserver((entries) => {
+      const [entry] = entries;
+      if (!entry) return;
+
+      const { width, height } = entry.contentRect;
+      setFrameSize({ width, height });
+    });
+
+    observer.observe(mapFrameRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  const positionedMarkers = useMemo(() => {
+    const centerPoint = projectLatLon(mapCenter.lat, mapCenter.lon);
+    const scaleX = frameSize.width / MAP_SIZE.width;
+    const scaleY = frameSize.height / MAP_SIZE.height;
+
+    return availableMarkers.map((marker) => {
+      const point = projectLatLon(marker.lat, marker.lon);
+      const left = MAP_SIZE.width / 2 + (point.x - centerPoint.x);
+      const top = MAP_SIZE.height / 2 + (point.y - centerPoint.y);
+
+      return {
+        ...marker,
+        position: {
+          left: left * scaleX,
+          top: top * scaleY,
+        },
+      };
+    });
+  }, [availableMarkers, frameSize.height, frameSize.width, mapCenter.lat, mapCenter.lon]);
 
   return (
     <div className="map-page">
@@ -97,7 +147,7 @@ function MapPage() {
       </div>
 
       <div className="map-workspace">
-        <div className="map-frame">
+        <div className="map-frame" ref={mapFrameRef}>
           <img
             src={mapImageUrl}
             alt="Mapa z oznaczonymi dostępnymi Mordeczkami"
@@ -105,6 +155,18 @@ function MapPage() {
             onLoad={() => setMapLoadError(false)}
             onError={() => setMapLoadError(true)}
           />
+          <div className="map-markers" aria-hidden="true">
+            {positionedMarkers.map(({ id, name, character, position }) => (
+              <div
+                key={id}
+                className="map-marker"
+                style={{ left: `${position.left}px`, top: `${position.top}px` }}
+              >
+                <CharacterMarker character={character} name={name} />
+                <span className="map-marker__label">{name}</span>
+              </div>
+            ))}
+          </div>
           <div className="map-overlay">
             <div>
               <p className="muted">Aktualizacja danych</p>

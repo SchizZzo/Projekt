@@ -15,23 +15,16 @@ const MAP_DEFAULT_CENTER = {
 
 const buildMapUrl = (markers, center) => {
   const baseUrl = 'https://staticmap.openstreetmap.de/osm/staticmap.php';
-  const markersParam = markers
-    .map(({ lat, lon, name }) => {
-      const label = name?.[0]?.toUpperCase() ?? 'X';
-      return `${lat},${lon},blue-${encodeURIComponent(label)}`;
-    })
-    .join('|');
 
-  const params = new URLSearchParams({
-    center: `${center.lat},${center.lon}`,
-    zoom: MAP_ZOOM.toString(),
-    size: `${MAP_SIZE.width}x${MAP_SIZE.height}`,
-    maptype: 'mapnik',
+  const params = new URLSearchParams();
+  params.set('center', `${center.lat},${center.lon}`);
+  params.set('zoom', MAP_ZOOM.toString());
+  params.set('size', `${MAP_SIZE.width}x${MAP_SIZE.height}`);
+  params.set('maptype', 'mapnik');
+
+  markers.forEach(({ lat, lon }) => {
+    params.append('markers', `${lat},${lon},blue`);
   });
-
-  if (markersParam) {
-    params.set('markers', markersParam);
-  }
 
   return `${baseUrl}?${params.toString()}`;
 };

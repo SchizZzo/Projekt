@@ -1224,7 +1224,34 @@ input:checked + .slider:before { transform: translateX(18px); }
   min-height: 0;
 }
 
-.chat-header { padding: 1rem; border-bottom: 1px solid var(--border); }
+.chat-header {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.chat-header__intro {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  flex: 1;
+  min-width: 280px;
+}
+
+.chat-header__actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.chat-header__actions .ghost-button {
+  white-space: nowrap;
+}
+
 .chat-title { font-weight: 800; font-size: 1.1rem; }
 
 .messages {

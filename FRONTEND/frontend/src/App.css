@@ -1194,6 +1194,24 @@ input:checked + .slider:before { transform: translateX(18px); }
 .status-dot.online { background: var(--success); }
 .status-dot.offline { background: #64748b; }
 
+.contact-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 36px;
+  justify-content: flex-end;
+}
+
+.contact-badge {
+  background: var(--primary-gradient);
+  color: white;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  box-shadow: 0 0 0 1px rgba(124, 58, 237, 0.25);
+}
+
 .chat-window {
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid var(--border);

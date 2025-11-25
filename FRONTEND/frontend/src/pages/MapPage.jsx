@@ -128,6 +128,38 @@ function CharacterMapMarker({ marker }) {
   );
 }
 
+function adjustOverlappingMarkers(markers) {
+  const markersByPosition = markers.reduce((groups, marker) => {
+    const key = `${marker.lat.toFixed(6)}-${marker.lon.toFixed(6)}`;
+    groups[key] = groups[key] || [];
+    groups[key].push(marker);
+    return groups;
+  }, {});
+
+  const SPREAD_RADIUS_METERS = 35;
+  const METERS_PER_DEGREE = 111_111;
+
+  return markers.flatMap((marker) => {
+    const key = `${marker.lat.toFixed(6)}-${marker.lon.toFixed(6)}`;
+    const group = markersByPosition[key];
+
+    if (group.length === 1) return marker;
+
+    const markerIndex = group.findIndex((groupMarker) => groupMarker.id === marker.id);
+    const angle = (2 * Math.PI * markerIndex) / group.length;
+    const latOffset = (SPREAD_RADIUS_METERS * Math.cos(angle)) / METERS_PER_DEGREE;
+    const lonOffset =
+      (SPREAD_RADIUS_METERS * Math.sin(angle)) /
+      (METERS_PER_DEGREE * Math.cos((marker.lat * Math.PI) / 180));
+
+    return {
+      ...marker,
+      lat: marker.lat + latOffset,
+      lon: marker.lon + lonOffset,
+    };
+  });
+}
+
 function MapBoundsUpdater({ markers, fallbackCenter }) {
   const map = useMap();
 
@@ -195,7 +227,7 @@ function MapPage() {
           Number.isFinite(marker.lat) && Number.isFinite(marker.lon) && Boolean(marker.character),
       );
 
-    return markers;
+    return adjustOverlappingMarkers(markers);
   }, [availableUsers]);
 
   const mapCenter = useMemo(() => availableMarkers[0] ?? MAP_DEFAULT_CENTER, [availableMarkers]);

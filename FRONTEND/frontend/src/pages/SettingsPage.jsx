@@ -40,31 +40,41 @@ function SettingsPage() {
 
   useEffect(() => {
     const fetchUserAvatar = async () => {
-      // Symulacja pobierania danych jak w aplikacji Flutter.
-      await new Promise((resolve) => setTimeout(resolve, 450));
-      const storedCooldown = Number(localStorage.getItem('nicknameCooldownUntil') ?? 0);
-      const mockUser = {
-        user_id: 'demo-user',
-        poziom: 4,
-        display_name: 'Mordeczka',
-        opis: 'Tworzę swoje alter ego na podstawie Rive.',
-        notifications: true,
-        character: {
-          kolorSkory: 1,
-          kolorWlosow: 2,
-          usta: 0,
-          dodatek: 3,
-          twarz: 1,
-          wlosy: 4,
-        },
-        cooldownUntil: storedCooldown,
-      };
+      setIsLoading(true);
+      try {
+        const response = await fetch('http://localhost/joker-login-api/me/');
 
-      setCharacter(mockUser.character);
-      setNickname(mockUser.display_name);
-      setOpis(mockUser.opis);
-      setNotificationsEnabled(mockUser.notifications);
-      setIsLoading(false);
+        if (!response.ok) {
+          throw new Error('Nie udało się pobrać danych użytkownika.');
+        }
+
+        const data = await response.json();
+        const storedCooldown = Number(localStorage.getItem('nicknameCooldownUntil') ?? 0);
+        const infoMessages = [];
+
+        if (!data.character) {
+          setCharacter(defaultCharacter);
+          infoMessages.push('Brak zapisanej Mordeczki – uzupełnij wygląd i zapisz ustawienia.');
+        } else {
+          setCharacter(data.character);
+        }
+
+        if (!data.display_name) {
+          setNickname('');
+          infoMessages.push('Brak ustawionej nazwy użytkownika – dodaj ją, aby zapisać profil.');
+        } else {
+          setNickname(data.display_name);
+        }
+
+        setOpis(data.opis ?? '');
+        setNotificationsEnabled(Boolean(data.notifications ?? true));
+        localStorage.setItem('nicknameCooldownUntil', `${data.cooldownUntil ?? storedCooldown}`);
+        setInfo(infoMessages.join(' ') || 'Pobrano ustawienia Mordeczki z API.');
+      } catch (error) {
+        setInfo(error.message || 'Wystąpił błąd podczas pobierania ustawień.');
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     fetchUserAvatar();

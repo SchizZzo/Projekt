@@ -25,6 +25,7 @@ function ChatPage() {
   const [quickReplies, setQuickReplies] = useState(['Jestem na mapie', 'Potwierdzam odbiór', 'Dodaję punkt']);
   const [newReply, setNewReply] = useState('');
   const [panelSizes, setPanelSizes] = useState({ contacts: 260, preferences: 320 });
+  const [sidebarWidth] = useState(240);
   const [preferences, setPreferences] = useState({
     notifications: true,
     sound: true,
@@ -522,8 +523,9 @@ function ChatPage() {
     () => ({
       '--contacts-width': `${panelSizes.contacts}px`,
       '--preferences-width': `${panelSizes.preferences}px`,
+      '--sidebar-width': `${sidebarWidth}px`,
     }),
-    [panelSizes],
+    [panelSizes, sidebarWidth],
   );
 
   const addQuickReply = (event) => {
@@ -589,6 +591,79 @@ function ChatPage() {
 
   return (
     <div className="chat-layout" style={layoutStyle}>
+      <aside className="chat-sidebar">
+        <div className="sidebar__header">
+          <div>
+            <p className="muted">Panel czatu</p>
+            <strong>Twoje centrum rozmów</strong>
+          </div>
+          <span className="pill pill-outline">Live</span>
+        </div>
+
+        <div className="sidebar__section">
+          <p className="muted">Status połączenia</p>
+          <div className="sidebar__status-card">
+            <div className="sidebar__status-row">
+              <span className={socketStatus === 'open' ? 'status-dot online' : 'status-dot offline'} />
+              <div>
+                <strong>{socketStatus === 'open' ? 'Połączono' : 'Oczekiwanie na połączenie'}</strong>
+                <p className="muted">{socketError || 'Kanał WebSocket jest monitorowany.'}</p>
+              </div>
+            </div>
+            <div className="sidebar__status-meta">
+              <span className="pill">ID: {userId || 'Nieznany'}</span>
+              <span className="pill pill-outline">Kontakty: {contacts.length}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="sidebar__section">
+          <p className="muted">Skróty</p>
+          <div className="sidebar__actions">
+            <button
+              type="button"
+              className="ghost-button"
+              onClick={() => setDraft('Hej! Masz chwilę na rozmowę?')}
+            >
+              Przywitaj się
+            </button>
+            <button type="button" className="ghost-button" onClick={() => fetchInvitations()}>
+              Odśwież zaproszenia
+            </button>
+            <button
+              type="button"
+              className="ghost-button"
+              onClick={() => selected && setDraft(`Cześć ${getContactDisplayName(selectedContact)}!`)}
+              disabled={!selectedContact}
+            >
+              Personalizuj wiadomość
+            </button>
+          </div>
+        </div>
+
+        <div className="sidebar__section sidebar__tiles">
+          <div className="sidebar__tile">
+            <p className="muted">Zaproszenia</p>
+            <strong>{invitationCounters.total}</strong>
+            <span className="pill pill-outline">{invitationCounters.pending} oczekuje</span>
+          </div>
+          <div className="sidebar__tile">
+            <p className="muted">Szybkie odpowiedzi</p>
+            <strong>{quickReplies.length}</strong>
+            <span className="pill">do użycia</span>
+          </div>
+          <div className="sidebar__tile">
+            <p className="muted">Preferencje</p>
+            <strong>{preferences.theme}</strong>
+            <span className="pill">{preferences.notifications ? 'Powiadomienia on' : 'Powiadomienia off'}</span>
+          </div>
+        </div>
+      </aside>
+
+      <div className="resize-handle" aria-hidden="true">
+        <span className="handle-line" />
+      </div>
+
       <aside className="contacts resizable-panel">
         <div className="contacts__header">Kontakty</div>
         {contactsLoading && <p className="muted">Ładowanie kontaktów...</p>}

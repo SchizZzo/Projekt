@@ -51,7 +51,7 @@ function useCharacterMapIcon(character, name) {
 }
 
 function CharacterMapMarker({ marker }) {
-  const { id, name, lat, lon, character, opis } = marker;
+  const { id, name, lat, lon, character, opis, distance } = marker;
   const markerIcon = useCharacterMapIcon(character, name);
 
   if (!markerIcon) return null;
@@ -64,6 +64,7 @@ function CharacterMapMarker({ marker }) {
           <div className="map-popup__details">
             <strong>{name}</strong>
             <p className="muted">{opis || 'Brak opisu.'}</p>
+            {Number.isFinite(distance) && <p className="muted">{`Dystans: ${distance.toFixed(1)} km`}</p>}
             <p className="muted">{`Pozycja: ${lat.toFixed(4)}, ${lon.toFixed(4)}`}</p>
           </div>
         </div>
@@ -130,6 +131,7 @@ function MapPage() {
         lon: Number(user.longitude),
         name: user.display_name || user.username,
         opis: user.opis,
+        distance: Number.isFinite(Number(user.distance)) ? Number(user.distance) : null,
         character: user.character ?? user.charakter,
       }))
       .filter(

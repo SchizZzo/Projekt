@@ -19,6 +19,8 @@ function SettingsPage() {
   const [opis, setOpis] = useState('');
   const [info, setInfo] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [latitude, setLatitude] = useState(null);
+  const [longitude, setLongitude] = useState(null);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [showDialog, setShowDialog] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -86,6 +88,8 @@ function SettingsPage() {
           setNickname(data.display_name);
         }
 
+        setLatitude(data.latitude ?? null);
+        setLongitude(data.longitude ?? null);
         setOpis(data.opis ?? '');
         setNotificationsEnabled(Boolean(data.notifications ?? true));
         localStorage.setItem('nicknameCooldownUntil', `${data.cooldownUntil ?? storedCooldown}`);
@@ -143,12 +147,20 @@ function SettingsPage() {
     try {
       const coords = await getCurrentCoordinates();
 
+      if (coords) {
+        setLatitude(coords.latitude);
+        setLongitude(coords.longitude);
+      }
+
+      const latitudeToSave = coords?.latitude ?? latitude;
+      const longitudeToSave = coords?.longitude ?? longitude;
+
       const payload = {
         display_name: nickname.trim(),
         opis: opis.trim(),
         notifications: notificationsEnabled,
-        latitude: coords?.latitude ?? null,
-        longitude: coords?.longitude ?? null,
+        latitude: latitudeToSave,
+        longitude: longitudeToSave,
         character: {
           kolorSkory: character.kolorSkory,
           kolorWlosow: character.kolorWlosow,
@@ -170,6 +182,8 @@ function SettingsPage() {
 
       const data = await response.json();
       setCharacter(data.character ?? payload.character);
+      setLatitude(data.latitude ?? latitudeToSave);
+      setLongitude(data.longitude ?? longitudeToSave);
       setInfo(nicknameStatus || 'Zapisano ustawienia Mordeczki.');
       localStorage.setItem('mordeczkaDraft', JSON.stringify(payload));
     } catch (error) {

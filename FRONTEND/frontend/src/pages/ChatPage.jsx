@@ -43,6 +43,7 @@ function ChatPage() {
   const [lastInvitationsUpdate, setLastInvitationsUpdate] = useState('');
   const [activeInvitationKey, setActiveInvitationKey] = useState(null);
   const [invitationActionState, setInvitationActionState] = useState({ status: 'idle', message: '' });
+  const [pendingMessages, setPendingMessages] = useState([]);
 
   const getContactKey = useCallback((contact, fallbackIndex) => {
     return (
@@ -109,6 +110,17 @@ function ChatPage() {
     } catch (error) {
       return rawDate;
     }
+  }, []);
+
+  const getInvitationMordka = useCallback((invitation) => {
+    return (
+      invitation?.friend_mordka ||
+      invitation?.sender_mordka ||
+      invitation?.mordka ||
+      invitation?.friend?.mordka ||
+      invitation?.friend?.friend_mordka ||
+      ''
+    );
   }, []);
 
   const resolveStatus = useCallback((invitation) => {
@@ -289,6 +301,24 @@ function ChatPage() {
     });
   }, []);
 
+  const updateMessageStatus = useCallback((conversationKey, messageId, status) => {
+    if (!conversationKey || !messageId) return;
+
+    setMessagesByContact((prev) => {
+      const key = conversationKey.toString();
+      const existing = prev[key] ?? [];
+
+      const updated = existing.map((message) =>
+        message.id === messageId ? { ...message, status } : message,
+      );
+
+      return {
+        ...prev,
+        [key]: updated,
+      };
+    });
+  }, []);
+
   useEffect(() => {
     if (!userId) {
       if (socketRef.current) {
@@ -305,7 +335,19 @@ function ChatPage() {
     const socket = new WebSocket(`ws://localhost/ws/chat/${userId}/`);
     socketRef.current = socket;
 
-    socket.onopen = () => setSocketStatus('open');
+    socket.onopen = () => {
+      setSocketStatus('open');
+      setSocketError('');
+
+      setPendingMessages((queued) => {
+        queued.forEach(({ payload, contactKey, messageId }) => {
+          socket.send(JSON.stringify(payload));
+          updateMessageStatus(contactKey, messageId, 'sent');
+        });
+
+        return [];
+      });
+    };
 
     socket.onerror = () => {
       setSocketStatus('error');
@@ -354,7 +396,7 @@ function ChatPage() {
       socketRef.current = null;
       socket.close();
     };
-  }, [appendMessage, getContactByKey, getContactDisplayName, userId]);
+  }, [appendMessage, getContactByKey, getContactDisplayName, updateMessageStatus, userId]);
 
   const selectedContact = useMemo(
     () => contacts.find((contact, index) => getContactKey(contact, index) === selected) ?? null,
@@ -540,12 +582,17 @@ function ChatPage() {
       odbiorca: coerceId(recipientId),
     };
 
+    const messageId = crypto.randomUUID ? crypto.randomUUID() : `msg-${Date.now()}`;
+    const baseMessage = { id: messageId, from: 'Ty', content: draft.trim(), time: readableTime };
+
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
       socketRef.current.send(JSON.stringify(payload));
-      appendMessage(selected, { from: 'Ty', content: draft.trim(), time: readableTime });
+      appendMessage(selected, { ...baseMessage, status: 'sent' });
       setSocketError('');
     } else {
-      setSocketError('Brak aktywnego połączenia WebSocket.');
+      setSocketError('Brak aktywnego połączenia WebSocket. Wiadomość zostanie wysłana po ponownym połączeniu.');
+      setPendingMessages((prev) => [...prev, { payload, contactKey: selected, messageId }]);
+      appendMessage(selected, { ...baseMessage, status: 'queued' });
     }
 
     setDraft('');
@@ -808,15 +855,29 @@ function ChatPage() {
         <div className="messages" ref={messagesContainerRef}>
           {messagesLoading && <p className="muted">Ładowanie wiadomości...</p>}
           {messagesError && <p className="error-text">{messagesError}</p>}
-          {messages.map((message, index) => (
-            <div key={index} className={message.from === 'Ty' ? 'message outgoing' : 'message incoming'}>
-              <div className="message-meta">
-                <strong>{message.from}</strong>
-                <span>{message.time}</span>
+          {messages.map((message, index) => {
+            const messageKey = message.id ?? index;
+
+            return (
+              <div
+                key={messageKey}
+                className={message.from === 'Ty' ? 'message outgoing' : 'message incoming'}
+              >
+                <div className="message-meta">
+                  <strong>{message.from}</strong>
+                  <span>{message.time}</span>
+                  {message.status && (
+                    <span className={message.status === 'queued' ? 'pill pill-outline' : 'pill'}>
+                      {message.status === 'queued'
+                        ? 'Oczekuje na połączenie'
+                        : 'Wysłano'}
+                    </span>
+                  )}
+                </div>
+                <p>{message.content}</p>
               </div>
-              <p>{message.content}</p>
-            </div>
-          ))}
+            );
+          })}
           {!messagesLoading && !messages.length && !messagesError && <p className="muted">Brak wiadomości.</p>}
         </div>
 
@@ -1022,7 +1083,7 @@ function ChatPage() {
                   >
                     <div className="invitation-row">
                       <div className="invitation-avatar">
-                        <MordkaPreview config={invitation.friend_mordka} size={140} />
+                        <MordkaPreview config={getInvitationMordka(invitation)} size={140} />
                       </div>
 
                       <div className="invitation-content">

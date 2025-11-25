@@ -20,6 +20,7 @@ function ChatPage() {
   const [unreadByContact, setUnreadByContact] = useState({});
   const [messagesLoading, setMessagesLoading] = useState(false);
   const [messagesError, setMessagesError] = useState('');
+  const [archiveLoading, setArchiveLoading] = useState(false);
   const messagesContainerRef = useRef(null);
   const socketRef = useRef(null);
   const contactsRef = useRef([]);
@@ -400,37 +401,39 @@ function ChatPage() {
     [userId],
   );
 
-  useEffect(() => {
-    const activeKey = selected?.toString?.();
-    if (!activeKey) return undefined;
+  const getMessageTimestamp = useCallback((message) => {
+    const rawTimestamp =
+      message?.created_at ?? message?.created ?? message?.timestamp ?? message?.time ?? '';
+    const parsed = rawTimestamp ? Date.parse(rawTimestamp) : Number.NaN;
+    return Number.isNaN(parsed) ? 0 : parsed;
+  }, []);
 
-    const selectedContact = getContactByKey(activeKey);
-    const contactId = getContactId(selectedContact);
+  const loadMessages = useCallback(
+    async ({ limit = 25, signal, markAsArchive = false } = {}) => {
+      const activeKey = selected?.toString?.();
+      if (!activeKey) return;
 
-    if (!selectedContact || !contactId) {
-      setMessagesError('Wybrany kontakt nie ma przypisanego identyfikatora.');
-      return undefined;
-    }
+      const selectedContact = getContactByKey(activeKey);
+      const contactId = getContactId(selectedContact);
 
-    const controller = new AbortController();
-    const contactName = getContactDisplayName(selectedContact, 'Nieznany znajomy');
+      if (!selectedContact || !contactId) {
+        setMessagesError('Wybrany kontakt nie ma przypisanego identyfikatora.');
+        return;
+      }
 
-    const getMessageTimestamp = (message) => {
-      const rawTimestamp =
-        message?.created_at ?? message?.created ?? message?.timestamp ?? message?.time ?? '';
-      const parsed = rawTimestamp ? Date.parse(rawTimestamp) : Number.NaN;
-      return Number.isNaN(parsed) ? 0 : parsed;
-    };
+      const contactName = getContactDisplayName(selectedContact, 'Nieznany znajomy');
+      const baseUrl = `/joker-chat-api/joker-chat/messages/conversation/${contactId}/`;
+      const url = typeof limit === 'number' ? `${baseUrl}${limit}/` : baseUrl;
 
-    const fetchMessages = async () => {
       setMessagesLoading(true);
       setMessagesError('');
 
+      if (markAsArchive) {
+        setArchiveLoading(true);
+      }
+
       try {
-        const response = await apiRequest(
-          `/joker-chat-api/joker-chat/messages/conversation/${contactId}/25/`,
-          { signal: controller.signal },
-        );
+        const response = await apiRequest(url, { signal });
 
         if (!response.ok) {
           throw new Error(`Nie udało się pobrać wiadomości (${response.status}).`);
@@ -438,7 +441,9 @@ function ChatPage() {
 
         const data = await response.json();
         const normalized = Array.isArray(data) ? data : [];
-        const sorted = normalized.slice().sort((a, b) => getMessageTimestamp(a) - getMessageTimestamp(b));
+        const sorted = normalized
+          .slice()
+          .sort((a, b) => getMessageTimestamp(a) - getMessageTimestamp(b));
         const formatted = sorted.map((message) => formatApiMessage(message, contactName));
 
         setMessagesByContact((prev) => {
@@ -457,17 +462,34 @@ function ChatPage() {
           return { ...prev, [activeKey]: merged };
         });
       } catch (error) {
-        if (error.name === 'AbortError') return;
-        setMessagesError('Nie udało się pobrać wiadomości.');
+        if (error.name !== 'AbortError') {
+          setMessagesError('Nie udało się pobrać wiadomości.');
+        }
       } finally {
         setMessagesLoading(false);
-      }
-    };
 
-    fetchMessages();
+        if (markAsArchive) {
+          setArchiveLoading(false);
+        }
+      }
+    },
+    [
+      formatApiMessage,
+      getContactByKey,
+      getContactDisplayName,
+      getContactId,
+      getMessageTimestamp,
+      selected,
+    ],
+  );
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    loadMessages({ signal: controller.signal });
 
     return () => controller.abort();
-  }, [formatApiMessage, getContactByKey, getContactDisplayName, getContactId, selected]);
+  }, [loadMessages]);
 
   const invitationCounters = useMemo(() => {
     const counters = {
@@ -746,8 +768,20 @@ function ChatPage() {
 
       <section className="chat-window">
         <header className="chat-header">
-          <div className="chat-title">Czat</div>
-          <p className="subtitle">Czat można dostosowywać — ustaw powiadomienia, dźwięki i układ wiadomości.</p>
+          <div className="chat-header__intro">
+            <div className="chat-title">Czat</div>
+            <p className="subtitle">Czat można dostosowywać — ustaw powiadomienia, dźwięki i układ wiadomości.</p>
+          </div>
+          <div className="chat-header__actions">
+            <button
+              type="button"
+              className="ghost-button"
+              onClick={() => loadMessages({ limit: 'all', markAsArchive: true })}
+              disabled={!selectedContact || messagesLoading || archiveLoading}
+            >
+              {archiveLoading ? 'Ładowanie archiwum...' : 'Archiwum wiadomości'}
+            </button>
+          </div>
         </header>
 
         <div className="connection-bar">

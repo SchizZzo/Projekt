@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
+import { apiRequest } from '../api/client';
 import MordeczkiAnimation from '../components/MordeczkiAnimation';
+
+const PROFILE_ENDPOINT = '/joker-login-api/me/';
 
 const defaultCharacter = {
   kolorSkory: 0,
@@ -42,7 +45,7 @@ function SettingsPage() {
     const fetchUserAvatar = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch('http://localhost/joker-login-api/me/');
+        const response = await apiRequest(PROFILE_ENDPOINT);
 
         if (!response.ok) {
           throw new Error('Nie udało się pobrać danych użytkownika.');
@@ -135,12 +138,8 @@ function SettingsPage() {
         },
       };
 
-      const response = await fetch('http://localhost/joker-login-api/me/', {
+      const response = await apiRequest(PROFILE_ENDPOINT, {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-        },
         body: JSON.stringify(payload),
       });
 

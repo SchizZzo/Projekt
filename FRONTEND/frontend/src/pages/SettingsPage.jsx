@@ -23,6 +23,23 @@ function SettingsPage() {
   const [showDialog, setShowDialog] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
+  const getCurrentCoordinates = () =>
+    new Promise((resolve) => {
+      if (!navigator.geolocation) {
+        resolve(null);
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => resolve(position.coords),
+        () => resolve(null),
+        {
+          enableHighAccuracy: true,
+          timeout: 5000,
+        },
+      );
+    });
+
   const optionLimits = {
     kolorSkory: 3,
     kolorWlosow: 4,
@@ -124,10 +141,14 @@ function SettingsPage() {
     setIsLoading(true);
 
     try {
+      const coords = await getCurrentCoordinates();
+
       const payload = {
         display_name: nickname.trim(),
         opis: opis.trim(),
         notifications: notificationsEnabled,
+        latitude: coords?.latitude ?? null,
+        longitude: coords?.longitude ?? null,
         character: {
           kolorSkory: character.kolorSkory,
           kolorWlosow: character.kolorWlosow,

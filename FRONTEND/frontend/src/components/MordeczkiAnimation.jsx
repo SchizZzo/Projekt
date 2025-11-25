@@ -28,6 +28,35 @@ function MordeczkiAnimation({ values = {}, onChange, labels = {}, disabled }) {
   );
 
   useEffect(() => {
+    const fetchCharacter = async () => {
+      try {
+        const response = await fetch('http://localhost/joker-login-api/me/');
+        if (!response.ok) {
+          throw new Error('Nie udało się pobrać danych użytkownika.');
+        }
+
+        const data = await response.json();
+        const character = data?.charakter;
+
+        controls.forEach(({ name, limit }, index) => {
+          const input = inputs[index];
+          const nextValue = Number(character?.[name]);
+
+          if (!Number.isNaN(nextValue) && input) {
+            const boundedValue = Math.min(Math.max(nextValue, 0), limit - 1);
+            input.value = boundedValue;
+            onChange?.(name, boundedValue);
+          }
+        });
+      } catch (error) {
+        console.error('Błąd pobierania charakteru Mordeczki:', error);
+      }
+    };
+
+    fetchCharacter();
+  }, [controls, inputs, onChange]);
+
+  useEffect(() => {
     controls.forEach(({ name }, index) => {
       const input = inputs[index];
       const nextValue = values[name];

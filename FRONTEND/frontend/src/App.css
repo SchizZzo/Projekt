@@ -817,13 +817,17 @@ input:checked + .slider:before { transform: translateX(18px); }
 }
 
 .map-marker {
-  position: absolute;
-  transform: translate(-50%, -100%);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.35rem;
   filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.35));
+  text-align: center;
+}
+
+.leaflet-div-icon.map-marker-icon {
+  background: transparent;
+  border: none;
 }
 
 .map-marker__icon {

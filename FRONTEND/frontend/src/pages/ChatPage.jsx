@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import MordkaPreview from '../components/MordkaPreview';
 
 const contacts = [
   { id: 1, name: 'Alice', status: 'online', preview: 'Hej, jak wygląda mapa?' },
@@ -37,6 +38,20 @@ function ChatPage() {
   const [invitationsLoading, setInvitationsLoading] = useState(false);
   const [invitationsError, setInvitationsError] = useState('');
   const [lastInvitationsUpdate, setLastInvitationsUpdate] = useState('');
+
+  const getCreatedLabel = useCallback((invitation) => {
+    const rawDate = invitation.created_at || invitation.created;
+    if (!rawDate) return '';
+
+    try {
+      const parsed = new Date(rawDate);
+      if (Number.isNaN(parsed.getTime())) return rawDate;
+
+      return parsed.toLocaleString();
+    } catch (error) {
+      return rawDate;
+    }
+  }, []);
 
   const resolveStatus = useCallback((invitation) => {
     const rawStatus =
@@ -416,56 +431,78 @@ function ChatPage() {
             <ul className="invitations-list">
               {invitations.map((invitation, index) => (
                 <li key={invitation.id ?? invitation.uuid ?? index} className="invitation-item">
-                  <div className="invitation-header">
-                    <div>
-                      <strong>
-                        {invitation.friend_username ||
-                          invitation.sender ||
-                          invitation.username ||
-                          'Nieznajomy użytkownik'}
-                      </strong>
-                      <p className="muted small-text">
-                        {invitation.email || invitation.friend_email || invitation.sender_email || 'Brak adresu e-mail'}
-                      </p>
+                  <div className="invitation-row">
+                    <div className="invitation-avatar">
+                      <MordkaPreview config={invitation.friend_mordka} size={140} />
                     </div>
-                    <div className="invitation-meta">
-                      {invitation.created_at && <span className="pill">{invitation.created_at}</span>}
-                      <span className="pill pill-outline">{resolveStatus(invitation)}</span>
+
+                    <div className="invitation-content">
+                      <div className="invitation-header">
+                        <div>
+                          <strong>
+                            {invitation.friend_display_name ||
+                              invitation.friend_username ||
+                              invitation.sender ||
+                              invitation.username ||
+                              invitation.friend ||
+                              'Nieznajomy użytkownik'}
+                          </strong>
+                          <p className="muted small-text">
+                            {invitation.email ||
+                              invitation.friend_email ||
+                              invitation.sender_email ||
+                              invitation.friend ||
+                              'Brak adresu e-mail'}
+                          </p>
+                        </div>
+                        <div className="invitation-meta">
+                          {getCreatedLabel(invitation) && (
+                            <span className="pill">{getCreatedLabel(invitation)}</span>
+                          )}
+                          <span className="pill pill-outline">{resolveStatus(invitation)}</span>
+                        </div>
+                      </div>
+
+                      {invitation.friend_message || invitation.message ? (
+                        <p className="muted">{invitation.friend_message || invitation.message}</p>
+                      ) : (
+                        <p className="muted">Zaproszenie do znajomych czeka na Twoją reakcję.</p>
+                      )}
+
+                      <dl className="invitation-details">
+                        {invitation.id && (
+                          <div>
+                            <dt>Identyfikator</dt>
+                            <dd>{invitation.id}</dd>
+                          </div>
+                        )}
+                        {invitation.uuid && (
+                          <div>
+                            <dt>UUID</dt>
+                            <dd>{invitation.uuid}</dd>
+                          </div>
+                        )}
+                        {invitation.receiver && (
+                          <div>
+                            <dt>Odbiorca</dt>
+                            <dd>{invitation.receiver}</dd>
+                          </div>
+                        )}
+                        {invitation.role && (
+                          <div>
+                            <dt>Rola</dt>
+                            <dd>{invitation.role}</dd>
+                          </div>
+                        )}
+                        {invitation.friend && (
+                          <div>
+                            <dt>Użytkownik</dt>
+                            <dd>{invitation.friend}</dd>
+                          </div>
+                        )}
+                      </dl>
                     </div>
                   </div>
-
-                  {invitation.friend_message || invitation.message ? (
-                    <p className="muted">{invitation.friend_message || invitation.message}</p>
-                  ) : (
-                    <p className="muted">Zaproszenie do znajomych czeka na Twoją reakcję.</p>
-                  )}
-
-                  <dl className="invitation-details">
-                    {invitation.id && (
-                      <div>
-                        <dt>Identyfikator</dt>
-                        <dd>{invitation.id}</dd>
-                      </div>
-                    )}
-                    {invitation.uuid && (
-                      <div>
-                        <dt>UUID</dt>
-                        <dd>{invitation.uuid}</dd>
-                      </div>
-                    )}
-                    {invitation.receiver && (
-                      <div>
-                        <dt>Odbiorca</dt>
-                        <dd>{invitation.receiver}</dd>
-                      </div>
-                    )}
-                    {invitation.role && (
-                      <div>
-                        <dt>Rola</dt>
-                        <dd>{invitation.role}</dd>
-                      </div>
-                    )}
-                  </dl>
                 </li>
               ))}
             </ul>

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { apiRequest } from '../api/client.js';
 import CharacterMarker from '../components/CharacterMarker.jsx';
 import RiveVehiclesWidget from '../components/RiveVehiclesWidget.jsx';
+import mapPlaceholder from '../assets/map-placeholder.svg';
 
 const AVAILABLE_USERS_ENDPOINT = '/joker-login-api/available-users/';
 const MAP_SIZE = { width: 865, height: 512 };
@@ -49,6 +50,7 @@ function MapPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [mapLoadError, setMapLoadError] = useState(false);
+  const [useFallbackMap, setUseFallbackMap] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(null);
   const [frameSize, setFrameSize] = useState(MAP_SIZE);
   const mapFrameRef = useRef(null);
@@ -101,6 +103,7 @@ function MapPage() {
 
   useEffect(() => {
     setMapLoadError(false);
+    setUseFallbackMap(false);
   }, [mapImageUrl]);
 
   useEffect(() => {
@@ -138,6 +141,14 @@ function MapPage() {
     });
   }, [availableMarkers, frameSize.height, frameSize.width, mapCenter.lat, mapCenter.lon]);
 
+  const mapSrc = useFallbackMap ? mapPlaceholder : mapImageUrl;
+
+  const bannerMessage =
+    error ||
+    (mapLoadError
+      ? 'Nie udało się pobrać obrazu mapy z OpenStreetMap. Wyświetlamy widok zastępczy.'
+      : 'Sprawdź połączenie i spróbuj ponownie.');
+
   return (
     <div className="map-page">
       <div className="map-hero">
@@ -152,11 +163,20 @@ function MapPage() {
       <div className="map-workspace">
         <div className="map-frame" ref={mapFrameRef}>
           <img
-            src={mapImageUrl}
+            src={mapSrc}
             alt="Mapa z oznaczonymi dostępnymi Mordeczkami"
             loading="lazy"
-            onLoad={() => setMapLoadError(false)}
-            onError={() => setMapLoadError(true)}
+            onLoad={() => {
+              if (!useFallbackMap) {
+                setMapLoadError(false);
+              }
+            }}
+            onError={() => {
+              if (!useFallbackMap) {
+                setMapLoadError(true);
+                setUseFallbackMap(true);
+              }
+            }}
           />
           <div className="map-markers" aria-hidden="true">
             {positionedMarkers.map(({ id, name, character, position }) => (
@@ -180,7 +200,7 @@ function MapPage() {
           {(error || mapLoadError) && (
             <div className="map-banner" role="status">
               <strong>Nie udało się załadować mapy</strong>
-              <p className="muted">{error || 'Sprawdź połączenie i spróbuj ponownie.'}</p>
+              <p className="muted">{bannerMessage}</p>
             </div>
           )}
         </div>

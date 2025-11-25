@@ -88,7 +88,10 @@ function MapPage() {
         opis: user.opis,
         character: user.character ?? user.charakter,
       }))
-      .filter((marker) => Number.isFinite(marker.lat) && Number.isFinite(marker.lon));
+      .filter(
+        (marker) =>
+          Number.isFinite(marker.lat) && Number.isFinite(marker.lon) && Boolean(marker.character),
+      );
 
     return markers;
   }, [availableUsers]);

@@ -1213,10 +1213,17 @@ input:checked + .slider:before { transform: translateX(18px); }
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--border);
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .message.incoming { border-color: rgba(124, 58, 237, 0.35); }
 .message.outgoing { border-color: rgba(63, 207, 142, 0.3); }
+
+.message p {
+  margin: 0;
+  max-width: 100%;
+}
 
 .message-meta {
   display: flex;

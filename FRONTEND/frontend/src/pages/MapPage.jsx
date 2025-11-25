@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { createRoot } from 'react-dom/client';
 import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -14,16 +15,61 @@ const MAP_DEFAULT_CENTER = {
   lon: 21.01178,
 };
 
-const FACE_ICON_SIZE = 56;
+const MARKER_ICON_SIZE = 78;
 
-function createFaceIcon() {
-  return L.divIcon({
-    html: '<div class="map-marker-face" role="img" aria-label="Lokalizacja mordeczki">😎</div>',
-    className: 'map-marker-face-wrapper',
-    iconSize: [FACE_ICON_SIZE, FACE_ICON_SIZE],
-    iconAnchor: [FACE_ICON_SIZE / 2, FACE_ICON_SIZE - 4],
-    popupAnchor: [0, -(FACE_ICON_SIZE - 16)],
-  });
+function useCharacterMapIcon(character, name) {
+  const [icon, setIcon] = useState(null);
+
+  useEffect(() => {
+    const container = document.createElement('div');
+    container.className = 'map-marker';
+
+    const root = createRoot(container);
+    root.render(
+      <>
+        <CharacterMarker character={character} name={name} />
+        <p className="map-marker__label">{name}</p>
+      </>,
+    );
+
+    const divIcon = L.divIcon({
+      html: container,
+      className: 'map-marker-icon',
+      iconSize: [MARKER_ICON_SIZE + 12, MARKER_ICON_SIZE + 40],
+      iconAnchor: [MARKER_ICON_SIZE / 2 + 6, MARKER_ICON_SIZE + 18],
+      popupAnchor: [0, -(MARKER_ICON_SIZE - 4)],
+    });
+
+    setIcon(divIcon);
+
+    return () => {
+      root.unmount();
+    };
+  }, [character, name]);
+
+  return icon;
+}
+
+function CharacterMapMarker({ marker }) {
+  const { id, name, lat, lon, character, opis } = marker;
+  const markerIcon = useCharacterMapIcon(character, name);
+
+  if (!markerIcon) return null;
+
+  return (
+    <Marker key={id} position={[lat, lon]} icon={markerIcon}>
+      <Popup>
+        <div className="map-popup">
+          <CharacterMarker character={character} name={name} />
+          <div className="map-popup__details">
+            <strong>{name}</strong>
+            <p className="muted">{opis || 'Brak opisu.'}</p>
+            <p className="muted">{`Pozycja: ${lat.toFixed(4)}, ${lon.toFixed(4)}`}</p>
+          </div>
+        </div>
+      </Popup>
+    </Marker>
+  );
 }
 
 function MapBoundsUpdater({ markers, fallbackCenter }) {
@@ -95,7 +141,6 @@ function MapPage() {
   }, [availableUsers]);
 
   const mapCenter = useMemo(() => availableMarkers[0] ?? MAP_DEFAULT_CENTER, [availableMarkers]);
-  const faceMarkerIcon = useMemo(() => createFaceIcon(), []);
 
   const bannerMessage =
     error ||
@@ -133,19 +178,8 @@ function MapPage() {
 
             <MapBoundsUpdater markers={availableMarkers} fallbackCenter={MAP_DEFAULT_CENTER} />
 
-            {availableMarkers.map(({ id, name, lat, lon, character, opis }) => (
-              <Marker key={id} position={[lat, lon]} icon={faceMarkerIcon}>
-                <Popup>
-                  <div className="map-popup">
-                    <CharacterMarker character={character} name={name} />
-                    <div className="map-popup__details">
-                      <strong>{name}</strong>
-                      <p className="muted">{opis || 'Brak opisu.'}</p>
-                      <p className="muted">{`Pozycja: ${lat.toFixed(4)}, ${lon.toFixed(4)}`}</p>
-                    </div>
-                  </div>
-                </Popup>
-              </Marker>
+            {availableMarkers.map((marker) => (
+              <CharacterMapMarker key={marker.id} marker={marker} />
             ))}
           </MapContainer>
 

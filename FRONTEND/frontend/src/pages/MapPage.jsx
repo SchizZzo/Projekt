@@ -85,7 +85,7 @@ function CharacterMapMarker({ marker }) {
   };
 
   return (
-    <Marker key={id} position={[lat, lon]} icon={markerIcon}>
+    <Marker key={id} position={[lat, lon]} icon={markerIcon} draggable>
       <Popup>
         <div className="map-popup">
           <CharacterMarker character={character} name={name} />

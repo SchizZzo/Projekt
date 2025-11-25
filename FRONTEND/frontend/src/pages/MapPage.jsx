@@ -13,7 +13,8 @@ const MAP_DEFAULT_CENTER = {
   lon: 21.01178,
 };
 
-const buildMapUrl = (markers, center) => {
+const buildMapUrl = (_, center) => {
+  // OSM udostępnia wyłącznie kafelki mapy – markery rysujemy po stronie frontendu.
   const baseUrl = 'https://staticmap.openstreetmap.de/osm/staticmap.php';
 
   const params = new URLSearchParams();
@@ -21,10 +22,6 @@ const buildMapUrl = (markers, center) => {
   params.set('zoom', MAP_ZOOM.toString());
   params.set('size', `${MAP_SIZE.width}x${MAP_SIZE.height}`);
   params.set('maptype', 'mapnik');
-
-  markers.forEach(({ lat, lon }) => {
-    params.append('markers', `${lat},${lon},blue`);
-  });
 
   return `${baseUrl}?${params.toString()}`;
 };

@@ -19,6 +19,7 @@ function ChatPage() {
   const [messagesByContact, setMessagesByContact] = useState({});
   const [messagesLoading, setMessagesLoading] = useState(false);
   const [messagesError, setMessagesError] = useState('');
+  const messagesContainerRef = useRef(null);
   const socketRef = useRef(null);
   const contactsRef = useRef([]);
   const [draft, setDraft] = useState('');
@@ -329,6 +330,13 @@ function ChatPage() {
     () => messagesByContact[selected?.toString?.() ?? selected] ?? [],
     [messagesByContact, selected],
   );
+
+  useEffect(() => {
+    const container = messagesContainerRef.current;
+    if (!container) return;
+
+    container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+  }, [messages, selected]);
 
   const formatApiMessage = useCallback(
     (message, contactName) => {
@@ -725,7 +733,7 @@ function ChatPage() {
 
         {socketError && <p className="error-text">{socketError}</p>}
 
-        <div className="messages">
+        <div className="messages" ref={messagesContainerRef}>
           {messagesLoading && <p className="muted">Ładowanie wiadomości...</p>}
           {messagesError && <p className="error-text">{messagesError}</p>}
           {messages.map((message, index) => (

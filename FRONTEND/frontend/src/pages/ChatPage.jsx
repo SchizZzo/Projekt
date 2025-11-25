@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 const contacts = [
   { id: 1, name: 'Alice', status: 'online', preview: 'Hej, jak wygląda mapa?' },
@@ -36,18 +36,42 @@ function ChatPage() {
   const [invitations, setInvitations] = useState([]);
   const [invitationsLoading, setInvitationsLoading] = useState(false);
   const [invitationsError, setInvitationsError] = useState('');
+  const [lastInvitationsUpdate, setLastInvitationsUpdate] = useState('');
 
-  useEffect(() => {
-    const controller = new AbortController();
+  const resolveStatus = useCallback((invitation) => {
+    const rawStatus =
+      invitation.status ||
+      invitation.state ||
+      invitation.decision_status ||
+      invitation.invitation_status ||
+      '';
 
-    const fetchInvitations = async () => {
+    const lowered = rawStatus.toString().trim().toLowerCase();
+    const labeledStatus =
+      {
+        pending: 'Oczekujące',
+        accepted: 'Zaakceptowane',
+        rejected: 'Odrzucone',
+        declined: 'Odrzucone',
+        canceled: 'Anulowane',
+      }[lowered] || '';
+
+    if (labeledStatus) return labeledStatus;
+    if (invitation.accepted) return 'Zaakceptowane';
+    if (invitation.rejected || invitation.declined) return 'Odrzucone';
+
+    return rawStatus || 'Oczekujące';
+  }, []);
+
+  const fetchInvitations = useCallback(
+    async (signal) => {
       setInvitationsLoading(true);
       setInvitationsError('');
 
       try {
         const response = await fetch(
           'http://localhost/joker-chat-api/joker-chat/friendships/invitations/',
-          { signal: controller.signal },
+          { signal },
         );
 
         if (!response.ok) {
@@ -56,6 +80,7 @@ function ChatPage() {
 
         const data = await response.json();
         setInvitations(Array.isArray(data) ? data : []);
+        setLastInvitationsUpdate(new Date().toLocaleString());
       } catch (error) {
         if (error.name !== 'AbortError') {
           setInvitations([]);
@@ -64,16 +89,42 @@ function ChatPage() {
       } finally {
         setInvitationsLoading(false);
       }
-    };
+    },
+    [resolveStatus],
+  );
 
-    fetchInvitations();
+  useEffect(() => {
+    const controller = new AbortController();
+
+    fetchInvitations(controller.signal);
 
     return () => {
       controller.abort();
     };
-  }, []);
+  }, [fetchInvitations]);
 
   const messages = useMemo(() => history[selected] ?? [], [selected]);
+
+  const invitationCounters = useMemo(() => {
+    const counters = {
+      total: invitations.length,
+      pending: 0,
+      accepted: 0,
+      rejected: 0,
+      other: 0,
+    };
+
+    invitations.forEach((invitation) => {
+      const status = resolveStatus(invitation).toLowerCase();
+
+      if (status.includes('oczek')) counters.pending += 1;
+      else if (status.includes('zaakcept')) counters.accepted += 1;
+      else if (status.includes('odrzu') || status.includes('declin')) counters.rejected += 1;
+      else counters.other += 1;
+    });
+
+    return counters;
+  }, [invitations, resolveStatus]);
 
   const handleSend = (event) => {
     event.preventDefault();
@@ -319,6 +370,41 @@ function ChatPage() {
         <div className="pref-summary invitations-section">
           <p className="muted">Otrzymane zaproszenia</p>
 
+          <div className="invitations-overview">
+            <div className="overview-row">
+              <div className="overview-card">
+                <span className="muted">Łącznie</span>
+                <strong>{invitationCounters.total}</strong>
+              </div>
+              <div className="overview-card">
+                <span className="muted">Oczekujące</span>
+                <strong>{invitationCounters.pending}</strong>
+              </div>
+              <div className="overview-card">
+                <span className="muted">Zaakceptowane</span>
+                <strong>{invitationCounters.accepted}</strong>
+              </div>
+              <div className="overview-card">
+                <span className="muted">Odrzucone</span>
+                <strong>{invitationCounters.rejected}</strong>
+              </div>
+            </div>
+
+            <div className="overview-actions">
+              <button
+                type="button"
+                className="ghost-button"
+                onClick={() => fetchInvitations()}
+                disabled={invitationsLoading}
+              >
+                {invitationsLoading ? 'Odświeżanie...' : 'Odśwież dane'}
+              </button>
+              {lastInvitationsUpdate && (
+                <span className="muted">Ostatnie pobranie: {lastInvitationsUpdate}</span>
+              )}
+            </div>
+          </div>
+
           {invitationsLoading && <p>Ładowanie zaproszeń...</p>}
           {invitationsError && <p className="error-text">{invitationsError}</p>}
 
@@ -331,16 +417,55 @@ function ChatPage() {
               {invitations.map((invitation, index) => (
                 <li key={invitation.id ?? invitation.uuid ?? index} className="invitation-item">
                   <div className="invitation-header">
-                    <strong>
-                      {invitation.friend_username || invitation.sender || invitation.username || 'Nieznajomy użytkownik'}
-                    </strong>
-                    {invitation.created_at && <span className="pill">{invitation.created_at}</span>}
+                    <div>
+                      <strong>
+                        {invitation.friend_username ||
+                          invitation.sender ||
+                          invitation.username ||
+                          'Nieznajomy użytkownik'}
+                      </strong>
+                      <p className="muted small-text">
+                        {invitation.email || invitation.friend_email || invitation.sender_email || 'Brak adresu e-mail'}
+                      </p>
+                    </div>
+                    <div className="invitation-meta">
+                      {invitation.created_at && <span className="pill">{invitation.created_at}</span>}
+                      <span className="pill pill-outline">{resolveStatus(invitation)}</span>
+                    </div>
                   </div>
+
                   {invitation.friend_message || invitation.message ? (
                     <p className="muted">{invitation.friend_message || invitation.message}</p>
                   ) : (
                     <p className="muted">Zaproszenie do znajomych czeka na Twoją reakcję.</p>
                   )}
+
+                  <dl className="invitation-details">
+                    {invitation.id && (
+                      <div>
+                        <dt>Identyfikator</dt>
+                        <dd>{invitation.id}</dd>
+                      </div>
+                    )}
+                    {invitation.uuid && (
+                      <div>
+                        <dt>UUID</dt>
+                        <dd>{invitation.uuid}</dd>
+                      </div>
+                    )}
+                    {invitation.receiver && (
+                      <div>
+                        <dt>Odbiorca</dt>
+                        <dd>{invitation.receiver}</dd>
+                      </div>
+                    )}
+                    {invitation.role && (
+                      <div>
+                        <dt>Rola</dt>
+                        <dd>{invitation.role}</dd>
+                      </div>
+                    )}
+                  </dl>
                 </li>
               ))}
             </ul>

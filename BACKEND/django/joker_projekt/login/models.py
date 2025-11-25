@@ -20,8 +20,8 @@ class CustomUser(AbstractUser):
         ('niewidoczny', 'Niewidoczny')
     ]
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='dostępny', blank=True)
-    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
-    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    latitude = models.DecimalField(max_digits=16, decimal_places=14, null=True, blank=True)
+    longitude = models.DecimalField(max_digits=16, decimal_places=14, null=True, blank=True)
     LOCATION_TYPE_CHOICES = [
         ('high', 'High'),
         ('low', 'Low'),

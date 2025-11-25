@@ -1344,11 +1344,23 @@ input:checked + .slider:before { transform: translateX(18px); }
   min-width: 160px;
 }
 
+
+
 .mordka-preview__canvas {
-  display: flex;
-  justify-content: flex-start;
-  align-items: flex-start;
+  position: relative;
+  top: -20px;
+  left: -20px;
+  width: 56px;
+  height: 56px;
+  min-width: 56px;
+  
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  
 }
+
+
 
 .invitation-content {
   display: grid;

@@ -310,7 +310,7 @@ function ChatPage() {
                 onClick={() => setSelected(contactKey)}
               >
                 <div className="avatar">
-                  <MordkaPreview config={contact.friend_mordka} size={32} />
+                  <MordkaPreview config={contact.friend_mordka} size={64} />
                 </div>
                 <div>
                   <div className="contact-name">{contact.friend_display_name || 'Nieznany znajomy'}</div>

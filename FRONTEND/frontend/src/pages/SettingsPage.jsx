@@ -155,10 +155,15 @@ function SettingsPage() {
       const latitudeToSave = coords?.latitude ?? latitude;
       const longitudeToSave = coords?.longitude ?? longitude;
 
+
+      // debug: print coordinates before sending to API
+      console.log('Saving coordinates:', { latitude: latitudeToSave, longitude: longitudeToSave });
+
+
       const payload = {
         display_name: nickname.trim(),
         opis: opis.trim(),
-        notifications: notificationsEnabled,
+        //notifications: notificationsEnabled,
         latitude: latitudeToSave,
         longitude: longitudeToSave,
         character: {

@@ -1,8 +1,10 @@
 import { useEffect, useMemo } from 'react';
 import { useRive, useStateMachineInput } from '@rive-app/react-canvas';
+import { apiRequest } from '../api/client';
 import MordeczkiAsset from '../assets/mordeczki4.riv';
 
 const STATE_MACHINE_NAME = 'State Machine 1';
+const PROFILE_ENDPOINT = '/joker-login-api/me/';
 
 function MordeczkiAnimation({ values = {}, onChange, labels = {}, disabled }) {
   const { rive, RiveComponent } = useRive({
@@ -30,7 +32,7 @@ function MordeczkiAnimation({ values = {}, onChange, labels = {}, disabled }) {
   useEffect(() => {
     const fetchCharacter = async () => {
       try {
-        const response = await fetch('http://localhost/joker-login-api/me/');
+        const response = await apiRequest(PROFILE_ENDPOINT);
         if (!response.ok) {
           throw new Error('Nie udało się pobrać danych użytkownika.');
         }

@@ -2,10 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-
-import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
-import markerIcon from 'leaflet/dist/images/marker-icon.png';
-import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 import { apiRequest } from '../api/client.js';
 import CharacterMarker from '../components/CharacterMarker.jsx';
 import RiveVehiclesWidget from '../components/RiveVehiclesWidget.jsx';
@@ -18,12 +14,17 @@ const MAP_DEFAULT_CENTER = {
   lon: 21.01178,
 };
 
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: markerIcon2x,
-  iconUrl: markerIcon,
-  shadowUrl: markerShadow,
-});
+const FACE_ICON_SIZE = 56;
+
+function createFaceIcon() {
+  return L.divIcon({
+    html: '<div class="map-marker-face" role="img" aria-label="Lokalizacja mordeczki">😎</div>',
+    className: 'map-marker-face-wrapper',
+    iconSize: [FACE_ICON_SIZE, FACE_ICON_SIZE],
+    iconAnchor: [FACE_ICON_SIZE / 2, FACE_ICON_SIZE - 4],
+    popupAnchor: [0, -(FACE_ICON_SIZE - 16)],
+  });
+}
 
 function MapBoundsUpdater({ markers, fallbackCenter }) {
   const map = useMap();
@@ -94,6 +95,7 @@ function MapPage() {
   }, [availableUsers]);
 
   const mapCenter = useMemo(() => availableMarkers[0] ?? MAP_DEFAULT_CENTER, [availableMarkers]);
+  const faceMarkerIcon = useMemo(() => createFaceIcon(), []);
 
   const bannerMessage =
     error ||
@@ -132,7 +134,7 @@ function MapPage() {
             <MapBoundsUpdater markers={availableMarkers} fallbackCenter={MAP_DEFAULT_CENTER} />
 
             {availableMarkers.map(({ id, name, lat, lon, character, opis }) => (
-              <Marker key={id} position={[lat, lon]}>
+              <Marker key={id} position={[lat, lon]} icon={faceMarkerIcon}>
                 <Popup>
                   <div className="map-popup">
                     <CharacterMarker character={character} name={name} />

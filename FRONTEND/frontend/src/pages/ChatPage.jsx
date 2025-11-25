@@ -12,7 +12,7 @@ function ChatPage() {
   const [contactsLoading, setContactsLoading] = useState(false);
   const [contactsError, setContactsError] = useState('');
   const [selected, setSelected] = useState(null);
-  const [userId, setUserId] = useState(() => localStorage.getItem('chatUserId') || '');
+  const [userId, setUserId] = useState('');
   const [socketStatus, setSocketStatus] = useState('disconnected');
   const [socketError, setSocketError] = useState('');
   const [messagesByContact, setMessagesByContact] = useState({});
@@ -39,18 +39,18 @@ function ChatPage() {
     return contact.id ?? contact.uuid ?? contact.friend_username ?? fallbackIndex;
   }, []);
 
-  const getContactId = useCallback(
-    (contact, fallbackIndex) => {
-      return (
-        contact.id ??
-        contact.uuid ??
-        contact.friend_id ??
-        contact.friend_username ??
-        getContactKey(contact, fallbackIndex)
-      );
-    },
-    [getContactKey],
-  );
+  const getContactId = useCallback((contact) => {
+    if (!contact) return null;
+
+    return (
+      contact.id ??
+      contact.friend_id ??
+      contact.friend_uuid ??
+      contact.uuid ??
+      contact.friend_user_id ??
+      null
+    );
+  }, []);
 
   const getCreatedLabel = useCallback((invitation) => {
     const rawDate = invitation.created_at || invitation.created;
@@ -193,10 +193,6 @@ function ChatPage() {
     return () => controller.abort();
   }, [fetchContacts, fetchUserId]);
 
-  useEffect(() => {
-    localStorage.setItem('chatUserId', userId ?? '');
-  }, [userId]);
-
   const coerceId = useCallback((rawId) => {
     const numericId = Number(rawId);
     return Number.isNaN(numericId) ? rawId : numericId;
@@ -310,7 +306,12 @@ function ChatPage() {
     }
 
     const readableTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    const recipientId = getContactId(selectedContact, selected);
+    const recipientId = getContactId(selectedContact);
+
+    if (!recipientId) {
+      setSocketError('Wybrany kontakt nie ma przypisanego identyfikatora.');
+      return;
+    }
     const senderId = coerceId(userId);
     const payload = {
       message: draft.trim(),

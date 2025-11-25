@@ -13,6 +13,7 @@ function ChatPage() {
   const [contactsError, setContactsError] = useState('');
   const [selected, setSelected] = useState(null);
   const [userId, setUserId] = useState('');
+  const [userIdLoading, setUserIdLoading] = useState(false);
   const [socketStatus, setSocketStatus] = useState('disconnected');
   const [socketError, setSocketError] = useState('');
   const [messagesByContact, setMessagesByContact] = useState({});
@@ -122,6 +123,8 @@ function ChatPage() {
   );
 
   const fetchUserId = useCallback(async (signal) => {
+    setUserIdLoading(true);
+
     try {
       const response = await apiRequest('/joker-login-api/me/', { signal });
 
@@ -140,6 +143,8 @@ function ChatPage() {
       if (error.name !== 'AbortError') {
         setSocketError('Nie udało się pobrać identyfikatora użytkownika.');
       }
+    } finally {
+      setUserIdLoading(false);
     }
   }, []);
 
@@ -192,6 +197,15 @@ function ChatPage() {
 
     return () => controller.abort();
   }, [fetchContacts, fetchUserId]);
+
+  useEffect(() => {
+    if (userId || userIdLoading) return undefined;
+
+    const controller = new AbortController();
+    fetchUserId(controller.signal);
+
+    return () => controller.abort();
+  }, [fetchUserId, userId, userIdLoading]);
 
   const coerceId = useCallback((rawId) => {
     const numericId = Number(rawId);
@@ -474,16 +488,10 @@ function ChatPage() {
         </header>
 
         <div className="connection-bar">
-          <label className="connection-field">
-            <span className="muted">Twój user_id</span>
-            <input
-              type="text"
-              value={userId}
-              readOnly
-              placeholder="Pobieranie identyfikatora..."
-              title="Identyfikator użytkownika pobrany z /joker-login-api/me/"
-            />
-          </label>
+          <div className="connection-summary">
+            <div className="connection-label">Identyfikator użytkownika</div>
+            <div className="connection-value">{userId || '—'}</div>
+          </div>
           <div className="connection-status pill pill-outline">
             <span className={socketStatus === 'open' ? 'status-dot online' : 'status-dot offline'} />
             <span>

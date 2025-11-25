@@ -627,7 +627,7 @@ body {
   position: absolute;
   width: 28px;
   height: 28px;
-  border-radius: 8px;
+  border-radius: 0;
   background: radial-gradient(circle, var(--accent, #e0f2fe) 65%, rgba(255, 255, 255, 0.2));
   top: 50px;
   right: 32px;
@@ -1106,12 +1106,12 @@ input:checked + .slider:before { transform: translateX(18px); }
 .avatar {
   width: 36px;
   height: 36px;
-  border-radius: 50%;
-  background: rgba(124, 58, 237, 0.25);
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  border-radius: 0;
+  background: transparent;
   font-weight: 700;
-  overflow: hidden;
 }
 
 .contact-name { font-weight: 700; }
@@ -1346,8 +1346,8 @@ input:checked + .slider:before { transform: translateX(18px); }
 
 .mordka-preview__canvas {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: flex-start;
+  align-items: flex-start;
 }
 
 .invitation-content {

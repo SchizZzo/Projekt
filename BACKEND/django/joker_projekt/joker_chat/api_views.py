@@ -21,9 +21,9 @@ class ChatMessageViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'], url_path='conversation/(?P<odbiorca_id>[^/.]+)/(?P<ileWiadomosciWstecz>\d+)')
     def get_conversation(self, request, odbiorca_id=None, ileWiadomosciWstecz=None):
+        max_messages = 100
         try:
-            if int(ileWiadomosciWstecz) <= 25:
-                ileWiadomosciWstecz = int(ileWiadomosciWstecz)
+            ileWiadomosciWstecz = min(int(ileWiadomosciWstecz), max_messages)
         except (ValueError, TypeError):
             return Response(
                 {"error": "Wartość 'ileWiadomosciWstecz' musi być liczbą całkowitą."},

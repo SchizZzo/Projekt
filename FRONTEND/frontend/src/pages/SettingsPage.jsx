@@ -106,7 +106,7 @@ function SettingsPage() {
     return 'Zapisano zmiany nazwy użytkownika.';
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!nickname.trim()) {
       setInfo('Wpisz nazwę użytkownika, aby zapisać zmiany.');
       return;
@@ -118,16 +118,44 @@ function SettingsPage() {
     }
 
     const nicknameStatus = handleNicknameHistory(nickname.trim());
-    setInfo(nicknameStatus);
+    setIsLoading(true);
 
-    const payload = {
-      ...character,
-      nickname: nickname.trim(),
-      opis: opis.trim(),
-      notificationsEnabled,
-    };
+    try {
+      const payload = {
+        display_name: nickname.trim(),
+        opis: opis.trim(),
+        notifications: notificationsEnabled,
+        character: {
+          kolorSkory: character.kolorSkory,
+          kolorWlosow: character.kolorWlosow,
+          usta: character.usta,
+          dodatek: character.dodatek,
+          twarz: character.twarz,
+          wlosy: character.wlosy,
+        },
+      };
 
-    localStorage.setItem('mordeczkaDraft', JSON.stringify(payload));
+      const response = await fetch('http://localhost/joker-login-api/me/', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error('Nie udało się zapisać ustawień. Spróbuj ponownie.');
+      }
+
+      const data = await response.json();
+      setCharacter(data.character ?? payload.character);
+      setInfo(nicknameStatus || 'Zapisano ustawienia Mordeczki.');
+      localStorage.setItem('mordeczkaDraft', JSON.stringify(payload));
+    } catch (error) {
+      setInfo(error.message || 'Wystąpił błąd podczas zapisywania ustawień.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

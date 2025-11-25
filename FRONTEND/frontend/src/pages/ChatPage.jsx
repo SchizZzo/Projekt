@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { apiRequest } from '../api/client.js';
 import MordkaPreview from '../components/MordkaPreview';
 
 const contacts = [
@@ -84,8 +85,8 @@ function ChatPage() {
       setInvitationsError('');
 
       try {
-        const response = await fetch(
-          'http://localhost/joker-chat-api/joker-chat/friendships/invitations/',
+        const response = await apiRequest(
+          '/joker-chat-api/joker-chat/friendships/invitations/',
           { signal },
         );
 

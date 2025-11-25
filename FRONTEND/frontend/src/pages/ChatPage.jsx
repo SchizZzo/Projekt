@@ -17,11 +17,13 @@ function ChatPage() {
   const [socketStatus, setSocketStatus] = useState('disconnected');
   const [socketError, setSocketError] = useState('');
   const [messagesByContact, setMessagesByContact] = useState({});
+  const [unreadByContact, setUnreadByContact] = useState({});
   const [messagesLoading, setMessagesLoading] = useState(false);
   const [messagesError, setMessagesError] = useState('');
   const messagesContainerRef = useRef(null);
   const socketRef = useRef(null);
   const contactsRef = useRef([]);
+  const selectedRef = useRef(null);
   const [draft, setDraft] = useState('');
   const [quickReplies, setQuickReplies] = useState(['Jestem na mapie', 'Potwierdzam odbiór', 'Dodaję punkt']);
   const [newReply, setNewReply] = useState('');
@@ -257,6 +259,22 @@ function ChatPage() {
     contactsRef.current = contacts;
   }, [contacts]);
 
+  useEffect(() => {
+    selectedRef.current = selected?.toString?.() ?? selected;
+  }, [selected]);
+
+  useEffect(() => {
+    const activeKey = selected?.toString?.() ?? selected;
+    if (!activeKey) return;
+
+    setUnreadByContact((prev) => {
+      if (!prev[activeKey]) return prev;
+
+      const { [activeKey]: _, ...rest } = prev;
+      return rest;
+    });
+  }, [selected]);
+
   const appendMessage = useCallback((conversationKey, message) => {
     if (!conversationKey) return;
 
@@ -309,6 +327,22 @@ function ChatPage() {
           from: senderName,
           content: data?.message ?? '',
           time: readableTime,
+        });
+
+        const keyString = senderKey?.toString?.() ?? senderKey;
+        const activeKey = selectedRef.current;
+        setUnreadByContact((prev) => {
+          if (!keyString) return prev;
+          if (activeKey?.toString?.() === keyString) {
+            if (!prev[keyString]) return prev;
+            const { [keyString]: _, ...rest } = prev;
+            return rest;
+          }
+
+          return {
+            ...prev,
+            [keyString]: (prev[keyString] ?? 0) + 1,
+          };
         });
       } catch (error) {
         console.error('Nieprawidłowy komunikat WebSocket:', error);
@@ -681,6 +715,7 @@ function ChatPage() {
           {contacts.map((contact, index) => {
             const contactKey = getContactKey(contact, index);
             const isActive = selected === contactKey;
+            const unreadCount = unreadByContact[contactKey?.toString?.() ?? contactKey];
 
             return (
               <li
@@ -695,7 +730,10 @@ function ChatPage() {
                   <div className="contact-name">{contact.friend_display_name || 'Nieznany znajomy'}</div>
                   <div className="contact-preview">{contact.friend_opis || 'Brak opisu'}</div>
                 </div>
-                <span className="status-dot online" />
+                <div className="contact-meta">
+                  {unreadCount ? <span className="contact-badge">{unreadCount}</span> : null}
+                  <span className="status-dot online" />
+                </div>
               </li>
             );
           })}

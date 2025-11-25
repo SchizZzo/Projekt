@@ -1,15 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { apiRequest } from '../api/client.js';
 import MordkaPreview from '../components/MordkaPreview';
-
-const history = {
-  1: [
-    { from: 'Alice', content: 'Hej, jak wygląda mapa?', time: '09:12' },
-    { from: 'Ty', content: 'Sprawdzam nowe dane', time: '09:14' },
-  ],
-  2: [{ from: 'Bob', content: 'Wyślę raport po 16:00.', time: '08:55' }],
-  3: [{ from: 'Charlie', content: 'Możemy dodać kolejny punkt.', time: '10:22' }],
-};
 
 const panelLimits = {
   contacts: { min: 220, max: 420 },
@@ -21,6 +12,11 @@ function ChatPage() {
   const [contactsLoading, setContactsLoading] = useState(false);
   const [contactsError, setContactsError] = useState('');
   const [selected, setSelected] = useState(null);
+  const [userId, setUserId] = useState(() => localStorage.getItem('chatUserId') || '');
+  const [socketStatus, setSocketStatus] = useState('disconnected');
+  const [socketError, setSocketError] = useState('');
+  const [messagesByContact, setMessagesByContact] = useState({});
+  const socketRef = useRef(null);
   const [draft, setDraft] = useState('');
   const [quickReplies, setQuickReplies] = useState(['Jestem na mapie', 'Potwierdzam odbiór', 'Dodaję punkt']);
   const [newReply, setNewReply] = useState('');
@@ -42,6 +38,19 @@ function ChatPage() {
   const getContactKey = useCallback((contact, fallbackIndex) => {
     return contact.id ?? contact.uuid ?? contact.friend_username ?? fallbackIndex;
   }, []);
+
+  const getContactId = useCallback(
+    (contact, fallbackIndex) => {
+      return (
+        contact.id ??
+        contact.uuid ??
+        contact.friend_id ??
+        contact.friend_username ??
+        getContactKey(contact, fallbackIndex)
+      );
+    },
+    [getContactKey],
+  );
 
   const getCreatedLabel = useCallback((invitation) => {
     const rawDate = invitation.created_at || invitation.created;
@@ -161,7 +170,81 @@ function ChatPage() {
     return () => controller.abort();
   }, [fetchContacts]);
 
-  const messages = useMemo(() => history[selected] ?? [], [selected]);
+  useEffect(() => {
+    localStorage.setItem('chatUserId', userId ?? '');
+  }, [userId]);
+
+  const appendMessage = useCallback((conversationKey, message) => {
+    if (!conversationKey) return;
+
+    setMessagesByContact((prev) => {
+      const key = conversationKey.toString();
+      const existing = prev[key] ?? [];
+      return {
+        ...prev,
+        [key]: [...existing, message],
+      };
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!userId) {
+      if (socketRef.current) {
+        socketRef.current.close();
+        socketRef.current = null;
+      }
+      setSocketStatus('disconnected');
+      return undefined;
+    }
+
+    setSocketStatus('connecting');
+    setSocketError('');
+
+    const socket = new WebSocket(`ws://localhost/ws/chat/${userId}/`);
+    socketRef.current = socket;
+
+    socket.onopen = () => setSocketStatus('open');
+
+    socket.onerror = () => {
+      setSocketStatus('error');
+      setSocketError('Wystąpił problem z połączeniem WebSocket.');
+    };
+
+    socket.onclose = () => {
+      setSocketStatus('closed');
+    };
+
+    socket.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        const senderKey = data?.nadawca ?? data?.sender ?? 'nieznany';
+        const readableTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        appendMessage(senderKey, {
+          from: data?.nadawca ?? 'Nadawca',
+          content: data?.message ?? '',
+          time: readableTime,
+        });
+      } catch (error) {
+        console.error('Nieprawidłowy komunikat WebSocket:', error);
+      }
+    };
+
+    return () => {
+      socketRef.current = null;
+      socket.close();
+    };
+  }, [appendMessage, userId]);
+
+  const selectedContact = useMemo(
+    () => contacts.find((contact, index) => getContactKey(contact, index) === selected) ?? null,
+    [contacts, getContactKey, selected],
+  );
+
+  const messages = useMemo(
+    () => messagesByContact[selected?.toString?.() ?? selected] ?? [],
+    [messagesByContact, selected],
+  );
 
   const invitationCounters = useMemo(() => {
     const counters = {
@@ -187,6 +270,33 @@ function ChatPage() {
   const handleSend = (event) => {
     event.preventDefault();
     if (!draft.trim()) return;
+
+    if (!selectedContact) {
+      setSocketError('Wybierz odbiorcę przed wysłaniem wiadomości.');
+      return;
+    }
+
+    if (!userId) {
+      setSocketError('Uzupełnij swój identyfikator użytkownika.');
+      return;
+    }
+
+    const readableTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const recipientId = getContactId(selectedContact, selected);
+    const payload = {
+      message: draft.trim(),
+      nadawca: Number.isNaN(Number(userId)) ? userId : Number(userId),
+      odbiorca: recipientId,
+    };
+
+    if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+      socketRef.current.send(JSON.stringify(payload));
+      appendMessage(selected, { from: 'Ty', content: draft.trim(), time: readableTime });
+      setSocketError('');
+    } else {
+      setSocketError('Brak aktywnego połączenia WebSocket.');
+    }
+
     setDraft('');
   };
 
@@ -333,6 +443,32 @@ function ChatPage() {
           <p className="subtitle">Czat można dostosowywać — ustaw powiadomienia, dźwięki i układ wiadomości.</p>
         </header>
 
+        <div className="connection-bar">
+          <label className="connection-field">
+            <span className="muted">Twój user_id</span>
+            <input
+              type="text"
+              value={userId}
+              onChange={(event) => setUserId(event.target.value)}
+              placeholder="Podaj identyfikator użytkownika"
+            />
+          </label>
+          <div className="connection-status pill pill-outline">
+            <span className={socketStatus === 'open' ? 'status-dot online' : 'status-dot offline'} />
+            <span>
+              {socketStatus === 'open'
+                ? 'Połączono z WebSocket'
+                : socketStatus === 'connecting'
+                  ? 'Łączenie...'
+                  : socketStatus === 'error'
+                    ? 'Błąd połączenia'
+                    : 'Rozłączono'}
+            </span>
+          </div>
+        </div>
+
+        {socketError && <p className="error-text">{socketError}</p>}
+
         <div className="messages">
           {messages.map((message, index) => (
             <div key={index} className={message.from === 'Ty' ? 'message outgoing' : 'message incoming'}>
@@ -362,7 +498,7 @@ function ChatPage() {
           <p className="muted">Szybkie odpowiedzi</p>
           <div className="quick-replies__chips">
             {quickReplies.map((reply) => (
-              <button key={reply} type="button" className="ghost-button">
+              <button key={reply} type="button" className="ghost-button" onClick={() => setDraft(reply)}>
                 {reply}
               </button>
             ))}

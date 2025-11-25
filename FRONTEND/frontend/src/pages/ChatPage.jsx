@@ -39,6 +39,8 @@ function ChatPage() {
   const [invitationsLoading, setInvitationsLoading] = useState(false);
   const [invitationsError, setInvitationsError] = useState('');
   const [lastInvitationsUpdate, setLastInvitationsUpdate] = useState('');
+  const [activeInvitationKey, setActiveInvitationKey] = useState(null);
+  const [invitationActionState, setInvitationActionState] = useState({ status: 'idle', message: '' });
 
   const getCreatedLabel = useCallback((invitation) => {
     const rawDate = invitation.created_at || invitation.created;
@@ -193,6 +195,60 @@ function ChatPage() {
     if (!newReply.trim()) return;
     setQuickReplies((prev) => [...prev, newReply.trim()]);
     setNewReply('');
+  };
+
+  const selectInvitation = (invitationKey) => {
+    setActiveInvitationKey((prev) => (prev === invitationKey ? null : invitationKey));
+    setInvitationActionState({ status: 'idle', message: '' });
+  };
+
+  const handleAcceptInvitation = async (invitationId) => {
+    if (!invitationId) {
+      setInvitationActionState({ status: 'error', message: 'Nie można zaakceptować zaproszenia bez identyfikatora.' });
+      return;
+    }
+
+    setInvitationActionState({ status: 'loading', message: 'Trwa akceptowanie zaproszenia...' });
+
+    try {
+      const response = await apiRequest(`/joker-chat-api/joker-chat/friendships/${invitationId}/`, {
+        method: 'PATCH',
+        body: JSON.stringify({ accepted: true }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Nie udało się zaakceptować zaproszenia.');
+      }
+
+      setInvitationActionState({ status: 'success', message: 'Zaproszenie zostało zaakceptowane.' });
+      fetchInvitations();
+    } catch (error) {
+      setInvitationActionState({ status: 'error', message: 'Akceptacja zaproszenia nie powiodła się.' });
+    }
+  };
+
+  const handleDeleteInvitation = async (invitationId) => {
+    if (!invitationId) {
+      setInvitationActionState({ status: 'error', message: 'Nie można usunąć zaproszenia bez identyfikatora.' });
+      return;
+    }
+
+    setInvitationActionState({ status: 'loading', message: 'Trwa usuwanie zaproszenia...' });
+
+    try {
+      const response = await apiRequest(`/joker-chat-api/joker-chat/friendships/${invitationId}/`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Nie udało się usunąć zaproszenia.');
+      }
+
+      setInvitationActionState({ status: 'success', message: 'Zaproszenie zostało usunięte.' });
+      fetchInvitations();
+    } catch (error) {
+      setInvitationActionState({ status: 'error', message: 'Usunięcie zaproszenia nie powiodło się.' });
+    }
   };
 
   return (
@@ -430,82 +486,131 @@ function ChatPage() {
 
           {!!invitations.length && (
             <ul className="invitations-list">
-              {invitations.map((invitation, index) => (
-                <li key={invitation.id ?? invitation.uuid ?? index} className="invitation-item">
-                  <div className="invitation-row">
-                    <div className="invitation-avatar">
-                      <MordkaPreview config={invitation.friend_mordka} size={140} />
-                    </div>
+              {invitations.map((invitation, index) => {
+                const invitationKey = invitation.id ?? invitation.uuid ?? index;
+                const isActive = invitationKey === activeInvitationKey;
 
-                    <div className="invitation-content">
-                      <div className="invitation-header">
-                        <div>
-                          <strong>
-                            {invitation.friend_display_name ||
-                              invitation.friend_username ||
-                              invitation.sender ||
-                              invitation.username ||
-                              invitation.friend ||
-                              'Nieznajomy użytkownik'}
-                          </strong>
-                          <p className="muted small-text">
-                            {invitation.email ||
-                              invitation.friend_email ||
-                              invitation.sender_email ||
-                              invitation.friend ||
-                              'Brak adresu e-mail'}
-                          </p>
-                        </div>
-                        <div className="invitation-meta">
-                          {getCreatedLabel(invitation) && (
-                            <span className="pill">{getCreatedLabel(invitation)}</span>
-                          )}
-                          <span className="pill pill-outline">{resolveStatus(invitation)}</span>
-                        </div>
+                return (
+                  <li
+                    key={invitationKey}
+                    className={isActive ? 'invitation-item active' : 'invitation-item'}
+                    onClick={() => selectInvitation(invitationKey)}
+                  >
+                    <div className="invitation-row">
+                      <div className="invitation-avatar">
+                        <MordkaPreview config={invitation.friend_mordka} size={140} />
                       </div>
 
-                      {invitation.friend_message || invitation.message ? (
-                        <p className="muted">{invitation.friend_message || invitation.message}</p>
-                      ) : (
-                        <p className="muted">Zaproszenie do znajomych czeka na Twoją reakcję.</p>
-                      )}
+                      <div className="invitation-content">
+                        <div className="invitation-header">
+                          <div>
+                            <strong>
+                              {invitation.friend_display_name ||
+                                invitation.friend_username ||
+                                invitation.sender ||
+                                invitation.username ||
+                                invitation.friend ||
+                                'Nieznajomy użytkownik'}
+                            </strong>
+                            <p className="muted small-text">
+                              {invitation.email ||
+                                invitation.friend_email ||
+                                invitation.sender_email ||
+                                invitation.friend ||
+                                'Brak adresu e-mail'}
+                            </p>
+                          </div>
+                          <div className="invitation-meta">
+                            {getCreatedLabel(invitation) && (
+                              <span className="pill">{getCreatedLabel(invitation)}</span>
+                            )}
+                            <span className="pill pill-outline">{resolveStatus(invitation)}</span>
+                          </div>
+                        </div>
 
-                      <dl className="invitation-details">
-                        {invitation.id && (
-                          <div>
-                            <dt>Identyfikator</dt>
-                            <dd>{invitation.id}</dd>
+                        {invitation.friend_message || invitation.message ? (
+                          <p className="muted">{invitation.friend_message || invitation.message}</p>
+                        ) : (
+                          <p className="muted">Zaproszenie do znajomych czeka na Twoją reakcję.</p>
+                        )}
+
+                        <dl className="invitation-details">
+                          {invitation.uuid && (
+                            <div>
+                              <dt>UUID</dt>
+                              <dd>{invitation.uuid}</dd>
+                            </div>
+                          )}
+                          {invitation.receiver && (
+                            <div>
+                              <dt>Odbiorca</dt>
+                              <dd>{invitation.receiver}</dd>
+                            </div>
+                          )}
+                          {invitation.role && (
+                            <div>
+                              <dt>Rola</dt>
+                              <dd>{invitation.role}</dd>
+                            </div>
+                          )}
+                          {invitation.friend && (
+                            <div>
+                              <dt>Użytkownik</dt>
+                              <dd>{invitation.friend}</dd>
+                            </div>
+                          )}
+                        </dl>
+
+                        {isActive && (
+                          <div className="invitation-actions">
+                            <p className="muted">
+                              Wybierz, czy zaakceptować zaproszenie czy je usunąć. Operacje wykonają odpowiednie
+                              wywołania API.
+                            </p>
+                            <div className="invitation-actions__buttons">
+                              <button
+                                type="button"
+                                className="primary-button"
+                                disabled={invitationActionState.status === 'loading'}
+                                onClick={(event) => {
+                                  event.stopPropagation();
+                                  handleAcceptInvitation(invitation.id);
+                                }}
+                              >
+                                {invitationActionState.status === 'loading'
+                                  ? 'Przetwarzanie...'
+                                  : 'Zaakceptuj zaproszenie'}
+                              </button>
+                              <button
+                                type="button"
+                                className="danger-button"
+                                disabled={invitationActionState.status === 'loading'}
+                                onClick={(event) => {
+                                  event.stopPropagation();
+                                  handleDeleteInvitation(invitation.id);
+                                }}
+                              >
+                                Usuń zaproszenie
+                              </button>
+                            </div>
+                            {invitationActionState.message && (
+                              <p
+                                className={
+                                  invitationActionState.status === 'error'
+                                    ? 'error-text'
+                                    : 'success-text'
+                                }
+                              >
+                                {invitationActionState.message}
+                              </p>
+                            )}
                           </div>
                         )}
-                        {invitation.uuid && (
-                          <div>
-                            <dt>UUID</dt>
-                            <dd>{invitation.uuid}</dd>
-                          </div>
-                        )}
-                        {invitation.receiver && (
-                          <div>
-                            <dt>Odbiorca</dt>
-                            <dd>{invitation.receiver}</dd>
-                          </div>
-                        )}
-                        {invitation.role && (
-                          <div>
-                            <dt>Rola</dt>
-                            <dd>{invitation.role}</dd>
-                          </div>
-                        )}
-                        {invitation.friend && (
-                          <div>
-                            <dt>Użytkownik</dt>
-                            <dd>{invitation.friend}</dd>
-                          </div>
-                        )}
-                      </dl>
+                      </div>
                     </div>
-                  </div>
-                </li>
-              ))}
+                  </li>
+                );
+              })}
             </ul>
           )}
         </div>

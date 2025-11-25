@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 const contacts = [
   { id: 1, name: 'Alice', status: 'online', preview: 'Hej, jak wygląda mapa?' },
@@ -33,6 +33,45 @@ function ChatPage() {
     typingPreview: true,
     theme: 'ciemny',
   });
+  const [invitations, setInvitations] = useState([]);
+  const [invitationsLoading, setInvitationsLoading] = useState(false);
+  const [invitationsError, setInvitationsError] = useState('');
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const fetchInvitations = async () => {
+      setInvitationsLoading(true);
+      setInvitationsError('');
+
+      try {
+        const response = await fetch(
+          'http://localhost/joker-chat-api/joker-chat/friendships/invitations/',
+          { signal: controller.signal },
+        );
+
+        if (!response.ok) {
+          throw new Error(`Błąd pobierania zaproszeń (${response.status})`);
+        }
+
+        const data = await response.json();
+        setInvitations(Array.isArray(data) ? data : []);
+      } catch (error) {
+        if (error.name !== 'AbortError') {
+          setInvitations([]);
+          setInvitationsError('Nie udało się pobrać zaproszeń.');
+        }
+      } finally {
+        setInvitationsLoading(false);
+      }
+    };
+
+    fetchInvitations();
+
+    return () => {
+      controller.abort();
+    };
+  }, []);
 
   const messages = useMemo(() => history[selected] ?? [], [selected]);
 
@@ -275,6 +314,37 @@ function ChatPage() {
               <strong className="pill pill-outline">{preferences.theme}</strong>
             </li>
           </ul>
+        </div>
+
+        <div className="pref-summary invitations-section">
+          <p className="muted">Otrzymane zaproszenia</p>
+
+          {invitationsLoading && <p>Ładowanie zaproszeń...</p>}
+          {invitationsError && <p className="error-text">{invitationsError}</p>}
+
+          {!invitationsLoading && !invitationsError && !invitations.length && (
+            <p className="muted">Brak nowych zaproszeń.</p>
+          )}
+
+          {!!invitations.length && (
+            <ul className="invitations-list">
+              {invitations.map((invitation, index) => (
+                <li key={invitation.id ?? invitation.uuid ?? index} className="invitation-item">
+                  <div className="invitation-header">
+                    <strong>
+                      {invitation.friend_username || invitation.sender || invitation.username || 'Nieznajomy użytkownik'}
+                    </strong>
+                    {invitation.created_at && <span className="pill">{invitation.created_at}</span>}
+                  </div>
+                  {invitation.friend_message || invitation.message ? (
+                    <p className="muted">{invitation.friend_message || invitation.message}</p>
+                  ) : (
+                    <p className="muted">Zaproszenie do znajomych czeka na Twoją reakcję.</p>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </aside>
     </div>

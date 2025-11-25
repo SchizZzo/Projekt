@@ -13,7 +13,10 @@ const buildMapUrl = (markers) => {
   const baseUrl = 'https://staticmap.openstreetmap.de/staticmap.php';
   const center = markers[0] ?? MAP_DEFAULT_CENTER;
   const markersParam = markers
-    .map(({ lat, lon }) => `${lat},${lon},lightblue1`)
+    .map(({ lat, lon, character }) => {
+      const label = character?.[0]?.toUpperCase() ?? 'X';
+      return `${lat},${lon},lightblue1-${encodeURIComponent(label)}`;
+    })
     .join('|');
 
   const params = new URLSearchParams({
@@ -33,6 +36,7 @@ function MapPage() {
   const [availableUsers, setAvailableUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [mapLoadError, setMapLoadError] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(null);
 
   useEffect(() => {
@@ -60,21 +64,26 @@ function MapPage() {
     fetchAvailableUsers();
   }, []);
 
-  const availableMarkers = useMemo(
-    () =>
-      availableUsers
-        .filter((user) => user.latitude !== null && user.longitude !== null)
-        .map((user) => ({
-          id: user.id ?? user.username,
-          lat: Number(user.latitude),
-          lon: Number(user.longitude),
-          name: user.display_name || user.username,
-          opis: user.opis,
-        })),
-    [availableUsers],
-  );
+  const availableMarkers = useMemo(() => {
+    const markers = availableUsers
+      .map((user) => ({
+        id: user.id ?? user.username,
+        lat: Number(user.latitude),
+        lon: Number(user.longitude),
+        name: user.display_name || user.username,
+        opis: user.opis,
+        character: user.character,
+      }))
+      .filter((marker) => Number.isFinite(marker.lat) && Number.isFinite(marker.lon));
+
+    return markers;
+  }, [availableUsers]);
 
   const mapImageUrl = useMemo(() => buildMapUrl(availableMarkers), [availableMarkers]);
+
+  useEffect(() => {
+    setMapLoadError(false);
+  }, [mapImageUrl]);
 
   return (
     <div className="map-page">
@@ -89,7 +98,13 @@ function MapPage() {
 
       <div className="map-workspace">
         <div className="map-frame">
-          <img src={mapImageUrl} alt="Mapa z oznaczonymi dostępnymi Mordeczkami" loading="lazy" />
+          <img
+            src={mapImageUrl}
+            alt="Mapa z oznaczonymi dostępnymi Mordeczkami"
+            loading="lazy"
+            onLoad={() => setMapLoadError(false)}
+            onError={() => setMapLoadError(true)}
+          />
           <div className="map-overlay">
             <div>
               <p className="muted">Aktualizacja danych</p>
@@ -97,10 +112,10 @@ function MapPage() {
             </div>
             <div className="pill pill-outline">{isLoading ? 'Ładowanie...' : `${availableMarkers.length} na mapie`}</div>
           </div>
-          {error && (
+          {(error || mapLoadError) && (
             <div className="map-banner" role="status">
               <strong>Nie udało się załadować mapy</strong>
-              <p className="muted">{error}</p>
+              <p className="muted">{error || 'Sprawdź połączenie i spróbuj ponownie.'}</p>
             </div>
           )}
         </div>

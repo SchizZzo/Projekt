@@ -18,6 +18,7 @@ function ChatPage() {
   const [socketError, setSocketError] = useState('');
   const [messagesByContact, setMessagesByContact] = useState({});
   const socketRef = useRef(null);
+  const contactsRef = useRef([]);
   const [draft, setDraft] = useState('');
   const [quickReplies, setQuickReplies] = useState(['Jestem na mapie', 'Potwierdzam odbiór', 'Dodaję punkt']);
   const [newReply, setNewReply] = useState('');
@@ -60,6 +61,34 @@ function ChatPage() {
       null
     );
   }, []);
+
+  const getContactDisplayName = useCallback((contact, fallback = 'Nieznany kontakt') => {
+    if (!contact) return fallback;
+
+    return (
+      contact.friend_display_name ||
+      contact.friend_username ||
+      contact.username ||
+      contact.display_name ||
+      contact.name ||
+      fallback
+    );
+  }, []);
+
+  const getContactByKey = useCallback(
+    (contactKey) => {
+      const stringKey = contactKey?.toString?.();
+      if (!stringKey) return null;
+
+      return (
+        contactsRef.current.find((contact, index) => {
+          const key = getContactKey(contact, index);
+          return key?.toString?.() === stringKey;
+        }) ?? null
+      );
+    },
+    [getContactKey],
+  );
 
   const getCreatedLabel = useCallback((invitation) => {
     const rawDate = invitation.created_at || invitation.created;
@@ -220,6 +249,10 @@ function ChatPage() {
     return Number.isNaN(numericId) ? rawId : numericId;
   }, []);
 
+  useEffect(() => {
+    contactsRef.current = contacts;
+  }, [contacts]);
+
   const appendMessage = useCallback((conversationKey, message) => {
     if (!conversationKey) return;
 
@@ -264,10 +297,12 @@ function ChatPage() {
       try {
         const data = JSON.parse(event.data);
         const senderKey = data?.nadawca ?? data?.sender ?? 'nieznany';
+        const senderContact = getContactByKey(senderKey);
+        const senderName = getContactDisplayName(senderContact, senderKey || 'Nieznany kontakt');
         const readableTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
         appendMessage(senderKey, {
-          from: data?.nadawca ?? 'Nadawca',
+          from: senderName,
           content: data?.message ?? '',
           time: readableTime,
         });
@@ -280,7 +315,7 @@ function ChatPage() {
       socketRef.current = null;
       socket.close();
     };
-  }, [appendMessage, userId]);
+  }, [appendMessage, getContactByKey, getContactDisplayName, userId]);
 
   const selectedContact = useMemo(
     () => contacts.find((contact, index) => getContactKey(contact, index) === selected) ?? null,

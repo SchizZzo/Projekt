@@ -121,6 +121,28 @@ function ChatPage() {
     [resolveStatus],
   );
 
+  const fetchUserId = useCallback(async (signal) => {
+    try {
+      const response = await apiRequest('/joker-login-api/me/', { signal });
+
+      if (!response.ok) {
+        throw new Error('Błąd pobierania profilu użytkownika.');
+      }
+
+      const data = await response.json();
+      const resolvedId = data?.id ?? data?.user_id ?? data?.userId ?? '';
+
+      if (resolvedId) {
+        setUserId(String(resolvedId));
+        setSocketError('');
+      }
+    } catch (error) {
+      if (error.name !== 'AbortError') {
+        setSocketError('Nie udało się pobrać identyfikatora użytkownika.');
+      }
+    }
+  }, []);
+
   useEffect(() => {
     const controller = new AbortController();
 
@@ -166,13 +188,19 @@ function ChatPage() {
     const controller = new AbortController();
 
     fetchContacts(controller.signal);
+    fetchUserId(controller.signal);
 
     return () => controller.abort();
-  }, [fetchContacts]);
+  }, [fetchContacts, fetchUserId]);
 
   useEffect(() => {
     localStorage.setItem('chatUserId', userId ?? '');
   }, [userId]);
+
+  const coerceId = useCallback((rawId) => {
+    const numericId = Number(rawId);
+    return Number.isNaN(numericId) ? rawId : numericId;
+  }, []);
 
   const appendMessage = useCallback((conversationKey, message) => {
     if (!conversationKey) return;
@@ -283,10 +311,11 @@ function ChatPage() {
 
     const readableTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     const recipientId = getContactId(selectedContact, selected);
+    const senderId = coerceId(userId);
     const payload = {
       message: draft.trim(),
-      nadawca: Number.isNaN(Number(userId)) ? userId : Number(userId),
-      odbiorca: recipientId,
+      nadawca: senderId,
+      odbiorca: coerceId(recipientId),
     };
 
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
@@ -449,8 +478,9 @@ function ChatPage() {
             <input
               type="text"
               value={userId}
-              onChange={(event) => setUserId(event.target.value)}
-              placeholder="Podaj identyfikator użytkownika"
+              readOnly
+              placeholder="Pobieranie identyfikatora..."
+              title="Identyfikator użytkownika pobrany z /joker-login-api/me/"
             />
           </label>
           <div className="connection-status pill pill-outline">

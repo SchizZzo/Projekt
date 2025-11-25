@@ -2,12 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { apiRequest } from '../api/client.js';
 import MordkaPreview from '../components/MordkaPreview';
 
-const contacts = [
-  { id: 1, name: 'Alice', status: 'online', preview: 'Hej, jak wygląda mapa?' },
-  { id: 2, name: 'Bob', status: 'offline', preview: 'Wyślę raport po 16:00.' },
-  { id: 3, name: 'Charlie', status: 'online', preview: 'Możemy dodać kolejny punkt.' },
-];
-
 const history = {
   1: [
     { from: 'Alice', content: 'Hej, jak wygląda mapa?', time: '09:12' },
@@ -23,7 +17,10 @@ const panelLimits = {
 };
 
 function ChatPage() {
-  const [selected, setSelected] = useState(contacts[0].id);
+  const [contacts, setContacts] = useState([]);
+  const [contactsLoading, setContactsLoading] = useState(false);
+  const [contactsError, setContactsError] = useState('');
+  const [selected, setSelected] = useState(null);
   const [draft, setDraft] = useState('');
   const [quickReplies, setQuickReplies] = useState(['Jestem na mapie', 'Potwierdzam odbiór', 'Dodaję punkt']);
   const [newReply, setNewReply] = useState('');
@@ -41,6 +38,10 @@ function ChatPage() {
   const [lastInvitationsUpdate, setLastInvitationsUpdate] = useState('');
   const [activeInvitationKey, setActiveInvitationKey] = useState(null);
   const [invitationActionState, setInvitationActionState] = useState({ status: 'idle', message: '' });
+
+  const getContactKey = useCallback((contact, fallbackIndex) => {
+    return contact.id ?? contact.uuid ?? contact.friend_username ?? fallbackIndex;
+  }, []);
 
   const getCreatedLabel = useCallback((invitation) => {
     const rawDate = invitation.created_at || invitation.created;
@@ -120,6 +121,45 @@ function ChatPage() {
       controller.abort();
     };
   }, [fetchInvitations]);
+
+  const fetchContacts = useCallback(async (signal) => {
+    setContactsLoading(true);
+    setContactsError('');
+
+    try {
+      const response = await apiRequest('/joker-chat-api/joker-chat/friendships/friends/', { signal });
+
+      if (!response.ok) {
+        throw new Error(`Błąd pobierania kontaktów (${response.status})`);
+      }
+
+      const data = await response.json();
+      const normalized = Array.isArray(data) ? data : [];
+
+      setContacts(normalized);
+
+      if (normalized.length) {
+        const firstContactKey = getContactKey(normalized[0], 0);
+
+        setSelected((prev) => (prev === null ? firstContactKey : prev));
+      }
+    } catch (error) {
+      if (error.name !== 'AbortError') {
+        setContactsError('Nie udało się pobrać kontaktów.');
+        setContacts([]);
+      }
+    } finally {
+      setContactsLoading(false);
+    }
+  }, [getContactKey]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    fetchContacts(controller.signal);
+
+    return () => controller.abort();
+  }, [fetchContacts]);
 
   const messages = useMemo(() => history[selected] ?? [], [selected]);
 
@@ -255,21 +295,31 @@ function ChatPage() {
     <div className="chat-layout" style={layoutStyle}>
       <aside className="contacts resizable-panel">
         <div className="contacts__header">Kontakty</div>
+        {contactsLoading && <p className="muted">Ładowanie kontaktów...</p>}
+        {contactsError && <p className="error-text">{contactsError}</p>}
+        {!contactsLoading && !contactsError && !contacts.length && <p className="muted">Brak kontaktów do wyświetlenia.</p>}
         <ul>
-          {contacts.map((contact) => (
-            <li
-              key={contact.id}
-              className={selected === contact.id ? 'contact active' : 'contact'}
-              onClick={() => setSelected(contact.id)}
-            >
-              <div className="avatar">{contact.name.slice(0, 1)}</div>
-              <div>
-                <div className="contact-name">{contact.name}</div>
-                <div className="contact-preview">{contact.preview}</div>
-              </div>
-              <span className={`status-dot ${contact.status}`} />
-            </li>
-          ))}
+          {contacts.map((contact, index) => {
+            const contactKey = getContactKey(contact, index);
+            const isActive = selected === contactKey;
+
+            return (
+              <li
+                key={contactKey}
+                className={isActive ? 'contact active' : 'contact'}
+                onClick={() => setSelected(contactKey)}
+              >
+                <div className="avatar">
+                  <MordkaPreview config={contact.friend_mordka} size={64} />
+                </div>
+                <div>
+                  <div className="contact-name">{contact.friend_display_name || 'Nieznany znajomy'}</div>
+                  <div className="contact-preview">{contact.friend_opis || 'Brak opisu'}</div>
+                </div>
+                <span className="status-dot online" />
+              </li>
+            );
+          })}
         </ul>
       </aside>
 

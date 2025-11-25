@@ -1200,6 +1200,10 @@ input:checked + .slider:before { transform: translateX(18px); }
   border-radius: 14px;
   display: grid;
   grid-template-rows: auto 1fr auto auto;
+  height: calc(100vh - 220px);
+  max-height: calc(100vh - 220px);
+  overflow: hidden;
+  min-height: 0;
 }
 
 .chat-header { padding: 1rem; border-bottom: 1px solid var(--border); }
@@ -1210,6 +1214,7 @@ input:checked + .slider:before { transform: translateX(18px); }
   display: grid;
   gap: 0.75rem;
   overflow-y: auto;
+  min-height: 0;
 }
 
 .message {

@@ -1050,7 +1050,14 @@ input:checked + .slider:before { transform: translateX(18px); }
 
 .chat-layout {
   display: grid;
-  grid-template-columns: var(--contacts-width, 260px) 10px 1fr 10px var(--preferences-width, 320px);
+  grid-template-columns:
+    var(--sidebar-width, 240px)
+    10px
+    var(--contacts-width, 260px)
+    10px
+    1fr
+    10px
+    var(--preferences-width, 320px);
   gap: 0;
   min-height: 70vh;
   align-items: stretch;
@@ -1058,6 +1065,68 @@ input:checked + .slider:before { transform: translateX(18px); }
 
 .resizable-panel {
   overflow: auto;
+}
+
+.chat-sidebar {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1rem;
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+}
+
+.sidebar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sidebar__section {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.85rem;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.sidebar__status-card {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.sidebar__status-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.sidebar__status-meta {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.sidebar__actions {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.sidebar__tiles {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  display: grid;
+  gap: 0.75rem;
+}
+
+.sidebar__tile {
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  padding: 0.85rem;
+  background: rgba(255, 255, 255, 0.03);
+  display: grid;
+  gap: 0.25rem;
 }
 
 .resize-handle {

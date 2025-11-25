@@ -14,6 +14,7 @@ class LoginAPITestCase(APITestCase):
             password="strong-password",
         )
         self.url = reverse("login:login")
+        self.refresh_url = reverse("login:token_refresh")
 
     def test_login_returns_jwt_tokens(self):
         response = self.client.post(
@@ -35,6 +36,22 @@ class LoginAPITestCase(APITestCase):
             self.fail("Access token returned by login endpoint is invalid")
 
         self.assertEqual(access_payload["user_id"], self.user.id)
+
+    def test_refresh_token_returns_new_access_token(self):
+        login_response = self.client.post(
+            self.url,
+            {"email": "test@example.com", "password": "strong-password"},
+            format="json",
+        )
+
+        refresh_token = login_response.data["refresh"]
+
+        response = self.client.post(
+            self.refresh_url, {"refresh": refresh_token}, format="json"
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn("access", response.data)
 
     def test_login_with_invalid_credentials_fails(self):
         response = self.client.post(

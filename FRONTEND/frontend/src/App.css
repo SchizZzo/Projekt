@@ -1111,6 +1111,7 @@ input:checked + .slider:before { transform: translateX(18px); }
   display: grid;
   place-items: center;
   font-weight: 700;
+  overflow: hidden;
 }
 
 .contact-name { font-weight: 700; }

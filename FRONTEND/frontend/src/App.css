@@ -1318,6 +1318,35 @@ input:checked + .slider:before { transform: translateX(18px); }
   gap: 0.35rem;
 }
 
+.invitation-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.9rem;
+  align-items: center;
+}
+
+.invitation-avatar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.5rem;
+  min-width: 160px;
+}
+
+.mordka-preview__canvas {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.invitation-content {
+  display: grid;
+  gap: 0.45rem;
+}
+
 .invitation-header {
   display: flex;
   align-items: flex-start;
@@ -1361,6 +1390,16 @@ input:checked + .slider:before { transform: translateX(18px); }
   margin: 0.1rem 0 0;
   color: #e2e8f0;
   word-break: break-word;
+}
+
+@media (max-width: 720px) {
+  .invitation-row {
+    grid-template-columns: 1fr;
+  }
+
+  .invitation-avatar {
+    min-width: 100%;
+  }
 }
 
 .muted { color: var(--muted); }

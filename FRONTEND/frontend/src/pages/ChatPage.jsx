@@ -330,6 +330,11 @@ function ChatPage() {
     [messagesByContact, selected],
   );
 
+  const displayedMessages = useMemo(
+    () => (Array.isArray(messages) ? [...messages].reverse() : []),
+    [messages],
+  );
+
   const formatApiMessage = useCallback(
     (message, contactName) => {
       const senderId =
@@ -728,7 +733,7 @@ function ChatPage() {
         <div className="messages">
           {messagesLoading && <p className="muted">Ładowanie wiadomości...</p>}
           {messagesError && <p className="error-text">{messagesError}</p>}
-          {messages.map((message, index) => (
+          {displayedMessages.map((message, index) => (
             <div key={index} className={message.from === 'Ty' ? 'message outgoing' : 'message incoming'}>
               <div className="message-meta">
                 <strong>{message.from}</strong>

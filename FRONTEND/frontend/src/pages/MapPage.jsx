@@ -9,6 +9,7 @@ import RiveVehiclesWidget from '../components/RiveVehiclesWidget.jsx';
 
 const AVAILABLE_USERS_ENDPOINT = '/joker-login-api/available-users/';
 const MAP_ZOOM = 13;
+const FRIENDSHIP_ENDPOINT = '/joker-chat-api/joker-chat/friendships/';
 
 const MAP_DEFAULT_CENTER = {
   lat: 52.22977,
@@ -51,10 +52,37 @@ function useCharacterMapIcon(character, name) {
 }
 
 function CharacterMapMarker({ marker }) {
-  const { id, name, lat, lon, character, opis, distance } = marker;
+  const { id, name, username, lat, lon, character, opis, distance } = marker;
   const markerIcon = useCharacterMapIcon(character, name);
+  const [friendRequestState, setFriendRequestState] = useState({ status: 'idle', message: '' });
+  const [friendMessage, setFriendMessage] = useState('');
 
   if (!markerIcon) return null;
+
+  const handleSendFriendRequest = async () => {
+    if (!username) return;
+
+    setFriendRequestState({ status: 'loading', message: '' });
+
+    try {
+      const response = await apiRequest(FRIENDSHIP_ENDPOINT, {
+        method: 'POST',
+        body: JSON.stringify({
+          friend_username: username,
+          friend_message: friendMessage,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Nie udało się wysłać zaproszenia.');
+      }
+
+      setFriendRequestState({ status: 'success', message: 'Zaproszenie wysłane.' });
+      setFriendMessage('');
+    } catch (apiError) {
+      setFriendRequestState({ status: 'error', message: apiError.message });
+    }
+  };
 
   return (
     <Marker key={id} position={[lat, lon]} icon={markerIcon}>
@@ -66,6 +94,33 @@ function CharacterMapMarker({ marker }) {
             <p className="muted">{opis || 'Brak opisu.'}</p>
             {Number.isFinite(distance) && <p className="muted">{`Dystans: ${distance.toFixed(1)} km`}</p>}
             <p className="muted">{`Pozycja: ${lat.toFixed(4)}, ${lon.toFixed(4)}`}</p>
+            <label className="muted" htmlFor={`friend-message-${id}`}>
+              Wiadomość do zaproszenia
+            </label>
+            <textarea
+              id={`friend-message-${id}`}
+              value={friendMessage}
+              onChange={(event) => setFriendMessage(event.target.value)}
+              placeholder="Napisz wiadomość do Mordeczki"
+              rows={3}
+              style={{ width: '100%', resize: 'vertical' }}
+            />
+            <button
+              type="button"
+              className="primary-button"
+              onClick={handleSendFriendRequest}
+              disabled={friendRequestState.status === 'loading'}
+            >
+              Wyślij zaproszenie
+            </button>
+            {friendRequestState.message && (
+              <p
+                className="muted"
+                style={{ color: friendRequestState.status === 'error' ? 'var(--error)' : 'inherit' }}
+              >
+                {friendRequestState.message}
+              </p>
+            )}
           </div>
         </div>
       </Popup>
@@ -130,6 +185,7 @@ function MapPage() {
         lat: Number(user.latitude),
         lon: Number(user.longitude),
         name: user.display_name || user.username,
+        username: user.username,
         opis: user.opis,
         distance: Number.isFinite(Number(user.distance)) ? Number(user.distance) : null,
         character: user.character ?? user.charakter,

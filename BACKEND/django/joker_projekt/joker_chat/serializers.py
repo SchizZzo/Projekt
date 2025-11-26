@@ -32,6 +32,7 @@ class FriendshipSerializer(serializers.ModelSerializer):
     friend_display_name = serializers.CharField(source='friend.display_name', read_only=True)
     friend_mordka = serializers.CharField(source='friend.character', read_only=True)
     friend_opis = serializers.CharField(source='friend.opis', read_only=True)
+    friend_status = serializers.CharField(source='friend.status', read_only=True)
     friend_bot = serializers.BooleanField(source='friend.bot', read_only=True)
     friend_endpoint = serializers.URLField(source='friend.endpoint', read_only=True)
     friend_id = serializers.IntegerField(source='friend.id', read_only=True)
@@ -41,7 +42,7 @@ class FriendshipSerializer(serializers.ModelSerializer):
     class Meta:
         model = Friendship
         fields = ('id', 'friend', 'friend_username', 'friend_message', 'accepted', 'created', 'user_display_name', 'user_mordka', 'user_opis', 'user_bot', 'user_endpoint', 'user_id', 'friend_display_name', 'friend_mordka', \
-                  'friend_opis', 'friend_bot', 'friend_endpoint', 'friend_id', 'last_view_contact')
+                  'friend_opis', 'friend_status', 'friend_bot', 'friend_endpoint', 'friend_id', 'last_view_contact')
         read_only_fields = ('created',)
     
     

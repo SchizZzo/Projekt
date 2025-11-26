@@ -109,6 +109,7 @@ class CurrentUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = (
+            "id",
             "username",
             "email",
             "display_name",

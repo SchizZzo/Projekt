@@ -45,6 +45,18 @@ function ChatPage() {
   const [invitationActionState, setInvitationActionState] = useState({ status: 'idle', message: '' });
   const [pendingMessages, setPendingMessages] = useState([]);
 
+  const getMessageSenderId = useCallback((message) => {
+    return (
+      message?.nadawca ??
+      message?.sender ??
+      message?.author ??
+      message?.user ??
+      message?.user_id ??
+      message?.from ??
+      null
+    );
+  }, []);
+
   const getContactKey = useCallback((contact, fallbackIndex) => {
     return (
       contact?.friend_id ??
@@ -497,6 +509,101 @@ function ChatPage() {
     () => contacts.find((contact, index) => getContactKey(contact, index) === selected) ?? null,
     [contacts, getContactKey, selected],
   );
+
+  const markContactAsViewed = useCallback(
+    async (contact, signal) => {
+      const contactId = getContactId(contact);
+      if (!contactId) return;
+
+      try {
+        await apiRequest('/joker-chat-api/joker-chat/friendships/last-view-contact/', {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ 'friend-id': contactId }),
+          signal,
+        });
+      } catch (error) {
+        if (error.name !== 'AbortError') {
+          console.error('Nie udało się zaktualizować czasu ostatniego podglądu kontaktu.', error);
+        }
+      }
+    },
+    [getContactId],
+  );
+
+  const loadUnreadCounts = useCallback(
+    async (signal) => {
+      if (!contacts.length || !userId) return;
+
+      const maxMessages = 100;
+      const unreadEntries = await Promise.all(
+        contacts.map(async (contact, index) => {
+          const contactId = getContactId(contact);
+          const contactKey = getContactKey(contact, index)?.toString?.();
+          const lastViewed = contact?.last_view_contact;
+
+          if (!contactId || !contactKey || !lastViewed) return [contactKey, 0];
+
+          const url =
+            `/joker-chat-api/joker-chat/messages/conversation/${contactId}/${maxMessages}/` +
+            `?from=${encodeURIComponent(lastViewed)}`;
+
+          try {
+            const response = await apiRequest(url, { signal });
+
+            if (!response.ok) {
+              throw new Error(`Nie udało się pobrać nowych wiadomości (${response.status}).`);
+            }
+
+            const data = await response.json();
+            if (!Array.isArray(data) || !data.length) return [contactKey, 0];
+
+            const incomingSinceLastView = data.filter((message) => {
+              const senderId = getMessageSenderId(message);
+              return senderId?.toString?.() === contactId.toString();
+            }).length;
+
+            return [contactKey, incomingSinceLastView];
+          } catch (error) {
+            if (error.name === 'AbortError') return [contactKey, 0];
+            console.error('Nie udało się obliczyć liczby nieprzeczytanych wiadomości.', error);
+            return [contactKey, 0];
+          }
+        }),
+      );
+
+      setUnreadByContact((prev) => {
+        const next = { ...prev };
+
+        unreadEntries.forEach(([key, count]) => {
+          if (!key || !count) return;
+          next[key] = Math.max(prev[key] ?? 0, count);
+        });
+
+        return next;
+      });
+    },
+    [contacts, getContactId, getContactKey, getMessageSenderId, userId],
+  );
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    loadUnreadCounts(controller.signal);
+
+    return () => controller.abort();
+  }, [loadUnreadCounts]);
+
+  useEffect(() => {
+    if (!selectedContact) return undefined;
+
+    const controller = new AbortController();
+    markContactAsViewed(selectedContact, controller.signal);
+
+    return () => controller.abort();
+  }, [markContactAsViewed, selectedContact]);
 
   const messages = useMemo(
     () => messagesByContact[selected?.toString?.() ?? selected] ?? [],

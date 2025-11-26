@@ -1198,7 +1198,7 @@ input:checked + .slider:before { transform: translateX(18px); }
 
 .status-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
 .status-dot.online { background: var(--success); }
-.status-dot.offline { background: #64748b; }
+.status-dot.offline { background: var(--error); }
 
 .contact-meta {
   display: flex;

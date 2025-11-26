@@ -1,4 +1,6 @@
-import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { apiRequest } from '../api/client.js';
 
 const menuItems = [
   { path: '/map', label: 'Mapa' },
@@ -8,7 +10,48 @@ const menuItems = [
 
 function BaseLayout() {
   const location = useLocation();
+  const navigate = useNavigate();
   const isMapPage = location.pathname.startsWith('/map');
+  const [userProfile, setUserProfile] = useState(null);
+
+  useEffect(() => {
+    const accessToken = localStorage.getItem('accessToken');
+
+    if (!accessToken) {
+      setUserProfile(null);
+      return undefined;
+    }
+
+    const controller = new AbortController();
+
+    const fetchProfile = async () => {
+      try {
+        const response = await apiRequest('/joker-login-api/me/', { signal: controller.signal });
+
+        if (!response.ok) {
+          throw new Error('Nie udało się pobrać profilu użytkownika.');
+        }
+
+        const data = await response.json();
+        setUserProfile(data);
+      } catch (error) {
+        if (error.name !== 'AbortError') {
+          setUserProfile(null);
+        }
+      }
+    };
+
+    fetchProfile();
+
+    return () => controller.abort();
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    setUserProfile(null);
+    navigate('/login', { replace: true });
+  };
 
   return (
     <div className="app-shell">
@@ -26,8 +69,21 @@ function BaseLayout() {
           ))}
         </nav>
         <div className="auth-links">
-          <NavLink to="/login" className="ghost-button">Logowanie</NavLink>
-          <NavLink to="/register" className="primary-button">Rejestracja</NavLink>
+          {userProfile ? (
+            <>
+              <span className="pill">
+                {userProfile.display_name || userProfile.username || 'Użytkownik'}
+              </span>
+              <button type="button" className="ghost-button" onClick={handleLogout}>
+                Wyloguj
+              </button>
+            </>
+          ) : (
+            <>
+              <NavLink to="/login" className="ghost-button">Logowanie</NavLink>
+              <NavLink to="/register" className="primary-button">Rejestracja</NavLink>
+            </>
+          )}
         </div>
       </header>
 

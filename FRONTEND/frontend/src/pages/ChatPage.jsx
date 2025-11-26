@@ -559,7 +559,8 @@ function ChatPage() {
 
         setMessagesByContact((prev) => {
           const existing = prev[activeKey] ?? [];
-          const merged = normalizeConversationMessages([...formatted, ...existing]);
+          const queued = existing.filter((message) => message.status === 'queued');
+          const merged = normalizeConversationMessages([...formatted, ...queued]);
           return { ...prev, [activeKey]: merged };
         });
       } catch (error) {

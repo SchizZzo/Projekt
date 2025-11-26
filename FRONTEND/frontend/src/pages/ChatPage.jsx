@@ -288,18 +288,78 @@ function ChatPage() {
     });
   }, [selected]);
 
-  const appendMessage = useCallback((conversationKey, message) => {
-    if (!conversationKey) return;
-
-    setMessagesByContact((prev) => {
-      const key = conversationKey.toString();
-      const existing = prev[key] ?? [];
-      return {
-        ...prev,
-        [key]: [...existing, message],
-      };
-    });
+  const getMessageTimestamp = useCallback((message) => {
+    const rawTimestamp =
+      message?.createdAt ??
+      message?.created_at ??
+      message?.created ??
+      message?.timestamp ??
+      message?.time ??
+      '';
+    const parsed = rawTimestamp ? Date.parse(rawTimestamp) : Number.NaN;
+    return Number.isNaN(parsed) ? 0 : parsed;
   }, []);
+
+  const normalizeConversationMessages = useCallback(
+    (messages) => {
+      const seen = new Set();
+
+      const buildKey = (message) => {
+        const timestamp =
+          message?.createdAt ?? message?.created_at ?? message?.created ?? message?.time ?? '';
+        return message?.id ?? `${message.from}||${timestamp}||${message.content}`;
+      };
+
+      return messages
+        .map((message) => {
+          const timestamp =
+            message?.createdAt ??
+            message?.created_at ??
+            message?.created ??
+            message?.timestamp ??
+            message?.time ??
+            '';
+          const parsed = timestamp ? new Date(timestamp) : null;
+          const isoTimestamp = parsed && !Number.isNaN(parsed.getTime()) ? parsed.toISOString() : null;
+          const readableTime =
+            message.time ||
+            (isoTimestamp
+              ? new Date(isoTimestamp).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })
+              : '—');
+
+          return {
+            ...message,
+            id: message.id ?? buildKey(message),
+            createdAt: isoTimestamp ?? timestamp ?? null,
+            time: readableTime,
+          };
+        })
+        .filter((message) => {
+          const key = buildKey(message);
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        })
+        .sort((a, b) => getMessageTimestamp(a) - getMessageTimestamp(b));
+    },
+    [getMessageTimestamp],
+  );
+
+  const appendMessage = useCallback(
+    (conversationKey, message) => {
+      if (!conversationKey) return;
+
+      setMessagesByContact((prev) => {
+        const key = conversationKey.toString();
+        const existing = prev[key] ?? [];
+        return {
+          ...prev,
+          [key]: normalizeConversationMessages([...existing, message]),
+        };
+      });
+    },
+    [normalizeConversationMessages],
+  );
 
   const updateMessageStatus = useCallback((conversationKey, messageId, status) => {
     if (!conversationKey || !messageId) return;
@@ -369,6 +429,7 @@ function ChatPage() {
         appendMessage(senderKey, {
           from: senderName,
           content: data?.message ?? '',
+          createdAt: new Date().toISOString(),
           time: readableTime,
         });
 
@@ -435,20 +496,15 @@ function ChatPage() {
           : '';
 
       return {
+        id: message?.id ?? message?.uuid ?? `${senderId}-${rawTimestamp || message?.message || ''}`,
         from: senderId?.toString?.() === userId?.toString?.() ? 'Ty' : contactName,
         content: message?.message ?? message?.content ?? message?.text ?? '',
         time: readableTime || '—',
+        createdAt: parsedDate && !Number.isNaN(parsedDate.getTime()) ? parsedDate.toISOString() : rawTimestamp,
       };
     },
     [userId],
   );
-
-  const getMessageTimestamp = useCallback((message) => {
-    const rawTimestamp =
-      message?.created_at ?? message?.created ?? message?.timestamp ?? message?.time ?? '';
-    const parsed = rawTimestamp ? Date.parse(rawTimestamp) : Number.NaN;
-    return Number.isNaN(parsed) ? 0 : parsed;
-  }, []);
 
   const loadMessages = useCallback(
     async ({ limit = 25, signal, markAsArchive = false } = {}) => {
@@ -490,17 +546,7 @@ function ChatPage() {
 
         setMessagesByContact((prev) => {
           const existing = prev[activeKey] ?? [];
-          const buildKey = (message) => `${message.from}||${message.time}||${message.content}`;
-          const seen = new Set();
-          const merged = [];
-
-          [...formatted, ...existing].forEach((message) => {
-            const key = buildKey(message);
-            if (seen.has(key)) return;
-            seen.add(key);
-            merged.push(message);
-          });
-
+          const merged = normalizeConversationMessages([...formatted, ...existing]);
           return { ...prev, [activeKey]: merged };
         });
       } catch (error) {
@@ -569,6 +615,7 @@ function ChatPage() {
     }
 
     const readableTime = new Date().toLocaleString([], { dateStyle: 'short', timeStyle: 'short' });
+    const createdAt = new Date().toISOString();
     const recipientId = getContactId(selectedContact);
 
     if (!recipientId) {
@@ -583,7 +630,13 @@ function ChatPage() {
     };
 
     const messageId = crypto.randomUUID ? crypto.randomUUID() : `msg-${Date.now()}`;
-    const baseMessage = { id: messageId, from: 'Ty', content: draft.trim(), time: readableTime };
+    const baseMessage = {
+      id: messageId,
+      from: 'Ty',
+      content: draft.trim(),
+      time: readableTime,
+      createdAt,
+    };
 
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
       socketRef.current.send(JSON.stringify(payload));

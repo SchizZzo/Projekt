@@ -534,7 +534,14 @@ function ChatPage() {
 
       const contactName = getContactDisplayName(selectedContact, 'Nieznany znajomy');
       const baseUrl = `/joker-chat-api/joker-chat/messages/conversation/${contactId}/`;
-      const url = typeof limit === 'number' ? `${baseUrl}${limit}/` : baseUrl;
+      const maxMessages = 100;
+      const resolvedLimit =
+        limit === 'all'
+          ? maxMessages
+          : typeof limit === 'number'
+            ? Math.min(limit, maxMessages)
+            : 25;
+      const url = `${baseUrl}${resolvedLimit}/`;
 
       setMessagesLoading(true);
       setMessagesError('');

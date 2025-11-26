@@ -103,7 +103,8 @@ function ChatPage() {
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '');
 
-    const isAvailable = normalized.includes('dostepn');
+    const isUnavailable = normalized.includes('niedostepn');
+    const isAvailable = normalized.includes('dostepn') && !isUnavailable;
 
     return {
       label: rawStatus || 'Status nieznany',

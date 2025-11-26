@@ -95,6 +95,22 @@ function ChatPage() {
     );
   }, []);
 
+  const getContactStatus = useCallback((contact) => {
+    const rawStatus = contact?.friend_status || contact?.status || '';
+    const normalized = rawStatus
+      .toString()
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
+
+    const isAvailable = normalized.includes('dostepn');
+
+    return {
+      label: rawStatus || 'Status nieznany',
+      className: isAvailable ? 'online' : 'offline',
+    };
+  }, []);
+
   const getContactByKey = useCallback(
     (contactKey) => {
       const stringKey = contactKey?.toString?.();
@@ -987,6 +1003,7 @@ function ChatPage() {
             const contactKey = getContactKey(contact, index);
             const isActive = selected === contactKey;
             const unreadCount = unreadByContact[contactKey?.toString?.() ?? contactKey];
+            const contactStatus = getContactStatus(contact);
 
             return (
               <li
@@ -1003,7 +1020,7 @@ function ChatPage() {
                 </div>
                 <div className="contact-meta">
                   {unreadCount ? <span className="contact-badge">{unreadCount}</span> : null}
-                  <span className="status-dot online" />
+                  <span className={`status-dot ${contactStatus.className}`} title={contactStatus.label} />
                 </div>
               </li>
             );

@@ -422,6 +422,13 @@ function ChatPage() {
       try {
         const data = JSON.parse(event.data);
         const senderKey = data?.nadawca ?? data?.sender ?? 'nieznany';
+
+        // Serwer odsyła również nasze własne komunikaty, co powodowało dublowanie wpisów.
+        // Jeśli nadawcą jesteśmy my sami, pomijamy ponowne dodanie wiadomości.
+        if (userId && senderKey?.toString?.() === userId.toString()) {
+          return;
+        }
+
         const senderContact = getContactByKey(senderKey);
         const senderName = getContactDisplayName(senderContact, senderKey || 'Nieznany kontakt');
         const readableTime = new Date().toLocaleString([], { dateStyle: 'short', timeStyle: 'short' });

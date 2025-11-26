@@ -114,8 +114,9 @@ function ChatPage() {
 
   const getInvitationMordka = useCallback((invitation) => {
     return (
-      invitation?.friend_mordka ||
       invitation?.sender_mordka ||
+      invitation?.inviter_mordka ||
+      invitation?.friend_mordka ||
       invitation?.mordka ||
       invitation?.friend?.mordka ||
       invitation?.friend?.friend_mordka ||
@@ -132,9 +133,9 @@ function ChatPage() {
       invitation.sender_name ||
       invitation.sender ||
       invitation.inviter_name ||
-      invitation.friend_display_name ||
-      invitation.friend_username ||
-      invitation.username ||
+      invitation.inviter_username ||
+      invitation.inviter_display_name ||
+      invitation.inviter ||
       fallback
     );
   }, []);
@@ -145,9 +146,8 @@ function ChatPage() {
     return (
       invitation.sender_email ||
       invitation.inviter_email ||
+      invitation.inviter?.email ||
       invitation.email ||
-      invitation.friend_email ||
-      invitation.receiver_email ||
       fallback
     );
   }, []);

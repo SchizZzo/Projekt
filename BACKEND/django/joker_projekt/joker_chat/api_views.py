@@ -7,6 +7,7 @@ from .models import Message
 from .serializers import MessageSerializer, User, UserSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.db.models import Q
+from django.utils.dateparse import parse_datetime
 
 
 class ChatMessageViewSet(viewsets.ModelViewSet):
@@ -30,13 +31,26 @@ class ChatMessageViewSet(viewsets.ModelViewSet):
                 status=400
             )
 
-        # Pobierz całą rozmowę w kolejności od najnowszych
         conversation = Message.objects.filter(
             Q(nadawca_id=request.user.id, odbiorca_id=odbiorca_id) |
             Q(nadawca_id=odbiorca_id, odbiorca_id=request.user.id)
-        ).order_by('-created')
+        )
 
-        # Pobierz żądaną liczbę wiadomości i odwróć kolejność, aby pokazać je chronologicznie
+        from_timestamp = request.query_params.get('from')
+        if from_timestamp:
+            parsed_timestamp = parse_datetime(from_timestamp)
+            if not parsed_timestamp:
+                return Response(
+                    {"error": "Nieprawidłowy format parametru 'from'. Użyj ISO 8601."},
+                    status=400
+                )
+            if timezone.is_naive(parsed_timestamp):
+                parsed_timestamp = timezone.make_aware(parsed_timestamp, timezone.get_default_timezone())
+
+            conversation = conversation.filter(created__gte=parsed_timestamp)
+
+        conversation = conversation.order_by('-created')
+
         messages = list(conversation[:ileWiadomosciWstecz])[::-1]
 
         serializer = self.get_serializer(messages, many=True)

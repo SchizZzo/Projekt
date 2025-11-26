@@ -123,6 +123,35 @@ function ChatPage() {
     );
   }, []);
 
+  const getInviterName = useCallback((invitation, fallback = 'Nieznany zapraszający') => {
+    if (!invitation) return fallback;
+
+    return (
+      invitation.sender_display_name ||
+      invitation.sender_username ||
+      invitation.sender_name ||
+      invitation.sender ||
+      invitation.inviter_name ||
+      invitation.friend_display_name ||
+      invitation.friend_username ||
+      invitation.username ||
+      fallback
+    );
+  }, []);
+
+  const getInviterEmail = useCallback((invitation, fallback = 'Brak adresu e-mail') => {
+    if (!invitation) return fallback;
+
+    return (
+      invitation.sender_email ||
+      invitation.inviter_email ||
+      invitation.email ||
+      invitation.friend_email ||
+      invitation.receiver_email ||
+      fallback
+    );
+  }, []);
+
   const resolveStatus = useCallback((invitation) => {
     const rawStatus =
       invitation.status ||
@@ -1148,6 +1177,8 @@ function ChatPage() {
               {invitations.map((invitation, index) => {
                 const invitationKey = invitation.id ?? invitation.uuid ?? index;
                 const isActive = invitationKey === activeInvitationKey;
+                const inviterName = getInviterName(invitation);
+                const inviterEmail = getInviterEmail(invitation);
 
                 return (
                   <li
@@ -1163,21 +1194,9 @@ function ChatPage() {
                       <div className="invitation-content">
                         <div className="invitation-header">
                           <div>
-                            <strong>
-                              {invitation.friend_display_name ||
-                                invitation.friend_username ||
-                                invitation.sender ||
-                                invitation.username ||
-                                invitation.friend ||
-                                'Nieznajomy użytkownik'}
-                            </strong>
-                            <p className="muted small-text">
-                              {invitation.email ||
-                                invitation.friend_email ||
-                                invitation.sender_email ||
-                                invitation.friend ||
-                                'Brak adresu e-mail'}
-                            </p>
+                            <p className="muted small-text invitation-from-label">Zaproszenie od</p>
+                            <strong>{inviterName}</strong>
+                            <p className="muted small-text">{inviterEmail}</p>
                           </div>
                           <div className="invitation-meta">
                             {getCreatedLabel(invitation) && (
@@ -1204,6 +1223,18 @@ function ChatPage() {
                             <div>
                               <dt>Odbiorca</dt>
                               <dd>{invitation.receiver}</dd>
+                            </div>
+                          )}
+                          {inviterName && (
+                            <div>
+                              <dt>Zapraszający</dt>
+                              <dd>{inviterName}</dd>
+                            </div>
+                          )}
+                          {inviterEmail && (
+                            <div>
+                              <dt>E-mail zapraszającego</dt>
+                              <dd>{inviterEmail}</dd>
                             </div>
                           )}
                           {invitation.role && (

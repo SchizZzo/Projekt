@@ -114,12 +114,11 @@ function ChatPage() {
 
   const getInvitationMordka = useCallback((invitation) => {
     return (
+      invitation?.user_mordka ||
       invitation?.sender_mordka ||
       invitation?.inviter_mordka ||
-      invitation?.friend_mordka ||
       invitation?.mordka ||
-      invitation?.friend?.mordka ||
-      invitation?.friend?.friend_mordka ||
+      invitation?.user?.mordka ||
       ''
     );
   }, []);
@@ -128,6 +127,11 @@ function ChatPage() {
     if (!invitation) return fallback;
 
     return (
+      invitation.user_display_name ||
+      invitation.user ||
+      invitation.user_username ||
+      invitation.user_name ||
+      invitation.user?.display_name ||
       invitation.sender_display_name ||
       invitation.sender_username ||
       invitation.sender_name ||
@@ -144,6 +148,8 @@ function ChatPage() {
     if (!invitation) return fallback;
 
     return (
+      invitation.user_email ||
+      invitation.user?.email ||
       invitation.sender_email ||
       invitation.inviter_email ||
       invitation.inviter?.email ||
@@ -1243,10 +1249,16 @@ function ChatPage() {
                               <dd>{invitation.role}</dd>
                             </div>
                           )}
-                          {invitation.friend && (
+                          {invitation.user && (
                             <div>
-                              <dt>Użytkownik</dt>
-                              <dd>{invitation.friend}</dd>
+                              <dt>Nadawca</dt>
+                              <dd>{invitation.user}</dd>
+                            </div>
+                          )}
+                          {invitation.user_email && (
+                            <div>
+                              <dt>E-mail nadawcy</dt>
+                              <dd>{invitation.user_email}</dd>
                             </div>
                           )}
                         </dl>

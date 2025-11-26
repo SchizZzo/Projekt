@@ -364,7 +364,7 @@ function ChatPage() {
         const senderKey = data?.nadawca ?? data?.sender ?? 'nieznany';
         const senderContact = getContactByKey(senderKey);
         const senderName = getContactDisplayName(senderContact, senderKey || 'Nieznany kontakt');
-        const readableTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const readableTime = new Date().toLocaleString([], { dateStyle: 'short', timeStyle: 'short' });
 
         appendMessage(senderKey, {
           from: senderName,
@@ -431,7 +431,7 @@ function ChatPage() {
       const parsedDate = rawTimestamp ? new Date(rawTimestamp) : null;
       const readableTime =
         parsedDate && !Number.isNaN(parsedDate.getTime())
-          ? parsedDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          ? parsedDate.toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })
           : '';
 
       return {
@@ -568,7 +568,7 @@ function ChatPage() {
       return;
     }
 
-    const readableTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const readableTime = new Date().toLocaleString([], { dateStyle: 'short', timeStyle: 'short' });
     const recipientId = getContactId(selectedContact);
 
     if (!recipientId) {

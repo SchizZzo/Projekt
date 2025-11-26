@@ -1485,6 +1485,8 @@ input:checked + .slider:before { transform: translateX(18px); }
 
 .mordka-preview__canvas {
   position: relative;
+  top: -20px;
+  left: -20px;
   width: auto;
   height: auto;
   display: grid;

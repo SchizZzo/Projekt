@@ -305,9 +305,15 @@ function ChatPage() {
       const seen = new Set();
 
       const buildKey = (message) => {
+        const content = (message?.content ?? message?.message ?? '').trim();
+        const sender = message?.from ?? message?.nadawca ?? message?.sender ?? '';
         const timestamp =
-          message?.createdAt ?? message?.created_at ?? message?.created ?? message?.time ?? '';
-        return message?.id ?? `${message.from}||${timestamp}||${message.content}`;
+          message?.createdAt ?? message?.created_at ?? message?.created ?? message?.timestamp ?? message?.time ?? '';
+        const parsed = timestamp ? new Date(timestamp) : null;
+        const normalizedTimestamp =
+          parsed && !Number.isNaN(parsed.getTime()) ? parsed.toISOString() : timestamp || '';
+
+        return `${sender}||${normalizedTimestamp}||${content}`;
       };
 
       return messages

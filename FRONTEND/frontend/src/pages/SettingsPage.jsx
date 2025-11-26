@@ -17,6 +17,7 @@ function SettingsPage() {
   const [character, setCharacter] = useState(defaultCharacter);
   const [nickname, setNickname] = useState('');
   const [opis, setOpis] = useState('');
+  const [availabilityStatus, setAvailabilityStatus] = useState('dostępny');
   const [info, setInfo] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [latitude, setLatitude] = useState(null);
@@ -88,6 +89,7 @@ function SettingsPage() {
           setNickname(data.display_name);
         }
 
+        setAvailabilityStatus(data.status || 'dostępny');
         setLatitude(data.latitude ?? null);
         setLongitude(data.longitude ?? null);
         setOpis(data.opis ?? '');
@@ -163,6 +165,7 @@ function SettingsPage() {
       const payload = {
         display_name: nickname.trim(),
         opis: opis.trim(),
+        status: availabilityStatus,
         //notifications: notificationsEnabled,
         latitude: latitudeToSave,
         longitude: longitudeToSave,
@@ -241,6 +244,33 @@ function SettingsPage() {
                 <button className="ghost-button" type="button" onClick={() => setShowDialog(true)}>
                   Otwórz ustawienia
                 </button>
+              </div>
+            </div>
+
+            <div className="status status--inline" data-variant="info">
+              <div className="setting-header">
+                <h4>Status dostępności</h4>
+                <p>Określ, czy Twoja Mordeczka jest widoczna jako dostępna na mapie.</p>
+              </div>
+              <div className="status-toggle" role="group" aria-label="Status dostępności">
+                {[
+                  { value: 'dostępny', label: 'Dostępny' },
+                  { value: 'niedostępny', label: 'Niedostępny' },
+                ].map((option) => {
+                  const isActive = availabilityStatus === option.value;
+                  return (
+                    <button
+                      key={option.value}
+                      type="button"
+                      className={`pill ${isActive ? '' : 'pill-outline'}`}
+                      aria-pressed={isActive}
+                      onClick={() => setAvailabilityStatus(option.value)}
+                      disabled={isLoading}
+                    >
+                      {option.label}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>

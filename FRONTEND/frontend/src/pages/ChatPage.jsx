@@ -144,20 +144,6 @@ function ChatPage() {
     );
   }, []);
 
-  const getInviterEmail = useCallback((invitation, fallback = 'Brak adresu e-mail') => {
-    if (!invitation) return fallback;
-
-    return (
-      invitation.user_email ||
-      invitation.user?.email ||
-      invitation.sender_email ||
-      invitation.inviter_email ||
-      invitation.inviter?.email ||
-      invitation.email ||
-      fallback
-    );
-  }, []);
-
   const resolveStatus = useCallback((invitation) => {
     const rawStatus =
       invitation.status ||
@@ -1184,7 +1170,6 @@ function ChatPage() {
                 const invitationKey = invitation.id ?? invitation.uuid ?? index;
                 const isActive = invitationKey === activeInvitationKey;
                 const inviterName = getInviterName(invitation);
-                const inviterEmail = getInviterEmail(invitation);
 
                 return (
                   <li
@@ -1202,7 +1187,6 @@ function ChatPage() {
                           <div>
                             <p className="muted small-text invitation-from-label">Zaproszenie od</p>
                             <strong>{inviterName}</strong>
-                            <p className="muted small-text">{inviterEmail}</p>
                           </div>
                           <div className="invitation-meta">
                             {getCreatedLabel(invitation) && (
@@ -1237,28 +1221,10 @@ function ChatPage() {
                               <dd>{inviterName}</dd>
                             </div>
                           )}
-                          {inviterEmail && (
-                            <div>
-                              <dt>E-mail zapraszającego</dt>
-                              <dd>{inviterEmail}</dd>
-                            </div>
-                          )}
                           {invitation.role && (
                             <div>
                               <dt>Rola</dt>
                               <dd>{invitation.role}</dd>
-                            </div>
-                          )}
-                          {invitation.user && (
-                            <div>
-                              <dt>Nadawca</dt>
-                              <dd>{invitation.user}</dd>
-                            </div>
-                          )}
-                          {invitation.user_email && (
-                            <div>
-                              <dt>E-mail nadawcy</dt>
-                              <dd>{invitation.user_email}</dd>
                             </div>
                           )}
                         </dl>

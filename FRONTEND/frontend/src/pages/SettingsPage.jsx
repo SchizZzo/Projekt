@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { apiRequest } from '../api/client';
 import MordeczkiAnimation from '../components/MordeczkiAnimation';
 
@@ -25,6 +26,7 @@ function SettingsPage() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [showDialog, setShowDialog] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const navigate = useNavigate();
 
   const getCurrentCoordinates = () =>
     new Promise((resolve) => {
@@ -201,6 +203,28 @@ function SettingsPage() {
     }
   };
 
+  const handleDeleteAccount = async () => {
+    setIsLoading(true);
+    try {
+      const response = await apiRequest(PROFILE_ENDPOINT, { method: 'DELETE' });
+
+      if (!response.ok) {
+        throw new Error('Nie udało się usunąć konta. Spróbuj ponownie.');
+      }
+
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      setInfo('Konto zostało usunięte. Przekierowanie do logowania...');
+      navigate('/login', { replace: true });
+    } catch (error) {
+      setInfo(error.message || 'Wystąpił błąd podczas usuwania konta.');
+    } finally {
+      setIsLoading(false);
+      setConfirmDelete(false);
+      setShowDialog(false);
+    }
+  };
+
   return (
     <div className="card">
       <p className="badge">Ustawienia</p>
@@ -353,8 +377,7 @@ function SettingsPage() {
                 <div>
                   <strong>Usuwanie konta</strong>
                   <p>
-                    Symulacja dialogu potwierdzenia. W prawdziwej aplikacji tutaj następuje wywołanie
-                    FirebaseAuth oraz API usuwania.
+                    Opcja usuwa Twoje konto w systemie i wylogowuje Cię z aplikacji.
                   </p>
                 </div>
                 <button className="danger-button" type="button" onClick={() => setConfirmDelete(true)}>
@@ -372,7 +395,7 @@ function SettingsPage() {
                     <button
                       className="danger-button"
                       type="button"
-                      onClick={() => setInfo('Konto zostałoby usunięte po stronie serwera.')}
+                      onClick={handleDeleteAccount}
                     >
                       Usuń
                     </button>

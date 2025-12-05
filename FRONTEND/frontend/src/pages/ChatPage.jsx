@@ -44,6 +44,7 @@ function ChatPage() {
   const [activeInvitationKey, setActiveInvitationKey] = useState(null);
   const [invitationActionState, setInvitationActionState] = useState({ status: 'idle', message: '' });
   const [pendingMessages, setPendingMessages] = useState([]);
+  const [contactActionState, setContactActionState] = useState({ status: 'idle', message: '' });
 
   const getMessageSenderId = useCallback((message) => {
     return (
@@ -317,6 +318,59 @@ function ChatPage() {
     const numericId = Number(rawId);
     return Number.isNaN(numericId) ? rawId : numericId;
   }, []);
+
+  const removeContact = useCallback(
+    async (contactKey) => {
+      const contact = getContactByKey(contactKey);
+      const contactId = getContactId(contact);
+
+      if (!contact || !contactId) {
+        setContactActionState({ status: 'error', message: 'Nie można usunąć kontaktu bez identyfikatora.' });
+        return;
+      }
+
+      setContactActionState({ status: 'loading', message: 'Trwa usuwanie kontaktu...' });
+
+      try {
+        const response = await apiRequest(`/joker-chat-api/joker-chat/friendships/${contactId}/`, {
+          method: 'DELETE',
+        });
+
+        if (!response.ok) {
+          throw new Error('Błąd usuwania kontaktu.');
+        }
+
+        const removedId = String(coerceId(contactId));
+
+        setContacts((previousContacts) => {
+          const updatedContacts = previousContacts.filter(
+            (item) => String(getContactId(item)) !== removedId,
+          );
+
+          setSelected((currentSelected) => {
+            if (!currentSelected) return currentSelected;
+
+            const stillExists = updatedContacts.some(
+              (item, index) =>
+                (getContactKey(item, index)?.toString?.() ?? getContactKey(item, index)) ===
+                (currentSelected?.toString?.() ?? currentSelected),
+            );
+
+            if (stillExists) return currentSelected;
+
+            return updatedContacts.length ? getContactKey(updatedContacts[0], 0) : null;
+          });
+
+          return updatedContacts;
+        });
+
+        setContactActionState({ status: 'success', message: 'Kontakt został usunięty.' });
+      } catch (error) {
+        setContactActionState({ status: 'error', message: 'Nie udało się usunąć kontaktu.' });
+      }
+    },
+    [coerceId, getContactByKey, getContactId, getContactKey],
+  );
 
   useEffect(() => {
     contactsRef.current = contacts;
@@ -1022,11 +1076,29 @@ function ChatPage() {
                 <div className="contact-meta">
                   {unreadCount ? <span className="contact-badge">{unreadCount}</span> : null}
                   <span className={`status-dot ${contactStatus.className}`} title={contactStatus.label} />
+                  <button
+                    type="button"
+                    className="ghost-button"
+                    aria-label="Usuń kontakt"
+                    title="Usuń kontakt"
+                    disabled={contactActionState.status === 'loading'}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      removeContact(contactKey);
+                    }}
+                  >
+                    Usuń
+                  </button>
                 </div>
               </li>
             );
           })}
         </ul>
+        {contactActionState.message && (
+          <p className={contactActionState.status === 'error' ? 'error-text' : 'success-text'}>
+            {contactActionState.message}
+          </p>
+        )}
       </aside>
 
       <div className="resize-handle" aria-hidden="true" onMouseDown={startResize('contacts')}>

@@ -199,7 +199,8 @@ class FriendshipViewSet(viewsets.ModelViewSet):
 
         friendship = get_object_or_404(
             Friendship,
-            Q(user=request.user, friend_id=friend_id) | Q(user_id=friend_id, friend=request.user),
+            user=request.user,
+            friend_id=friend_id,
         )
 
         if friendship.user != request.user and friendship.friend != request.user:

@@ -323,9 +323,16 @@ function ChatPage() {
     async (contactKey) => {
       const contact = getContactByKey(contactKey);
       const contactId = getContactId(contact);
+      const contactName = getContactDisplayName(contact, 'tego kontaktu');
 
       if (!contact || !contactId) {
         setContactActionState({ status: 'error', message: 'Nie można usunąć kontaktu bez identyfikatora.' });
+        return;
+      }
+
+      const isConfirmed = window.confirm(`Czy na pewno chcesz usunąć kontakt "${contactName}"?`);
+
+      if (!isConfirmed) {
         return;
       }
 
@@ -369,7 +376,7 @@ function ChatPage() {
         setContactActionState({ status: 'error', message: 'Nie udało się usunąć kontaktu.' });
       }
     },
-    [coerceId, getContactByKey, getContactId, getContactKey],
+    [coerceId, getContactByKey, getContactDisplayName, getContactId, getContactKey],
   );
 
   useEffect(() => {

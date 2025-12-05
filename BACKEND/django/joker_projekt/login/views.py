@@ -1,17 +1,19 @@
 from django.contrib.gis.db.models.functions import Distance
 
-from rest_framework import status
 from rest_framework import generics
+from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from .models import SiteDocument
 from .serializers import (
     AvailableUserSerializer,
     CurrentUserSerializer,
     LoginSerializer,
     RegisterSerializer,
+    SiteDocumentSerializer,
 )
 
 
@@ -91,3 +93,12 @@ class AvailableUsersAPIView(generics.ListAPIView):
             queryset = queryset.annotate(distance=Distance("punkt", user_point))
 
         return queryset
+
+
+class SiteDocumentAPIView(generics.RetrieveAPIView):
+    """Public endpoint exposing legal documents stored in the database."""
+
+    permission_classes = [AllowAny]
+    serializer_class = SiteDocumentSerializer
+    queryset = SiteDocument.objects.all()
+    lookup_field = "slug"

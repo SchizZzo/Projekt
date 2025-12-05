@@ -6,6 +6,7 @@ from .views import (
     CurrentUserAPIView,
     LoginAPIView,
     RegisterAPIView,
+    SiteDocumentAPIView,
 )
 
 
@@ -20,5 +21,10 @@ urlpatterns = [
         "available-users/",
         AvailableUsersAPIView.as_view(),
         name="available_users",
+    ),
+    path(
+        "documents/<slug:slug>/",
+        SiteDocumentAPIView.as_view(),
+        name="site_document",
     ),
 ]

@@ -1,6 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import BaseLayout from './layouts/BaseLayout.jsx';
 import ChatPage from './pages/ChatPage.jsx';
+import DocumentPage from './pages/DocumentPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import MapPage from './pages/MapPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
@@ -16,6 +17,7 @@ function App() {
           <Route path="settings" element={<SettingsPage />} />
           <Route path="map" element={<MapPage />} />
           <Route path="chat" element={<ChatPage />} />
+          <Route path="documents/:slug" element={<DocumentPage />} />
         </Route>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />

@@ -4,6 +4,8 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
+from .models import SiteDocument
+
 
 class LoginSerializer(serializers.Serializer):
     """Serializer used to validate login credentials."""
@@ -163,3 +165,12 @@ class AvailableUserSerializer(serializers.ModelSerializer):
         if distance is None:
             return None
         return distance.km
+
+
+class SiteDocumentSerializer(serializers.ModelSerializer):
+    """Serializer exposing public legal documents."""
+
+    class Meta:
+        model = SiteDocument
+        fields = ("title", "slug", "document_type", "content", "updated_at")
+        read_only_fields = fields

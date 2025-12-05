@@ -6,6 +6,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.db.models import Q
 
 from .models import SiteDocument
 from .serializers import (
@@ -15,6 +16,7 @@ from .serializers import (
     RegisterSerializer,
     SiteDocumentSerializer,
 )
+from joker_chat.models import Message
 
 
 class LoginAPIView(APIView):
@@ -80,6 +82,7 @@ class CurrentUserAPIView(APIView):
 
     def delete(self, request, *args, **kwargs):
         user = request.user
+        Message.objects.filter(Q(nadawca=user) | Q(odbiorca=user)).delete()
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 

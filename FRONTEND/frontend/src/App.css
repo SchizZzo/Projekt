@@ -1619,6 +1619,18 @@ input:checked + .slider:before { transform: translateX(18px); }
   flex-wrap: wrap;
 }
 
+.footer-contacts {
+  display: grid;
+  gap: 0.4rem;
+  align-items: start;
+}
+
+.footer-contact-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
 .footer-link {
   padding: 0.55rem 0.85rem;
   border-radius: 10px;

@@ -108,6 +108,17 @@ function BaseLayout() {
               Zapoznaj się z kluczowymi dokumentami prawnymi naszego serwisu.
             </p>
           </div>
+          <div className="footer-contacts">
+            <div className="footer-title">Kontakt</div>
+            <div className="footer-contact-list">
+              <a className="footer-link" href="mailto:22989@student.ansleszno.pl">
+                22989@student.ansleszno.pl
+              </a>
+              <a className="footer-link" href="mailto:nr@student.ansleszno.pl">
+                nr@student.ansleszno.pl
+              </a>
+            </div>
+          </div>
           <div className="footer-links">
             {footerLinks.map((item) => (
               <NavLink key={item.path} to={item.path} className="footer-link">

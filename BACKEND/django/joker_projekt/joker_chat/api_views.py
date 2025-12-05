@@ -195,10 +195,17 @@ class FriendshipViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
     
     def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        if instance.user != request.user:
+        friend_id = kwargs.get("pk")
+
+        friendship = get_object_or_404(
+            Friendship,
+            Q(user=request.user, friend_id=friend_id) | Q(user_id=friend_id, friend=request.user),
+        )
+
+        if friendship.user != request.user and friendship.friend != request.user:
             return Response({"error": "Nie masz uprawnień do usunięcia tego kontaktu."}, status=status.HTTP_403_FORBIDDEN)
-        self.perform_destroy(instance)
+
+        self.perform_destroy(friendship)
         return Response(status=status.HTTP_204_NO_CONTENT)
     
     @action(detail=False, methods=['get'], url_path='invitations', permission_classes=[IsAuthenticated])

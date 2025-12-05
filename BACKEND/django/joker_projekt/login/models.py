@@ -48,7 +48,7 @@ class SiteDocument(models.Model):
     document_type = models.CharField(
         max_length=32, choices=DocumentType.choices, unique=True
     )
-    slug = models.SlugField(max_length=100, unique=True, blank=True, editable=False, db_index=True)
+    slug = models.SlugField(max_length=100, unique=True, db_index=True)
     title = models.CharField(max_length=255)
     content = models.TextField()
     updated_at = models.DateTimeField(auto_now=True)
@@ -59,17 +59,4 @@ class SiteDocument(models.Model):
     def __str__(self):
         return self.title
 
-    def save(self, *args, **kwargs):
-
-        base_slug = slugify(self.title, allow_unicode=True)[:100]
-        slug = base_slug
-        counter = 1
-        Model = type(self)
-
-        while Model.objects.filter(slug=slug).exclude(pk=self.pk).exists():
-            suffix = f"-{counter}"
-            slug = f"{base_slug[:100 - len(suffix)]}{suffix}"
-            counter += 1
-
-        self.slug = slug
-        super().save(*args, **kwargs)
+    

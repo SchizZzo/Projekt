@@ -1,0 +1,135 @@
+
+
+# **REGULAMIN KORZYSTANIA Z SERWISU – CHAT Z MAPĄ UŻYTKOWNIKÓW**
+
+*(wersja ogólna, zgodna z polskim i unijnym prawem; dostosowana do aplikacji internetowych opartych o geolokalizację i czat)*
+
+---
+
+## **1. Definicje**
+
+1. **Serwis / Aplikacja** – platforma internetowa udostępniająca funkcje czatu oraz mapy prezentującej lokalizacje użytkowników.
+2. **Usługodawca** – podmiot prowadzący i administrujący serwis (Twoje dane firmy lub imię i nazwisko – uzupełnię, jeśli podasz).
+3. **Użytkownik** – osoba korzystająca z serwisu, w tym przeglądająca mapę, prowadząca rozmowy lub tworząca konto.
+4. **Konto** – indywidualny profil użytkownika umożliwiający korzystanie z funkcji aplikacji, w tym chatu i geolokalizacji.
+5. **Treści** – wszelkie materiały, wiadomości, dane, lokalizacje, zdjęcia i inne informacje publikowane lub wysyłane przez użytkowników.
+
+---
+
+## **2. Postanowienia ogólne**
+
+1. Niniejszy regulamin określa zasady korzystania z serwisu, w szczególności funkcjalności:
+
+   * wyświetlanie mapy z lokalizacjami użytkowników,
+   * czat indywidualny i/lub grupowy,
+   * profile użytkowników oraz ustawienia widoczności.
+2. Korzystanie z serwisu oznacza akceptację regulaminu.
+3. Usługodawca może wprowadzać zmiany regulaminu, o czym poinformuje użytkowników z odpowiednim wyprzedzeniem.
+
+---
+
+## **3. Warunki korzystania z serwisu**
+
+1. Korzystanie z serwisu jest możliwe po akceptacji regulaminu oraz polityki prywatności.
+2. Użytkownik zobowiązuje się do:
+
+   * podawania prawdziwych danych (o ile są wymagane),
+   * nieudostępniania swojego konta osobom trzecim,
+   * korzystania z serwisu zgodnie z przepisami prawa oraz zasadami współżycia społecznego.
+3. Usługodawca może zablokować lub usunąć konto, jeżeli użytkownik:
+
+   * narusza regulamin,
+   * wysyła treści obraźliwe, niezgodne z prawem, nękające, pornograficzne lub spam,
+   * próbuje nadużyć systemu geolokalizacji,
+   * stanowi zagrożenie dla bezpieczeństwa innych użytkowników.
+
+---
+
+## **4. Geolokalizacja i mapa użytkowników**
+
+1. Funkcja mapy umożliwia wyświetlanie przybliżonej lokalizacji użytkowników.
+2. Lokalizacja może być:
+
+   * pobierana automatycznie z urządzenia (za zgodą użytkownika),
+   * ustawiana ręcznie przez użytkownika.
+3. Użytkownik może w każdej chwili wyłączyć udostępnianie swojej lokalizacji.
+4. Usługodawca nie gwarantuje dokładności danych geolokalizacyjnych i nie odpowiada za skutki ich nieprawidłowości.
+5. Zabronione jest manipulowanie lokalizacją w celu wprowadzania innych użytkowników w błąd, nękania lub śledzenia kogokolwiek.
+
+---
+
+## **5. Zasady korzystania z chatu**
+
+1. Użytkownik może wysyłać wiadomości tekstowe, a także inne treści, o ile funkcjonalność na to pozwala.
+2. Zabronione jest wysyłanie:
+
+   * treści obraźliwych, wulgarnych, agresywnych,
+   * treści pornograficznych lub seksualizujących osoby małoletnie,
+   * spamu, reklam, linków do wirusów lub złośliwego oprogramowania,
+   * gróźb lub treści naruszających prawo.
+3. Usługodawca ma prawo usuwać wiadomości naruszające regulamin lub blokować użytkownika.
+
+---
+
+## **6. Treści użytkownika**
+
+1. Użytkownik ponosi pełną odpowiedzialność za treści, które publikuje.
+2. Usługodawca może usuwać treści naruszające regulamin lub przepisy prawa.
+3. Użytkownik udziela usługodawcy niewyłącznej licencji na techniczne przetwarzanie treści niezbędne do wyświetlenia ich w serwisie.
+
+---
+
+## **7. Odpowiedzialność**
+
+1. Usługodawca nie odpowiada za działania użytkowników, w szczególności za:
+
+   * treści przesyłane w czacie,
+   * podawane lokalizacje,
+   * kontakty nawiązywane między użytkownikami.
+2. Usługodawca nie gwarantuje ciągłości działania serwisu ani braku błędów technicznych.
+3. Użytkownik korzysta z serwisu na własną odpowiedzialność.
+
+---
+
+## **8. Konto użytkownika i jego usunięcie**
+
+1. Użytkownik może w każdej chwili usunąć swoje konto.
+2. Usunięcie konta powoduje:
+
+   * usunięcie danych profilu,
+   * usunięcie lokalizacji,
+   * anonimizację wiadomości (jeśli to możliwe technicznie).
+3. Usługodawca może usunąć konto, jeśli użytkownik narusza regulamin.
+
+---
+
+## **9. Prywatność i dane osobowe**
+
+1. Dane osobowe użytkowników przetwarzane są zgodnie z RODO oraz polityką prywatności.
+2. Użytkownik ma prawo:
+
+   * dostępu do swoich danych,
+   * ich poprawiania,
+   * usunięcia,
+   * ograniczenia przetwarzania,
+   * sprzeciwu,
+   * przenoszenia danych.
+3. Lokalizacja jest udostępniana wyłącznie za zgodą użytkownika i może być w każdej chwili wyłączona.
+
+---
+
+## **10. Zgłaszanie naruszeń**
+
+1. Użytkownik może zgłosić naruszenie poprzez formularz kontaktowy lub adres e-mail usługodawcy.
+2. Usługodawca podejmie odpowiednie działania w uzasadnionym czasie.
+
+---
+
+## **11. Postanowienia końcowe**
+
+1. Regulamin wchodzi w życie z dniem publikacji w serwisie.
+2. Prawem właściwym jest prawo polskie.
+3. W sprawach nieuregulowanych zastosowanie mają przepisy Kodeksu cywilnego oraz inne właściwe akty prawne.
+4. Użytkownik akceptując regulamin, akceptuje także zasady przetwarzania danych opisane w polityce prywatności.
+
+

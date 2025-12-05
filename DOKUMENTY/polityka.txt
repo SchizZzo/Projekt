@@ -1,0 +1,211 @@
+
+
+# **POLITYKA PRYWATNOŚCI
+
+dla serwisu z czatem i mapą użytkowników**
+
+*(wersja ogólna – do dostosowania pod Twoją aplikację)*
+
+---
+
+## **1. Informacje ogólne**
+
+1. Niniejsza Polityka Prywatności określa zasady przetwarzania danych osobowych użytkowników korzystających z serwisu internetowego udostępniającego funkcje czatu oraz mapy prezentującej lokalizacje użytkowników („Serwis”).
+2. Administratorem danych osobowych użytkowników jest:
+   **[Tu wstaw dane Administratora – uzupełnię, gdy podasz]**
+3. Kontakt w sprawach związanych z ochroną danych:
+   **[adres e-mail administratora danych]**
+
+---
+
+## **2. Zakres przetwarzanych danych osobowych**
+
+W zależności od sposobu korzystania z Serwisu, Administrator może przetwarzać następujące dane:
+
+### **Dane konta użytkownika**
+
+* adres e-mail (login),
+* nazwa użytkownika / pseudonim,
+* hasło (zaszyfrowane),
+* zdjęcie profilowe (opcjonalnie).
+
+### **Dane lokalizacyjne**
+
+* lokalizacja użytkownika pobrana z GPS / przeglądarki (tylko za zgodą),
+* lokalizacja ustawiona ręcznie przez użytkownika,
+* przybliżone dane dotyczące aktywności w Serwisie (np. ostatnia aktywność).
+
+### **Dane z czatu**
+
+* wiadomości tekstowe,
+* przesyłane treści (np. zdjęcia, linki – jeśli funkcja jest włączona),
+* metadane wiadomości (czas, nadawca, odbiorca).
+
+### **Dane techniczne i statystyczne**
+
+* adres IP,
+* typ urządzenia i system operacyjny,
+* wersja przeglądarki,
+* cookies (plików cookie),
+* identyfikatory urządzenia,
+* logi techniczne.
+
+Administrator **nie przetwarza danych wrażliwych** (art. 9 RODO).
+
+---
+
+## **3. Cele i podstawy prawne przetwarzania**
+
+### **Korzystanie z Serwisu**
+
+* założenie i obsługa konta użytkownika – **art. 6 ust. 1 lit. b RODO**
+* obsługa mapy i lokalizacji – **zgoda użytkownika (art. 6 ust. 1 lit. a RODO)**
+* wyświetlanie użytkowników na mapie – **prawnie uzasadniony interes Administratora (art. 6 ust. 1 lit. f)**
+
+### **Czat i komunikacja**
+
+* umożliwienie wysyłania i odbierania wiadomości – **art. 6 ust. 1 lit. b RODO**
+* przeciwdziałanie nadużyciom, spamowi i treściom zabronionym – **art. 6 ust. 1 lit. f**
+
+### **Bezpieczeństwo i utrzymanie systemu**
+
+* zapewnienie bezpieczeństwa kont i danych – **art. 6 ust. 1 lit. f**
+* prowadzenie logów serwera – **art. 6 ust. 1 lit. f**
+
+### **Statystyki i analityka**
+
+* analiza ruchu i sposobu korzystania z Serwisu – **art. 6 ust. 1 lit. f**
+  (dane są anonimizowane, jeśli to możliwe)
+
+### **Marketing (jeśli włączysz)**
+
+* newsletter, powiadomienia – **art. 6 ust. 1 lit. a**
+
+---
+
+## **4. Udostępnianie danych**
+
+Administrator może udostępniać dane:
+
+1. **Podmiotom przetwarzającym** dane w jego imieniu, takim jak:
+
+   * dostawca hostingu / serwerów,
+   * dostawca usług e-mail,
+   * usługodawcy IT (np. obsługa bazy danych, systemów bezpieczeństwa),
+   * narzędzia analityczne.
+
+2. **Organom państwowym**, na podstawie przepisów prawa (np. policja, sąd).
+
+3. Dane **nie są sprzedawane** podmiotom trzecim.
+
+4. Dane lokalizacji użytkownika **nie są udostępniane innym użytkownikom bez zgody** – użytkownik może sam decydować o widoczności lokalizacji.
+
+---
+
+## **5. Pliki cookies**
+
+Serwis może korzystać z:
+
+### **Cookies niezbędnych:**
+
+* logowanie,
+* utrzymanie sesji,
+* podstawowe funkcje interfejsu.
+
+### **Cookies analitycznych (opcjonalne):**
+
+* np. Google Analytics, Matomo
+  → wymagają zgody użytkownika.
+
+Użytkownik może zarządzać cookies w ustawieniach przeglądarki lub bannera cookie.
+
+---
+
+## **6. Geolokalizacja**
+
+1. Udostępnienie lokalizacji odbywa się **tylko za zgodą użytkownika**.
+2. Zgoda może być przez użytkownika cofnięta w każdej chwili.
+3. Lokalizacja może być:
+
+   * pobierana automatycznie (GPS, przeglądarka),
+   * ustawiana manualnie.
+4. Lokalizacja jest widoczna dla innych użytkowników tylko zgodnie z ustawieniami konta.
+5. Serwis nie śledzi użytkownika poza funkcjonalnością mapy wynikającą z jego działań.
+
+---
+
+## **7. Okres przechowywania danych**
+
+* dane konta – do czasu usunięcia konta przez użytkownika,
+* dane lokalizacji – tylko do wyświetlenia na mapie, mogą być usuwane po wylogowaniu lub po określonym czasie,
+* wiadomości czatu – do czasu ich ręcznego usunięcia lub zgodnie z polityką przechowywania,
+* logi techniczne – maksymalnie 12 miesięcy (chyba że przepisy wymagają dłużej),
+* dane statystyczne – w formie zanonimizowanej bez ograniczenia czasowego.
+
+---
+
+## **8. Prawa użytkownika (RODO)**
+
+Użytkownik ma prawo do:
+
+1. dostępu do swoich danych,
+2. sprostowania danych,
+3. usunięcia danych („prawo do bycia zapomnianym”),
+4. ograniczenia przetwarzania,
+5. przenoszenia danych,
+6. wniesienia sprzeciwu wobec przetwarzania,
+7. cofnięcia zgody (np. na lokalizację lub marketing),
+8. wniesienia skargi do Prezesa UODO.
+
+Wnioski należy kierować na adres:
+**[tu e-mail administratora]**
+
+---
+
+## **9. Bezpieczeństwo danych**
+
+Administrator stosuje środki techniczne i organizacyjne, takie jak:
+
+* szyfrowanie połączeń (HTTPS),
+* hasła przechowywane w formie zaszyfrowanej (hash + salt),
+* zapory sieciowe i systemy anty-DDoS,
+* regularne aktualizacje oprogramowania,
+* kontrola dostępu po stronie serwera.
+
+Mimo to użytkownik powinien zachować ostrożność i:
+
+* nie udostępniać hasła innym osobom,
+* uważać na treści publikowane w czacie,
+* nie udostępniać lokalizacji osobom, do których nie ma zaufania.
+
+---
+
+## **10. Usunięcie konta i danych**
+
+1. Użytkownik może zażądać usunięcia konta w ustawieniach lub kontaktując się z administratorem.
+2. Po usunięciu konta:
+
+   * dane osobowe zostaną usunięte lub zanonimizowane,
+   * wiadomości czatu mogą pozostać w formie anonimowej (np. „użytkownik usunięty”), jeśli jest to niezbędne do integralności rozmów.
+
+---
+
+## **11. Zmiany Polityki Prywatności**
+
+1. Administrator może zmieniać Politykę Prywatności w przypadku:
+
+   * aktualizacji funkcjonalności aplikacji,
+   * zmian prawa,
+   * wprowadzenia nowych usług.
+2. Użytkownik zostanie poinformowany o zmianach w widoczny sposób (np. komunikat w aplikacji).
+
+---
+
+## **12. Kontakt**
+
+W sprawach dotyczących danych osobowych prosimy o kontakt:
+
+**[tu wstaw: e-mail administratora, nazwę firmy, adres – mogę przygotować wersję finalną]**
+
+---
+

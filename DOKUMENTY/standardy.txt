@@ -1,0 +1,210 @@
+
+# **STANDARDY OCHRONY MAŁOLETNICH
+
+dla serwisu z czatem i mapą użytkowników**
+
+---
+
+## **1. Cele i zasady ogólne**
+
+Celem niniejszych standardów jest zapewnienie maksymalnego bezpieczeństwa małoletnich korzystających z serwisu, który umożliwia:
+
+* wyświetlanie przybliżonych lokalizacji użytkowników na mapie,
+* komunikację za pomocą czatu.
+
+Serwis zobowiązuje się chronić małoletnich przed:
+
+* nadużyciami,
+* groomingiem,
+* nękaniem,
+* ujawnianiem danych lokalizacyjnych,
+* treściami seksualnymi lub wulgarnymi,
+* kontaktami nieodpowiednimi dla ich wieku.
+
+---
+
+## **2. Minimalny wiek użytkownika**
+
+1. Z aplikacji mogą korzystać osoby **od 13. roku życia** (USA/UE standard).
+2. Osoby poniżej 16 lat muszą korzystać z serwisu **za zgodą rodzica lub opiekuna** – zgodnie z RODO.
+3. Osoby poniżej 13 lat **nie mogą tworzyć konta**.
+
+*(Jeśli chcesz, mogę ustawić inny minimalny wiek – np. 16+)*
+
+---
+
+## **3. Ograniczenie widoczności lokalizacji małoletnich**
+
+Aby chronić małoletnich przed śledzeniem i nadużyciami:
+
+1. Lokalizacja użytkowników <18 lat jest **domyślnie przybliżana** (np. obszar miasta lub ±1 km).
+2. Dokładna lokalizacja nigdy nie jest udostępniana innym użytkownikom.
+3. Małoletni mogą całkowicie wyłączyć widoczność lokalizacji w ustawieniach konta.
+4. System może okresowo losowo przesuwać punkt lokalizacyjny małoletnich o kilka procent (tzw. **location fuzzing**).
+
+---
+
+## **4. Zasady korzystania z czatu przez małoletnich**
+
+1. Zabroniona jest wymiana treści:
+
+   * seksualnych,
+   * pornograficznych,
+   * wulgarnych,
+   * uwłaczających,
+   * zachęcających do kontaktów poza aplikacją,
+   * próśb o zdjęcia, szczególnie wrażliwych.
+
+2. Zakazuje się próśb o:
+
+   * adres domowy,
+   * numer telefonu,
+   * informacje o rodzinie,
+   * szkołę,
+   * miejsca codziennego pobytu.
+
+3. W przypadku wykrycia takich zachowań czat może zostać:
+
+   * automatycznie zablokowany,
+   * przekazany do moderacji,
+   * zgłoszony organom ścigania, jeśli dotyczy przestępstw na małoletnich.
+
+---
+
+## **5. Wykrywanie i przeciwdziałanie groomingowi**
+
+Grooming – czyli uwodzenie małoletnich online – jest jednym z największych zagrożeń przy aplikacjach lokalizacyjnych.
+
+Serwis wdraża:
+
+1. **Automatyczne alerty zachowania ryzykownego**, takie jak:
+
+   * nagłe przejście na prywatny czat,
+   * prośby o spotkanie,
+   * prośby o lokalizację,
+   * powtarzające się wiadomości od dorosłych do wielu młodych użytkowników.
+
+2. **Moderatorzy** mogą analizować rozmowy zgłoszone przez użytkowników (nigdy nie monitorujemy prywatnych rozmów bez zgody lub zgłoszenia).
+
+3. Każdy użytkownik może zgłosić:
+
+   * nadużycie,
+   * podejrzane zachowanie,
+   * prośby o lokalizację,
+   * treści seksualne.
+
+---
+
+## **6. Weryfikacja wieku użytkownika**
+
+Serwis może stosować:
+
+1. **Samo-potwierdzenie wieku** przy rejestracji (standard minimalny).
+2. **Weryfikację przez e-mail lub SMS** dla kont podwyższonego ryzyka.
+3. **Weryfikację dokumentu lub przelewu weryfikacyjnego** – w przypadkach zgłoszeń lub podejrzeń groomingowych.
+
+---
+
+## **7. Ochrona danych osobowych małoletnich**
+
+1. Administrator przetwarza dane małoletnich zgodnie z RODO.
+2. Nie gromadzimy danych nadmiarowych, takich jak:
+
+   * dokładny adres,
+   * szkoła,
+   * numery dokumentów.
+3. Dane lokalizacyjne małoletnich są anonimizowane i przechowywane krócej niż dane dorosłych.
+4. Rodzice mają prawo:
+
+   * dostępu do danych małoletniego,
+   * żądania usunięcia konta,
+   * żądania ograniczenia przetwarzania.
+
+---
+
+## **8. Reakcja na zgłoszenia**
+
+1. Każdy użytkownik może zgłosić naruszenie wprost z aplikacji.
+
+2. Zgłoszenia dotyczące małoletnich mają **najwyższy priorytet** i są analizowane niezwłocznie.
+
+3. Jeśli istnieje podejrzenie groomingu, Administrator:
+
+   * blokuje użytkownika podejrzanego,
+   * zabezpiecza logi i dowody,
+   * może zgłosić sprawę odpowiednim organom.
+
+4. Jeśli sytuacja zagraża życiu lub bezpieczeństwu dziecka, Serwis może przekazać dane policji zgodnie z prawem.
+
+---
+
+## **9. Zakaz dyskryminacji i przemocy**
+
+Małoletni nie mogą być narażani na:
+
+* przemoc psychiczną,
+* groźby,
+* mobbing,
+* wyśmiewanie,
+* szantaż,
+* obrażanie.
+
+Złamanie zasad skutkuje natychmiastową blokadą konta.
+
+---
+
+## **10. Edukacja użytkowników**
+
+Serwis zobowiązuje się do:
+
+1. Publikowania zasad bezpieczeństwa dla młodych użytkowników.
+2. Informowania o tym, jak bezpiecznie korzystać z mapy i czatu.
+3. Przypominania o nieudostępnianiu lokalizacji osobom nieznanym.
+
+---
+
+## **11. Uprawnienia i obowiązki Administratora**
+
+Administrator:
+
+* wdraża zabezpieczenia techniczne i organizacyjne,
+* monitoruje zgłoszenia,
+* reaguje na incydenty,
+* blokuje konta naruszające zasady,
+* przechowuje dowody na potrzeby postępowań.
+
+Administrator **może ujawniać dane organom ścigania**, jeśli:
+
+* ma miejsce podejrzenie popełnienia przestępstwa wobec małoletniego,
+* użytkownik wymaga ochrony prawnej.
+
+---
+
+## **12. Szkolenia i procedury wewnętrzne**
+
+Jeśli serwis ma moderatorów lub pracowników, obowiązują ich:
+
+1. szkolenia z ochrony małoletnich,
+2. zasada niekontaktowania się prywatnie z małoletnimi użytkownikami,
+3. obowiązek natychmiastowego zgłoszenia podejrzenia groomingu,
+4. zasady archiwizacji dowodów i przekazywania organom ścigania.
+
+---
+
+## **13. Odpowiedzialność użytkowników dorosłych**
+
+1. Dorośli użytkownicy ponoszą pełną odpowiedzialność za swoje zachowania.
+2. Jakiekolwiek działanie mogące naruszyć bezpieczeństwo małoletnich prowadzi do:
+
+   * usunięcia konta,
+   * zgłoszenia organom ścigania.
+
+---
+
+## **14. Postanowienia końcowe**
+
+1. Standardy są częścią Regulaminu i Polityki Prywatności.
+2. Administrator może aktualizować standardy, jeśli zmieniają się przepisy lub funkcje serwisu.
+3. Standardy obowiązują wszystkich użytkowników serwisu – zarówno pełnoletnich, jak i małoletnich.
+
+---

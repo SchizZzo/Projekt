@@ -1652,6 +1652,51 @@ input:checked + .slider:before { transform: translateX(18px); }
   color: #e5e7eb;
 }
 
+.document-content h1,
+.document-content h2,
+.document-content h3,
+.document-content h4,
+.document-content h5,
+.document-content h6 {
+  margin: 0;
+  font-weight: 700;
+}
+
+.document-content ul,
+.document-content ol {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.document-content code {
+  background: rgba(148, 163, 184, 0.15);
+  padding: 0.15rem 0.35rem;
+  border-radius: 6px;
+  font-size: 0.95em;
+}
+
+.document-content pre {
+  background: rgba(15, 23, 42, 0.65);
+  padding: 1rem;
+  border-radius: 12px;
+  overflow-x: auto;
+}
+
+.document-content a {
+  color: #a78bfa;
+  text-decoration: underline;
+}
+
+.document-content blockquote {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border-left: 4px solid #a78bfa;
+  background: rgba(167, 139, 250, 0.1);
+  border-radius: 10px;
+}
+
 .error-text {
   color: var(--error);
 }

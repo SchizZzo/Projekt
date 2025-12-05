@@ -78,6 +78,11 @@ class CurrentUserAPIView(APIView):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    def delete(self, request, *args, **kwargs):
+        user = request.user
+        user.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class AvailableUsersAPIView(generics.ListAPIView):
     """List users who have their availability status set to "dostępny"."""

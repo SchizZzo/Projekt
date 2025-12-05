@@ -1,16 +1,8 @@
-from django.db import models
-
-# Create your models here.
-
 from django.contrib.auth.models import AbstractUser
 from django.contrib.gis.db import models as gis_models
-
-
-
+from django.db import models
 
 class CustomUser(AbstractUser):
-    
-    
     display_name = models.CharField(max_length=16, unique=True, blank=True, null=True)
     character = models.JSONField(null=True, blank=True)
     opis = models.TextField(max_length=150, blank=True)
@@ -32,7 +24,6 @@ class CustomUser(AbstractUser):
     ]
     location_type = models.CharField(max_length=50, choices=LOCATION_TYPE_CHOICES, default='low', blank=True)
     punkt = gis_models.PointField(null=True, blank=True)
-    
 
     def save(self, *args, **kwargs):
         if self.display_name == "":
@@ -44,3 +35,24 @@ class CustomUser(AbstractUser):
             if not self.punkt or (self.punkt.x != float(self.longitude) or self.punkt.y != float(self.latitude)):
                 self.punkt = Point(float(self.longitude), float(self.latitude), srid=4326)
         super().save(*args, **kwargs)
+
+
+class SiteDocument(models.Model):
+    class DocumentType(models.TextChoices):
+        TERMS = "terms", "Regulamin"
+        PRIVACY = "privacy", "Polityka prywatności"
+        MINOR_PROTECTION = "minor_protection", "Standardy ochrony małoletnich"
+
+    document_type = models.CharField(
+        max_length=32, choices=DocumentType.choices, unique=True
+    )
+    slug = models.SlugField(max_length=100, unique=True)
+    title = models.CharField(max_length=255)
+    content = models.TextField()
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["title"]
+
+    def __str__(self):
+        return self.title

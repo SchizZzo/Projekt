@@ -8,6 +8,15 @@ const menuItems = [
   { path: '/settings', label: 'Ustawienia' },
 ];
 
+const footerLinks = [
+  { path: '/documents/regulamin', label: 'Regulamin' },
+  { path: '/documents/polityka-prywatnosci', label: 'Polityka prywatności' },
+  {
+    path: '/documents/standardy-ochrony-maloletnich',
+    label: 'Standardy ochrony małoletnich',
+  },
+];
+
 function BaseLayout() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -90,6 +99,24 @@ function BaseLayout() {
       <main className={isMapPage ? 'app-content app-content--full' : 'app-content'}>
         <Outlet />
       </main>
+
+      <footer className="app-footer">
+        <div className="footer-content">
+          <div>
+            <div className="footer-title">Panel Joker</div>
+            <p className="footer-text">
+              Zapoznaj się z kluczowymi dokumentami prawnymi naszego serwisu.
+            </p>
+          </div>
+          <div className="footer-links">
+            {footerLinks.map((item) => (
+              <NavLink key={item.path} to={item.path} className="footer-link">
+                {item.label}
+              </NavLink>
+            ))}
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

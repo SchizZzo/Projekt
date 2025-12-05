@@ -102,3 +102,32 @@ class SiteDocumentAPIView(generics.RetrieveAPIView):
     serializer_class = SiteDocumentSerializer
     queryset = SiteDocument.objects.all()
     lookup_field = "slug"
+
+    DEFAULT_DOCUMENTS = (
+        (
+            SiteDocument.DocumentType.TERMS,
+            "Regulamin",
+            "Treść dokumentu zostanie wkrótce uzupełniona.",
+        ),
+        (
+            SiteDocument.DocumentType.PRIVACY,
+            "Polityka prywatności",
+            "Treść dokumentu zostanie wkrótce uzupełniona.",
+        ),
+        (
+            SiteDocument.DocumentType.MINOR_PROTECTION,
+            "Standardy ochrony małoletnich",
+            "Treść dokumentu zostanie wkrótce uzupełniona.",
+        ),
+    )
+
+    def _ensure_default_documents_exist(self):
+        for document_type, title, content in self.DEFAULT_DOCUMENTS:
+            SiteDocument.objects.get_or_create(
+                document_type=document_type,
+                defaults={"title": title, "content": content},
+            )
+
+    def get_object(self):
+        self._ensure_default_documents_exist()
+        return super().get_object()

@@ -45,6 +45,7 @@ function ChatPage() {
   const [invitationActionState, setInvitationActionState] = useState({ status: 'idle', message: '' });
   const [pendingMessages, setPendingMessages] = useState([]);
   const [contactActionState, setContactActionState] = useState({ status: 'idle', message: '' });
+  const [contactPendingRemoval, setContactPendingRemoval] = useState(null);
 
   const getMessageSenderId = useCallback((message) => {
     return (
@@ -319,20 +320,32 @@ function ChatPage() {
     return Number.isNaN(numericId) ? rawId : numericId;
   }, []);
 
-  const removeContact = useCallback(
-    async (contactKey) => {
+  const openRemoveContactModal = useCallback(
+    (contactKey) => {
       const contact = getContactByKey(contactKey);
       const contactId = getContactId(contact);
-      const contactName = getContactDisplayName(contact, 'tego kontaktu');
 
       if (!contact || !contactId) {
         setContactActionState({ status: 'error', message: 'Nie można usunąć kontaktu bez identyfikatora.' });
         return;
       }
 
-      const isConfirmed = window.confirm(`Czy na pewno chcesz usunąć kontakt "${contactName}"?`);
+      setContactPendingRemoval({
+        key: contactKey,
+        id: contactId,
+        name: getContactDisplayName(contact, 'tego kontaktu'),
+      });
+    },
+    [getContactByKey, getContactDisplayName, getContactId],
+  );
 
-      if (!isConfirmed) {
+  const removeContact = useCallback(
+    async (contactKey) => {
+      const contact = getContactByKey(contactKey);
+      const contactId = getContactId(contact);
+
+      if (!contact || !contactId) {
+        setContactActionState({ status: 'error', message: 'Nie można usunąć kontaktu bez identyfikatora.' });
         return;
       }
 
@@ -374,9 +387,11 @@ function ChatPage() {
         setContactActionState({ status: 'success', message: 'Kontakt został usunięty.' });
       } catch (error) {
         setContactActionState({ status: 'error', message: 'Nie udało się usunąć kontaktu.' });
+      } finally {
+        setContactPendingRemoval(null);
       }
     },
-    [coerceId, getContactByKey, getContactDisplayName, getContactId, getContactKey],
+    [coerceId, getContactByKey, getContactId, getContactKey],
   );
 
   useEffect(() => {
@@ -1091,7 +1106,7 @@ function ChatPage() {
                     disabled={contactActionState.status === 'loading'}
                     onClick={(event) => {
                       event.stopPropagation();
-                      removeContact(contactKey);
+                      openRemoveContactModal(contactKey);
                     }}
                   >
                     Usuń
@@ -1487,6 +1502,36 @@ function ChatPage() {
           )}
         </div>
       </aside>
+      {contactPendingRemoval && (
+        <div className="dialog-backdrop" role="dialog" aria-modal="true">
+          <div className="dialog-card">
+            <div className="dialog-header">
+              <h3>Usuń kontakt</h3>
+              <button type="button" className="ghost-button" onClick={() => setContactPendingRemoval(null)}>
+                Zamknij
+              </button>
+            </div>
+            <div className="dialog-body">
+              <p>
+                Czy na pewno chcesz usunąć kontakt "{contactPendingRemoval.name}"?
+              </p>
+              <div className="actions-row">
+                <button type="button" className="ghost-button" onClick={() => setContactPendingRemoval(null)}>
+                  Anuluj
+                </button>
+                <button
+                  type="button"
+                  className="danger-button"
+                  disabled={contactActionState.status === 'loading'}
+                  onClick={() => removeContact(contactPendingRemoval.key)}
+                >
+                  Usuń kontakt
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

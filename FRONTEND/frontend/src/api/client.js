@@ -1,4 +1,5 @@
-export const API_HOST = 'http://localhost';
+const envApiHost = import.meta?.env?.VITE_API_HOST;
+export const API_HOST = (envApiHost || 'http://localhost:8000').replace(/\/$/, '');
 
 const REFRESH_PATH = '/joker-login-api/refresh/';
 

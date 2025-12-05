@@ -47,7 +47,7 @@ function SettingsPage() {
     kolorSkory: 3,
     kolorWlosow: 4,
     usta: 3,
-    dodatek: 5,
+    dodatek: 6,
     twarz: 4,
     wlosy: 9,
   };

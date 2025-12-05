@@ -33,4 +33,4 @@ EXPOSE 8000
 #RUN python3 BACKEND/django/joker_projekt/manage.py collectstatic --noinput
 
 
-CMD ["gunicorn", "joker_projekt.asgi:application", "--workers", "4", "--bind", "0.0.0.0:8000", "--log-level", "info"]
+#CMD ["gunicorn", "joker_projekt.asgi:application", "--workers", "4", "--bind", "0.0.0.0:8000", "--log-level", "info"]

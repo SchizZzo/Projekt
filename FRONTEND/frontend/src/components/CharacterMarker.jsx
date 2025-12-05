@@ -8,7 +8,7 @@ const CONTROL_DEFINITIONS = [
   { name: 'kolorSkory', limit: 3 },
   { name: 'kolorWlosow', limit: 4 },
   { name: 'usta', limit: 3 },
-  { name: 'dodatek', limit: 5 },
+  { name: 'dodatek', limit: 6 },
   { name: 'twarz', limit: 4 },
   { name: 'wlosy', limit: 9 },
 ];

@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.contrib.gis.db import models as gis_models
 from django.db import models
+from django.utils.text import slugify
 
 class CustomUser(AbstractUser):
     display_name = models.CharField(max_length=16, unique=True, blank=True, null=True)
@@ -31,6 +32,7 @@ class CustomUser(AbstractUser):
         # Tworzymy obiekt Point tylko jeśli są dane dla szerokości i długości geograficznej
         if self.latitude is not None and self.longitude is not None:
             from django.contrib.gis.geos import Point
+
             # Aktualizujemy punkt tylko jeśli współrzędne się zmieniają lub punkt nie istnieje
             if not self.punkt or (self.punkt.x != float(self.longitude) or self.punkt.y != float(self.latitude)):
                 self.punkt = Point(float(self.longitude), float(self.latitude), srid=4326)
@@ -46,7 +48,7 @@ class SiteDocument(models.Model):
     document_type = models.CharField(
         max_length=32, choices=DocumentType.choices, unique=True
     )
-    slug = models.SlugField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=100, unique=True, blank=True, editable=False, db_index=True)
     title = models.CharField(max_length=255)
     content = models.TextField()
     updated_at = models.DateTimeField(auto_now=True)
@@ -56,3 +58,18 @@ class SiteDocument(models.Model):
 
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+
+        base_slug = slugify(self.title, allow_unicode=True)[:100]
+        slug = base_slug
+        counter = 1
+        Model = type(self)
+
+        while Model.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+            suffix = f"-{counter}"
+            slug = f"{base_slug[:100 - len(suffix)]}{suffix}"
+            counter += 1
+
+        self.slug = slug
+        super().save(*args, **kwargs)

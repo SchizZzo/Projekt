@@ -18,7 +18,7 @@ function MordeczkiAnimation({ values = {}, onChange, labels = {}, disabled }) {
       { name: 'kolorSkory', limit: 3, label: 'Kolor skóry' },
       { name: 'kolorWlosow', limit: 4, label: 'Kolor włosów' },
       { name: 'usta', limit: 3, label: 'Usta' },
-      { name: 'dodatek', limit: 5, label: 'Dodatek' },
+      { name: 'dodatek', limit: 6, label: 'Dodatek' },
       { name: 'twarz', limit: 4, label: 'Twarz' },
       { name: 'wlosy', limit: 9, label: 'Włosy' },
     ],

@@ -76,26 +76,31 @@ sudo docker stack deploy -c stack.yml joker_chat_swarm_stack
 
 1. **Logowanie do rejestru GHCR (opcjonalnie do pushowania własnych obrazów):**
    ```bash
-   echo "<GITHUB_PAT>" | docker login ghcr.io -u dawidmichalowicz --password-stdin
+   echo "<GITHUB_PAT>" | docker login ghcr.io -u schizzzo --password-stdin
    ```
-2. **Budowa i tagowanie obrazu backendu (jeśli tworzysz własny build):**
+2. **Budowa obrazu backendu:**
    ```bash
-   docker build -t backend:latest .
-   docker tag backend:latest ghcr.io/dawidmichalowicz/joker-backend-backend:latest
+   docker build -t joker_chat_swarm_backend:latest .
    ```
-3. **Publikacja obrazu (jeśli potrzebne):**
+3. **Tagowanie i publikacja obrazu backendu w GHCR:**
    ```bash
-   docker push ghcr.io/dawidmichalowicz/joker-backend-backend:latest
+   docker tag joker_chat_swarm_backend:latest ghcr.io/schizzzo/joker_chat_swarm_backend:latest
+   docker push ghcr.io/schizzzo/joker_chat_swarm_backend:latest
    ```
-4. **Pobranie aktualnych obrazów i wdrożenie stacka:**
+4. **Tagowanie i publikacja obrazu frontendu (gdy budujesz lokalnie):**
+   ```bash
+   docker tag joker_chat_swarm_frontend:latest ghcr.io/schizzzo/joker_chat_swarm_frontend:latest
+   docker push ghcr.io/schizzzo/joker_chat_swarm_frontend:latest
+   ```
+5. **Pobranie aktualnych obrazów i wdrożenie stacka:**
    ```bash
    sudo docker pull ghcr.io/schizzzo/joker_chat_swarm_frontend:latest
    sudo docker stack deploy -c stack.yml joker_chat_swarm_stack
    ```
-5. **Obsługa statycznych plików Django (po migracjach/aktualizacjach):**
+6. **Obsługa statycznych plików Django (po migracjach/aktualizacjach):**
    ```bash
    sudo docker exec -it <backend_container_id> python manage.py collectstatic
    ```
-6. **Cloudflare Tunnel:** aplikacja nasłuchuje na porcie 80; zmieniasz jedynie hostname w tunelu, port pozostaje 80.
+7. **Cloudflare Tunnel:** aplikacja nasłuchuje na porcie 80; zmieniasz jedynie hostname w tunelu, port pozostaje 80.
 
 Po wdrożeniu stacka zweryfikuj usługi komendą `sudo docker ps` oraz ewentualnie `sudo docker service ls` w zależności od konfiguracji.

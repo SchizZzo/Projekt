@@ -1,11 +1,17 @@
 import { useMemo, useState } from 'react';
+import { API_HOST, apiRequest } from '../api/client.js';
+
+const REGISTER_PATH = '/joker-login-api/register/';
+const REGISTER_ENDPOINT = `${API_HOST}${REGISTER_PATH}`;
 
 function RegisterPage() {
   const [formData, setFormData] = useState({ email: '', password: '', confirm: '', name: '' });
   const [status, setStatus] = useState({ type: 'info', message: 'Uzupełnij dane, aby utworzyć konto.' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const isFormValid = useMemo(() => {
     return (
+      formData.name.trim() !== '' &&
       formData.email.trim() !== '' &&
       formData.password.trim() !== '' &&
       formData.confirm.trim() !== '' &&
@@ -18,13 +24,43 @@ function RegisterPage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    if (!isFormValid) {
+    if (!isFormValid || isSubmitting) {
       setStatus({ type: 'error', message: 'Hasła muszą być zgodne, a pola wypełnione.' });
       return;
     }
-    setStatus({ type: 'success', message: 'Formularz wygląda dobrze. Tutaj podłącz API rejestracji.' });
+
+    setIsSubmitting(true);
+    setStatus({ type: 'info', message: 'Trwa tworzenie konta...' });
+
+    try {
+      const response = await apiRequest(
+        REGISTER_PATH,
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            password: formData.password,
+          }),
+        },
+        { useAuth: false }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data?.message || 'Nie udało się utworzyć konta.');
+      }
+
+      setStatus({ type: 'success', message: 'Konto utworzone. Możesz teraz się zalogować.' });
+      setFormData({ email: '', password: '', confirm: '', name: '' });
+    } catch (error) {
+      setStatus({ type: 'error', message: error.message || 'Wystąpił błąd podczas rejestracji.' });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -84,13 +120,14 @@ function RegisterPage() {
             </label>
           </div>
 
-          <button type="submit" className="primary" disabled={!isFormValid}>
-            Utwórz konto
+          <button type="submit" className="primary" disabled={!isFormValid || isSubmitting}>
+            {isSubmitting ? 'Wysyłanie...' : 'Utwórz konto'}
           </button>
         </form>
 
         <div className="status" data-variant={status.type}>
           <span>{status.message}</span>
+          <small>Połączenie z <strong>{REGISTER_ENDPOINT}</strong></small>
           {formData.password !== formData.confirm && (
             <small>Hasła nie są takie same.</small>
           )}

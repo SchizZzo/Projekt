@@ -5,9 +5,6 @@ import MordeczkiAnimation from '../components/MordeczkiAnimation';
 
 const PROFILE_ENDPOINT = '/joker-login-api/me/';
 
-const NICKNAME_COOLDOWN_MINUTES = 1;
-const NICKNAME_COOLDOWN_MS = NICKNAME_COOLDOWN_MINUTES * 60 * 1000;
-
 const defaultCharacter = {
   kolorSkory: 0,
   kolorWlosow: 0,
@@ -81,9 +78,7 @@ function SettingsPage() {
         }
 
         const data = await response.json();
-        const storedCooldown = Number(localStorage.getItem('nicknameCooldownUntil') ?? 0);
-        const cooldownLimit = Date.now() + NICKNAME_COOLDOWN_MS;
-        const infoMessages = [`Zmianę Mordeczki możesz zapisywać raz na ${NICKNAME_COOLDOWN_MINUTES} minutę.`];
+        const infoMessages = [];
 
         if (!data.character) {
           setCharacter(defaultCharacter);
@@ -104,10 +99,6 @@ function SettingsPage() {
         setLongitude(data.longitude ?? null);
         setOpis(data.opis ?? '');
         setNotificationsEnabled(Boolean(data.notifications ?? true));
-
-        const cooldownUntil = Number(data.cooldownUntil ?? storedCooldown);
-        const nextAllowedChange = Math.min(Number.isFinite(cooldownUntil) ? cooldownUntil : 0, cooldownLimit);
-        localStorage.setItem('nicknameCooldownUntil', `${nextAllowedChange}`);
         setInfo(infoMessages.join(' ') || 'Pobrano ustawienia Mordeczki z API.');
       } catch (error) {
         setInfo(error.message || 'Wystąpił błąd podczas pobierania ustawień.');
@@ -132,17 +123,9 @@ function SettingsPage() {
   };
 
   const handleNicknameHistory = (nextNickname) => {
-    const now = Date.now();
-    const cooldownUntil = Number(localStorage.getItem('nicknameCooldownUntil') ?? 0);
-
-    if (cooldownUntil > now && nextNickname !== nickname) {
-      const minutesLeft = Math.ceil((cooldownUntil - now) / 60000);
-      return `Możesz zmienić nick za ${minutesLeft} min.`;
-    }
-
-    const newCooldown = now + NICKNAME_COOLDOWN_MS; // Skrócony czas do kolejnej zmiany.
-    localStorage.setItem('nicknameCooldownUntil', `${newCooldown}`);
-    return 'Zapisano zmiany nazwy użytkownika.';
+    return nextNickname === nickname
+      ? 'Zapisano zmiany profilu.'
+      : 'Zapisano zmiany nazwy użytkownika.';
   };
 
   const handleSave = async () => {

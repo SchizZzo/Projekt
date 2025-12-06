@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { apiRequest } from '../api/client';
 import MordeczkiAnimation from '../components/MordeczkiAnimation';
@@ -111,12 +111,12 @@ function SettingsPage() {
     fetchUserAvatar();
   }, []);
 
-  const handleAnimationChange = (name, value) => {
+  const handleAnimationChange = useCallback((name, value) => {
     setCharacter((prev) => ({
       ...prev,
       [name]: value,
     }));
-  };
+  }, []);
 
   const saveNotificationPreference = (value) => {
     setNotificationsEnabled(value);

@@ -1,4 +1,4 @@
-export const API_HOST = 'http://localhost';
+export const API_HOST = 'https://chat-backend.michalowicz.dev';
 
 const REFRESH_PATH = '/joker-login-api/refresh/';
 

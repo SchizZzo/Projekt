@@ -5,13 +5,13 @@ const REGISTER_PATH = '/joker-login-api/register/';
 const REGISTER_ENDPOINT = `${API_HOST}${REGISTER_PATH}`;
 
 function RegisterPage() {
-  const [formData, setFormData] = useState({ email: '', password: '', confirm: '', name: '' });
+  const [formData, setFormData] = useState({ email: '', password: '', confirm: '', username: '' });
   const [status, setStatus] = useState({ type: 'info', message: 'Uzupełnij dane, aby utworzyć konto.' });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const isFormValid = useMemo(() => {
     return (
-      formData.name.trim() !== '' &&
+      formData.username.trim() !== '' &&
       formData.email.trim() !== '' &&
       formData.password.trim() !== '' &&
       formData.confirm.trim() !== '' &&
@@ -40,9 +40,10 @@ function RegisterPage() {
         {
           method: 'POST',
           body: JSON.stringify({
-            name: formData.name,
+            username: formData.username,
             email: formData.email,
             password: formData.password,
+            password_confirm: formData.confirm,
           }),
         },
         { useAuth: false }
@@ -51,11 +52,17 @@ function RegisterPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data?.message || 'Nie udało się utworzyć konta.');
+        const message =
+          data?.password_confirm?.[0] ||
+          data?.password?.[0] ||
+          data?.username?.[0] ||
+          data?.email?.[0] ||
+          data?.message;
+        throw new Error(message || 'Nie udało się utworzyć konta.');
       }
 
       setStatus({ type: 'success', message: 'Konto utworzone. Możesz teraz się zalogować.' });
-      setFormData({ email: '', password: '', confirm: '', name: '' });
+      setFormData({ email: '', password: '', confirm: '', username: '' });
     } catch (error) {
       setStatus({ type: 'error', message: error.message || 'Wystąpił błąd podczas rejestracji.' });
     } finally {
@@ -72,13 +79,13 @@ function RegisterPage() {
 
         <form className="stack" onSubmit={handleSubmit}>
           <label className="field">
-            <span>Imię lub nazwa</span>
+            <span>Nazwa użytkownika</span>
             <input
               type="text"
-              name="name"
-              value={formData.name}
+              name="username"
+              value={formData.username}
               onChange={handleChange}
-              placeholder="Twoje imię"
+              placeholder="Twoja nazwa użytkownika"
               required
             />
           </label>

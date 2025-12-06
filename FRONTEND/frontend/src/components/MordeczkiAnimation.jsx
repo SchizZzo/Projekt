@@ -38,7 +38,7 @@ function MordeczkiAnimation({ values = {}, onChange, labels = {}, disabled }) {
         }
 
         const data = await response.json();
-        const character = data?.charakter;
+        const character = data?.character;
 
         controls.forEach(({ name, limit }, index) => {
           const input = inputs[index];

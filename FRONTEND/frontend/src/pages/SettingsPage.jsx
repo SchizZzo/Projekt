@@ -4,6 +4,7 @@ import { apiRequest } from '../api/client';
 import MordeczkiAnimation from '../components/MordeczkiAnimation';
 
 const PROFILE_ENDPOINT = '/joker-login-api/me/';
+const NICKNAME_COOLDOWN_MINUTES = 1;
 
 const defaultCharacter = {
   kolorSkory: 0,

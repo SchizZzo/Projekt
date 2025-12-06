@@ -31,16 +31,20 @@ function SettingsPage() {
   const getCurrentCoordinates = () =>
     new Promise((resolve) => {
       if (!navigator.geolocation) {
-        resolve(null);
+        resolve({ coords: null, reason: 'unsupported' });
         return;
       }
 
       navigator.geolocation.getCurrentPosition(
-        (position) => resolve(position.coords),
-        () => resolve(null),
+        (position) => resolve({ coords: position.coords, reason: null }),
+        (error) => {
+          const reason = error?.code === error.PERMISSION_DENIED ? 'permission-denied' : 'unavailable';
+          resolve({ coords: null, reason });
+        },
         {
           enableHighAccuracy: true,
-          timeout: 5,
+          timeout: 10000,
+          maximumAge: 30000,
         },
       );
     });
@@ -149,7 +153,7 @@ function SettingsPage() {
     setIsLoading(true);
 
     try {
-      const coords = await getCurrentCoordinates();
+      const { coords, reason: geolocationReason } = await getCurrentCoordinates();
 
       if (coords) {
         setLatitude(coords.latitude);
@@ -159,9 +163,12 @@ function SettingsPage() {
       const latitudeToSave = coords?.latitude ?? latitude;
       const longitudeToSave = coords?.longitude ?? longitude;
 
-
-      // debug: print coordinates before sending to API
-      console.log('Saving coordinates:', { latitude: latitudeToSave, longitude: longitudeToSave });
+      const geolocationInfo =
+        !coords && geolocationReason === 'permission-denied'
+          ? ' Brak uprawnień do geolokalizacji – zapisana pozycja mogła nie zostać zaktualizowana.'
+          : !coords && geolocationReason
+            ? ' Nie udało się pobrać bieżącej lokalizacji – użyto ostatnio zapisanej wartości.'
+            : '';
 
 
       const payload = {
@@ -194,7 +201,7 @@ function SettingsPage() {
       setCharacter(data.character ?? payload.character);
       setLatitude(data.latitude ?? latitudeToSave);
       setLongitude(data.longitude ?? longitudeToSave);
-      setInfo(nicknameStatus || 'Zapisano ustawienia Mordeczki.');
+      setInfo(`${nicknameStatus || 'Zapisano ustawienia Mordeczki.'}${geolocationInfo}`);
       localStorage.setItem('mordeczkaDraft', JSON.stringify(payload));
     } catch (error) {
       setInfo(error.message || 'Wystąpił błąd podczas zapisywania ustawień.');

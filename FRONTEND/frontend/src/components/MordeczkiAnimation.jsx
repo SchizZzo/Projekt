@@ -25,9 +25,46 @@ function MordeczkiAnimation({ values = {}, onChange, labels = {}, disabled }) {
     [],
   );
 
-  const inputs = controls.map(({ name }) =>
-    useStateMachineInput(rive, STATE_MACHINE_NAME, name, 0),
+  const kolorSkoryInput = useStateMachineInput(
+    rive,
+    STATE_MACHINE_NAME,
+    'kolorSkory',
+    0,
   );
+  const kolorWlosowInput = useStateMachineInput(
+    rive,
+    STATE_MACHINE_NAME,
+    'kolorWlosow',
+    0,
+  );
+  const ustaInput = useStateMachineInput(rive, STATE_MACHINE_NAME, 'usta', 0);
+  const dodatekInput = useStateMachineInput(
+    rive,
+    STATE_MACHINE_NAME,
+    'dodatek',
+    0,
+  );
+  const twarzInput = useStateMachineInput(
+    rive,
+    STATE_MACHINE_NAME,
+    'twarz',
+    0,
+  );
+  const wlosyInput = useStateMachineInput(
+    rive,
+    STATE_MACHINE_NAME,
+    'wlosy',
+    0,
+  );
+
+  const inputs = [
+    kolorSkoryInput,
+    kolorWlosowInput,
+    ustaInput,
+    dodatekInput,
+    twarzInput,
+    wlosyInput,
+  ];
 
   useEffect(() => {
     const fetchCharacter = async () => {

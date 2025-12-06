@@ -1,6 +1,8 @@
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError as DjangoValidationError
+from decimal import Decimal, InvalidOperation
+
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
@@ -135,6 +137,38 @@ class CurrentUserSerializer(serializers.ModelSerializer):
                     _("A user with that display name already exists.")
                 )
         return value
+
+    def validate(self, attrs):
+        """Normalize coordinates so they can be saved without validation errors.
+
+        The Decimal fields on the model accept up to 14 decimal places. Browsers
+        can send coordinates with more precision, which previously caused a 400
+        response when attempting to save the profile. By rounding both latitude
+        and longitude to 14 decimal places we keep the value accurate while
+        matching the database constraints.
+        """
+
+        latitude = attrs.get("latitude")
+        longitude = attrs.get("longitude")
+
+        if latitude is None and longitude is None:
+            return attrs
+
+        if latitude is None or longitude is None:
+            raise serializers.ValidationError(
+                {"location": _("Both latitude and longitude are required to update location.")}
+            )
+
+        try:
+            quantize_exp = Decimal("1.00000000000000")  # 14 decimal places
+            attrs["latitude"] = Decimal(str(latitude)).quantize(quantize_exp)
+            attrs["longitude"] = Decimal(str(longitude)).quantize(quantize_exp)
+        except (InvalidOperation, TypeError, ValueError) as exc:
+            raise serializers.ValidationError(
+                {"location": _("Invalid coordinates provided.")}
+            ) from exc
+
+        return attrs
 
 
 class AvailableUserSerializer(serializers.ModelSerializer):

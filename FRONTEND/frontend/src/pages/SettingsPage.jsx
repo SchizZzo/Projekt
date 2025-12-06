@@ -79,13 +79,14 @@ function SettingsPage() {
         }
 
         const data = await response.json();
+        const userCharacter = data.charakter ?? data.character;
         const infoMessages = [];
 
-        if (!data.character) {
+        if (!userCharacter) {
           setCharacter(defaultCharacter);
           infoMessages.push('Brak zapisanej Mordeczki – uzupełnij wygląd i zapisz ustawienia.');
         } else {
-          setCharacter(data.character);
+          setCharacter(userCharacter);
         }
 
         if (!data.display_name) {
@@ -169,7 +170,7 @@ function SettingsPage() {
         //notifications: notificationsEnabled,
         latitude: latitudeToSave,
         longitude: longitudeToSave,
-        character: {
+        charakter: {
           kolorSkory: character.kolorSkory,
           kolorWlosow: character.kolorWlosow,
           usta: character.usta,
@@ -189,7 +190,8 @@ function SettingsPage() {
       }
 
       const data = await response.json();
-      setCharacter(data.character ?? payload.character);
+      const savedCharacter = data.charakter ?? data.character ?? payload.charakter;
+      setCharacter(savedCharacter);
       setLatitude(data.latitude ?? latitudeToSave);
       setLongitude(data.longitude ?? longitudeToSave);
       setInfo(`${nicknameStatus || 'Zapisano ustawienia Mordeczki.'}${geolocationInfo}`);

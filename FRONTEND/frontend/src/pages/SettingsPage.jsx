@@ -1,10 +1,9 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { apiRequest } from '../api/client';
 import MordeczkiAnimation from '../components/MordeczkiAnimation';
 
 const PROFILE_ENDPOINT = '/joker-login-api/me/';
-const NICKNAME_COOLDOWN_MINUTES = 1;
 
 const defaultCharacter = {
   kolorSkory: 0,
@@ -32,20 +31,16 @@ function SettingsPage() {
   const getCurrentCoordinates = () =>
     new Promise((resolve) => {
       if (!navigator.geolocation) {
-        resolve({ coords: null, reason: 'unsupported' });
+        resolve(null);
         return;
       }
 
       navigator.geolocation.getCurrentPosition(
-        (position) => resolve({ coords: position.coords, reason: null }),
-        (error) => {
-          const reason = error?.code === error.PERMISSION_DENIED ? 'permission-denied' : 'unavailable';
-          resolve({ coords: null, reason });
-        },
+        (position) => resolve(position.coords),
+        () => resolve(null),
         {
           enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 30000,
+          timeout: 5,
         },
       );
     });
@@ -79,6 +74,7 @@ function SettingsPage() {
         }
 
         const data = await response.json();
+        const storedCooldown = Number(localStorage.getItem('nicknameCooldownUntil') ?? 0);
         const infoMessages = [];
 
         if (!data.character) {
@@ -100,6 +96,7 @@ function SettingsPage() {
         setLongitude(data.longitude ?? null);
         setOpis(data.opis ?? '');
         setNotificationsEnabled(Boolean(data.notifications ?? true));
+        localStorage.setItem('nicknameCooldownUntil', `${data.cooldownUntil ?? storedCooldown}`);
         setInfo(infoMessages.join(' ') || 'Pobrano ustawienia Mordeczki z API.');
       } catch (error) {
         setInfo(error.message || 'Wystąpił błąd podczas pobierania ustawień.');
@@ -111,12 +108,12 @@ function SettingsPage() {
     fetchUserAvatar();
   }, []);
 
-  const handleAnimationChange = useCallback((name, value) => {
+  const handleAnimationChange = (name, value) => {
     setCharacter((prev) => ({
       ...prev,
       [name]: value,
     }));
-  }, []);
+  };
 
   const saveNotificationPreference = (value) => {
     setNotificationsEnabled(value);
@@ -124,9 +121,17 @@ function SettingsPage() {
   };
 
   const handleNicknameHistory = (nextNickname) => {
-    return nextNickname === nickname
-      ? 'Zapisano zmiany profilu.'
-      : 'Zapisano zmiany nazwy użytkownika.';
+    const now = Date.now();
+    const cooldownUntil = Number(localStorage.getItem('nicknameCooldownUntil') ?? 0);
+
+    if (cooldownUntil > now && nextNickname !== nickname) {
+      const minutesLeft = Math.ceil((cooldownUntil - now) / 60000);
+      return `Możesz zmienić nick za ${minutesLeft} min.`;
+    }
+
+    const newCooldown = now + 10 * 60 * 1000; // 10 minut na kolejną zmianę.
+    localStorage.setItem('nicknameCooldownUntil', `${newCooldown}`);
+    return 'Zapisano zmiany nazwy użytkownika.';
   };
 
   const handleSave = async () => {
@@ -144,7 +149,7 @@ function SettingsPage() {
     setIsLoading(true);
 
     try {
-      const { coords, reason: geolocationReason } = await getCurrentCoordinates();
+      const coords = await getCurrentCoordinates();
 
       if (coords) {
         setLatitude(coords.latitude);
@@ -154,12 +159,9 @@ function SettingsPage() {
       const latitudeToSave = coords?.latitude ?? latitude;
       const longitudeToSave = coords?.longitude ?? longitude;
 
-      const geolocationInfo =
-        !coords && geolocationReason === 'permission-denied'
-          ? ' Brak uprawnień do geolokalizacji – zapisana pozycja mogła nie zostać zaktualizowana.'
-          : !coords && geolocationReason
-            ? ' Nie udało się pobrać bieżącej lokalizacji – użyto ostatnio zapisanej wartości.'
-            : '';
+
+      // debug: print coordinates before sending to API
+      console.log('Saving coordinates:', { latitude: latitudeToSave, longitude: longitudeToSave });
 
 
       const payload = {
@@ -192,7 +194,7 @@ function SettingsPage() {
       setCharacter(data.character ?? payload.character);
       setLatitude(data.latitude ?? latitudeToSave);
       setLongitude(data.longitude ?? longitudeToSave);
-      setInfo(`${nicknameStatus || 'Zapisano ustawienia Mordeczki.'}${geolocationInfo}`);
+      setInfo(nicknameStatus || 'Zapisano ustawienia Mordeczki.');
       localStorage.setItem('mordeczkaDraft', JSON.stringify(payload));
     } catch (error) {
       setInfo(error.message || 'Wystąpił błąd podczas zapisywania ustawień.');
@@ -246,10 +248,6 @@ function SettingsPage() {
                 onChange={(event) => setNickname(event.target.value)}
                 placeholder="Wpisz swoją nazwę"
               />
-              <small className="field__hint">
-                Mordeczkę i nazwę możesz zmienić co {NICKNAME_COOLDOWN_MINUTES} minutę. Jeśli spróbujesz
-                częściej, poczekaj do wygaśnięcia minutowego limitu.
-              </small>
             </label>
             <label className="field">
               <span>Opis profilu</span>

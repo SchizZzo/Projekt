@@ -1,17 +1,11 @@
 import { useMemo, useState } from 'react';
-import { API_HOST, apiRequest } from '../api/client.js';
-
-const REGISTER_PATH = '/joker-login-api/register/';
-const REGISTER_ENDPOINT = `${API_HOST}${REGISTER_PATH}`;
 
 function RegisterPage() {
-  const [formData, setFormData] = useState({ email: '', password: '', confirm: '', username: '' });
+  const [formData, setFormData] = useState({ email: '', password: '', confirm: '', name: '' });
   const [status, setStatus] = useState({ type: 'info', message: 'Uzupełnij dane, aby utworzyć konto.' });
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const isFormValid = useMemo(() => {
     return (
-      formData.username.trim() !== '' &&
       formData.email.trim() !== '' &&
       formData.password.trim() !== '' &&
       formData.confirm.trim() !== '' &&
@@ -24,50 +18,13 @@ function RegisterPage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
-    if (!isFormValid || isSubmitting) {
+    if (!isFormValid) {
       setStatus({ type: 'error', message: 'Hasła muszą być zgodne, a pola wypełnione.' });
       return;
     }
-
-    setIsSubmitting(true);
-    setStatus({ type: 'info', message: 'Trwa tworzenie konta...' });
-
-    try {
-      const response = await apiRequest(
-        REGISTER_PATH,
-        {
-          method: 'POST',
-          body: JSON.stringify({
-            username: formData.username,
-            email: formData.email,
-            password: formData.password,
-            password_confirm: formData.confirm,
-          }),
-        },
-        { useAuth: false }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        const message =
-          data?.password_confirm?.[0] ||
-          data?.password?.[0] ||
-          data?.username?.[0] ||
-          data?.email?.[0] ||
-          data?.message;
-        throw new Error(message || 'Nie udało się utworzyć konta.');
-      }
-
-      setStatus({ type: 'success', message: 'Konto utworzone. Możesz teraz się zalogować.' });
-      setFormData({ email: '', password: '', confirm: '', username: '' });
-    } catch (error) {
-      setStatus({ type: 'error', message: error.message || 'Wystąpił błąd podczas rejestracji.' });
-    } finally {
-      setIsSubmitting(false);
-    }
+    setStatus({ type: 'success', message: 'Formularz wygląda dobrze. Tutaj podłącz API rejestracji.' });
   };
 
   return (
@@ -79,13 +36,13 @@ function RegisterPage() {
 
         <form className="stack" onSubmit={handleSubmit}>
           <label className="field">
-            <span>Nazwa użytkownika</span>
+            <span>Imię lub nazwa</span>
             <input
               type="text"
-              name="username"
-              value={formData.username}
+              name="name"
+              value={formData.name}
               onChange={handleChange}
-              placeholder="Twoja nazwa użytkownika"
+              placeholder="Twoje imię"
               required
             />
           </label>
@@ -127,14 +84,13 @@ function RegisterPage() {
             </label>
           </div>
 
-          <button type="submit" className="primary" disabled={!isFormValid || isSubmitting}>
-            {isSubmitting ? 'Wysyłanie...' : 'Utwórz konto'}
+          <button type="submit" className="primary" disabled={!isFormValid}>
+            Utwórz konto
           </button>
         </form>
 
         <div className="status" data-variant={status.type}>
           <span>{status.message}</span>
-          <small>Połączenie z <strong>{REGISTER_ENDPOINT}</strong></small>
           {formData.password !== formData.confirm && (
             <small>Hasła nie są takie same.</small>
           )}

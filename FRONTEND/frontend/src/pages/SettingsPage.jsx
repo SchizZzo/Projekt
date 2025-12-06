@@ -5,6 +5,9 @@ import MordeczkiAnimation from '../components/MordeczkiAnimation';
 
 const PROFILE_ENDPOINT = '/joker-login-api/me/';
 
+const NICKNAME_COOLDOWN_MINUTES = 1;
+const NICKNAME_COOLDOWN_MS = NICKNAME_COOLDOWN_MINUTES * 60 * 1000;
+
 const defaultCharacter = {
   kolorSkory: 0,
   kolorWlosow: 0,
@@ -79,7 +82,8 @@ function SettingsPage() {
 
         const data = await response.json();
         const storedCooldown = Number(localStorage.getItem('nicknameCooldownUntil') ?? 0);
-        const infoMessages = [];
+        const cooldownLimit = Date.now() + NICKNAME_COOLDOWN_MS;
+        const infoMessages = [`Zmianę Mordeczki możesz zapisywać raz na ${NICKNAME_COOLDOWN_MINUTES} minutę.`];
 
         if (!data.character) {
           setCharacter(defaultCharacter);
@@ -100,7 +104,10 @@ function SettingsPage() {
         setLongitude(data.longitude ?? null);
         setOpis(data.opis ?? '');
         setNotificationsEnabled(Boolean(data.notifications ?? true));
-        localStorage.setItem('nicknameCooldownUntil', `${data.cooldownUntil ?? storedCooldown}`);
+
+        const cooldownUntil = Number(data.cooldownUntil ?? storedCooldown);
+        const nextAllowedChange = Math.min(Number.isFinite(cooldownUntil) ? cooldownUntil : 0, cooldownLimit);
+        localStorage.setItem('nicknameCooldownUntil', `${nextAllowedChange}`);
         setInfo(infoMessages.join(' ') || 'Pobrano ustawienia Mordeczki z API.');
       } catch (error) {
         setInfo(error.message || 'Wystąpił błąd podczas pobierania ustawień.');
@@ -133,7 +140,7 @@ function SettingsPage() {
       return `Możesz zmienić nick za ${minutesLeft} min.`;
     }
 
-    const newCooldown = now + 10 * 60 * 1000; // 10 minut na kolejną zmianę.
+    const newCooldown = now + NICKNAME_COOLDOWN_MS; // Skrócony czas do kolejnej zmiany.
     localStorage.setItem('nicknameCooldownUntil', `${newCooldown}`);
     return 'Zapisano zmiany nazwy użytkownika.';
   };
@@ -255,6 +262,10 @@ function SettingsPage() {
                 onChange={(event) => setNickname(event.target.value)}
                 placeholder="Wpisz swoją nazwę"
               />
+              <small className="field__hint">
+                Mordeczkę i nazwę możesz zmienić co {NICKNAME_COOLDOWN_MINUTES} minutę. Jeśli spróbujesz
+                częściej, poczekaj do wygaśnięcia minutowego limitu.
+              </small>
             </label>
             <label className="field">
               <span>Opis profilu</span>

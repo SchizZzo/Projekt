@@ -15,6 +15,10 @@ make createsuperuser
 Urochamianie dockera
 make run
 
+## Wdrożenie produkcyjne i instalacja Dockera
+
+Szczegółowa instrukcja instalacji Dockera na Debianie 13 (Trixie) oraz uruchamiania stacka w produkcji znajduje się w pliku [`DOKUMENTY/docker_production.md`](DOKUMENTY/docker_production.md). Dokument opisuje wymagane repozytoria APT, instalację Docker Engine, podstawowe komendy Swarm oraz procedurę deployu (w tym uwagi dotyczące Cloudflare Tunnel na porcie 80).
+
 ## Dokumentacja API
 
 ### Uwierzytelnianie

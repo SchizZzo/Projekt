@@ -9,14 +9,15 @@ const LOGIN_ENDPOINT = `${API_HOST}${LOGIN_PATH}`;
 function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [status, setStatus] = useState({ type: 'info', message: 'Wprowadź dane logowania.' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [tokens, setTokens] = useState({ access: null, refresh: null });
   const navigate = useNavigate();
 
   const isFormValid = useMemo(
-    () => email.trim() !== '' && password.trim() !== '',
-    [email, password]
+    () => email.trim() !== '' && password.trim() !== '' && termsAccepted,
+    [email, password, termsAccepted]
   );
 
   const handleSubmit = async (event) => {
@@ -118,6 +119,30 @@ function LoginPage() {
                 required
               />
               <small className="field__hint">Hasło nigdy nie jest przechowywane na serwerze w postaci jawnej.</small>
+            </label>
+
+            <label className="field field--inline">
+              <input
+                type="checkbox"
+                name="terms"
+                checked={termsAccepted}
+                onChange={(event) => setTermsAccepted(event.target.checked)}
+                required
+              />
+              <span>
+                Akceptuję
+                {' '}
+                <a href="/documents/regulamin" target="_blank" rel="noreferrer">regulamin</a>,
+                {' '}
+                <a href="/documents/polityka-prywatnosci" target="_blank" rel="noreferrer">politykę prywatności</a>
+                {' '}
+                oraz
+                {' '}
+                <a href="/documents/standardy-ochrony-maloletnich" target="_blank" rel="noreferrer">
+                  standardy ochrony małoletnich
+                </a>
+                .
+              </span>
             </label>
 
             <button type="submit" className="primary" disabled={!isFormValid || isSubmitting}>

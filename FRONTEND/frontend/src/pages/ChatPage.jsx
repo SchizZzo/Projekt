@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { apiRequest } from '../api/client.js';
 import MordkaPreview from '../components/MordkaPreview';
+import newMessageSound from '../assets/nowy_dzwiek_wiadomosci.mp3';
 
 const panelLimits = {
   contacts: { min: 220, max: 420 },
@@ -22,6 +23,7 @@ function ChatPage() {
   const [messagesError, setMessagesError] = useState('');
   const [archiveLoading, setArchiveLoading] = useState(false);
   const messagesContainerRef = useRef(null);
+  const messageSoundRef = useRef(null);
   const socketRef = useRef(null);
   const contactsRef = useRef([]);
   const selectedRef = useRef(null);
@@ -199,6 +201,35 @@ function ChatPage() {
 
     return rawStatus || 'Oczekujące';
   }, []);
+
+  useEffect(() => {
+    messageSoundRef.current = new Audio(newMessageSound);
+    messageSoundRef.current.preload = 'auto';
+
+    return () => {
+      if (messageSoundRef.current) {
+        messageSoundRef.current.pause();
+        messageSoundRef.current = null;
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!messageSoundRef.current) return;
+
+    messageSoundRef.current.muted = !preferences.sound;
+  }, [preferences.sound]);
+
+  const playMessageSound = useCallback(() => {
+    if (!preferences.sound || !messageSoundRef.current) return;
+
+    try {
+      messageSoundRef.current.currentTime = 0;
+      void messageSoundRef.current.play();
+    } catch (error) {
+      console.error('Nie udało się odtworzyć dźwięku wiadomości.', error);
+    }
+  }, [preferences.sound]);
 
   const fetchInvitations = useCallback(
     async (signal) => {
@@ -587,6 +618,8 @@ function ChatPage() {
             [keyString]: (prev[keyString] ?? 0) + 1,
           };
         });
+
+        playMessageSound();
       } catch (error) {
         console.error('Nieprawidłowy komunikat WebSocket:', error);
       }
@@ -596,7 +629,7 @@ function ChatPage() {
       socketRef.current = null;
       socket.close();
     };
-  }, [appendMessage, getContactByKey, getContactDisplayName, updateMessageStatus, userId]);
+  }, [appendMessage, getContactByKey, getContactDisplayName, playMessageSound, updateMessageStatus, userId]);
 
   const selectedContact = useMemo(
     () => contacts.find((contact, index) => getContactKey(contact, index) === selected) ?? null,

@@ -1,11 +1,19 @@
 import { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { API_HOST, apiRequest } from '../api/client.js';
+
+const REGISTER_PATH = '/joker-login-api/register/';
+const REGISTER_ENDPOINT = `${API_HOST}${REGISTER_PATH}`;
 
 function RegisterPage() {
   const [formData, setFormData] = useState({ email: '', password: '', confirm: '', name: '' });
   const [status, setStatus] = useState({ type: 'info', message: 'Uzupełnij dane, aby utworzyć konto.' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
 
   const isFormValid = useMemo(() => {
     return (
+      formData.name.trim() !== '' &&
       formData.email.trim() !== '' &&
       formData.password.trim() !== '' &&
       formData.confirm.trim() !== '' &&
@@ -18,13 +26,49 @@ function RegisterPage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    if (!isFormValid) {
-      setStatus({ type: 'error', message: 'Hasła muszą być zgodne, a pola wypełnione.' });
-      return;
+    if (!isFormValid || isSubmitting) return;
+
+    setIsSubmitting(true);
+    setStatus({ type: 'info', message: 'Wysyłanie danych rejestracyjnych...' });
+
+    try {
+      const response = await apiRequest(
+        REGISTER_PATH,
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            username: formData.name,
+            email: formData.email,
+            password: formData.password,
+            password_confirm: formData.confirm,
+          }),
+        },
+        { useAuth: false }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        const errorMessage =
+          data?.password?.[0] ||
+          data?.password_confirm?.[0] ||
+          data?.email?.[0] ||
+          data?.username?.[0] ||
+          data?.detail ||
+          data?.message ||
+          'Nie udało się utworzyć konta.';
+        throw new Error(errorMessage);
+      }
+
+      setStatus({ type: 'success', message: 'Konto utworzone pomyślnie. Przekierowuję do logowania...' });
+      setTimeout(() => navigate('/login', { replace: true }), 800);
+    } catch (error) {
+      setStatus({ type: 'error', message: error.message || 'Wystąpił błąd podczas rejestracji.' });
+    } finally {
+      setIsSubmitting(false);
     }
-    setStatus({ type: 'success', message: 'Formularz wygląda dobrze. Tutaj podłącz API rejestracji.' });
   };
 
   return (
@@ -84,13 +128,16 @@ function RegisterPage() {
             </label>
           </div>
 
-          <button type="submit" className="primary" disabled={!isFormValid}>
-            Utwórz konto
+          <button type="submit" className="primary" disabled={!isFormValid || isSubmitting}>
+            {isSubmitting ? 'Tworzenie konta...' : 'Utwórz konto'}
           </button>
         </form>
 
         <div className="status" data-variant={status.type}>
-          <span>{status.message}</span>
+          <div>
+            <span>{status.message}</span>
+            <small>Połączenie z {REGISTER_ENDPOINT}</small>
+          </div>
           {formData.password !== formData.confirm && (
             <small>Hasła nie są takie same.</small>
           )}

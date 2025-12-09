@@ -555,7 +555,7 @@ function ChatPage() {
     setSocketStatus('connecting');
     setSocketError('');
 
-    const socket = new WebSocket(`wss://chat-backend.michalowicz.dev/ws/chat/${userId}/`);
+    const socket = new WebSocket(`wss://czat-backend.michalowicz.dev/ws/chat/${userId}/`); //new WebSocket(`ws://localhost/ws/chat/${userId}/`);
     socketRef.current = socket;
 
     socket.onopen = () => {

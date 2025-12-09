@@ -48,6 +48,9 @@ function ChatPage() {
   const [pendingMessages, setPendingMessages] = useState([]);
   const [contactActionState, setContactActionState] = useState({ status: 'idle', message: '' });
   const [contactPendingRemoval, setContactPendingRemoval] = useState(null);
+  const [isWindowFocused, setIsWindowFocused] = useState(() =>
+    typeof document !== 'undefined' ? document.hasFocus() : true,
+  );
 
   const getMessageSenderId = useCallback((message) => {
     return (
@@ -220,6 +223,29 @@ function ChatPage() {
     messageSoundRef.current.muted = !preferences.sound;
   }, [preferences.sound]);
 
+  useEffect(() => {
+    const handleFocus = () => setIsWindowFocused(true);
+    const handleBlur = () => setIsWindowFocused(false);
+
+    window.addEventListener('focus', handleFocus);
+    window.addEventListener('blur', handleBlur);
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      window.removeEventListener('blur', handleBlur);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!preferences.notifications || typeof Notification === 'undefined') return;
+
+    if (Notification.permission === 'default') {
+      Notification.requestPermission().catch((error) =>
+        console.error('Nie udało się uzyskać zgody na powiadomienia.', error),
+      );
+    }
+  }, [preferences.notifications]);
+
   const playMessageSound = useCallback(() => {
     if (!preferences.sound || !messageSoundRef.current) return;
 
@@ -230,6 +256,39 @@ function ChatPage() {
       console.error('Nie udało się odtworzyć dźwięku wiadomości.', error);
     }
   }, [preferences.sound]);
+
+  const alertAboutMessage = useCallback(
+    (senderName, messageContent, conversationKey) => {
+      const activeKey = selectedRef.current;
+      const isCurrentConversation = activeKey?.toString?.() === conversationKey?.toString?.();
+      const isBackground = document.hidden || !isWindowFocused || !isCurrentConversation;
+
+      if (isBackground) {
+        playMessageSound();
+      }
+
+      if (
+        preferences.notifications &&
+        typeof Notification !== 'undefined' &&
+        Notification.permission === 'granted' &&
+        isBackground
+      ) {
+        const title = senderName ? `Nowa wiadomość od ${senderName}` : 'Nowa wiadomość';
+        const body = messageContent || 'Otrzymałeś nową wiadomość.';
+
+        try {
+          new Notification(title, { body, silent: false });
+        } catch (error) {
+          console.error('Nie udało się wyświetlić powiadomienia.', error);
+        }
+      }
+
+      if (!isBackground) {
+        playMessageSound();
+      }
+    },
+    [isWindowFocused, playMessageSound, preferences.notifications],
+  );
 
   const fetchInvitations = useCallback(
     async (signal) => {
@@ -596,9 +655,11 @@ function ChatPage() {
         const senderName = getContactDisplayName(senderContact, senderKey || 'Nieznany kontakt');
         const readableTime = new Date().toLocaleString([], { dateStyle: 'short', timeStyle: 'short' });
 
+        const content = data?.message ?? '';
+
         appendMessage(senderKey, {
           from: senderName,
-          content: data?.message ?? '',
+          content,
           createdAt: new Date().toISOString(),
           time: readableTime,
         });
@@ -619,7 +680,7 @@ function ChatPage() {
           };
         });
 
-        playMessageSound();
+        alertAboutMessage(senderName, content, senderKey);
       } catch (error) {
         console.error('Nieprawidłowy komunikat WebSocket:', error);
       }
@@ -629,7 +690,7 @@ function ChatPage() {
       socketRef.current = null;
       socket.close();
     };
-  }, [appendMessage, getContactByKey, getContactDisplayName, playMessageSound, updateMessageStatus, userId]);
+  }, [alertAboutMessage, appendMessage, getContactByKey, getContactDisplayName, updateMessageStatus, userId]);
 
   const selectedContact = useMemo(
     () => contacts.find((contact, index) => getContactKey(contact, index) === selected) ?? null,

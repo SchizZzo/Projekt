@@ -40,7 +40,9 @@ function SettingsPage() {
         () => resolve(null),
         {
           enableHighAccuracy: true,
-          timeout: 5,
+          // Allow enough time for the device to fetch GPS data; 5ms was too short
+          // and caused coordinates to fall back to null.
+          timeout: 5000,
         },
       );
     });

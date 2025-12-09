@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { apiRequest } from '../api/client.js';
+import ChatNotifications from '../components/ChatNotifications.jsx';
 
 const menuItems = [
   { path: '/map', label: 'Mapa' },
@@ -21,6 +22,7 @@ function BaseLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const isMapPage = location.pathname.startsWith('/map');
+  const isChatPage = location.pathname.startsWith('/chat');
   const [userProfile, setUserProfile] = useState(null);
 
   useEffect(() => {
@@ -64,6 +66,7 @@ function BaseLayout() {
 
   return (
     <div className="app-shell">
+      <ChatNotifications isChatPage={isChatPage} />
       <header className="app-header">
         <div className="brand">Panel Joker</div>
         <nav className="main-nav">

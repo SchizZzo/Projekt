@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { apiRequest } from '../api/client.js';
 import MordkaPreview from '../components/MordkaPreview';
 import newMessageSound from '../assets/nowy_dzwiek_wiadomosci.mp3';
+import { loadChatPreferences, saveChatPreferences } from '../utils/chatPreferences.js';
 
 const panelLimits = {
   contacts: { min: 220, max: 420 },
@@ -32,13 +33,7 @@ function ChatPage() {
   const [newReply, setNewReply] = useState('');
   const [panelSizes, setPanelSizes] = useState({ contacts: 260, preferences: 320 });
   const [sidebarWidth] = useState(240);
-  const [preferences, setPreferences] = useState({
-    notifications: true,
-    sound: true,
-    compact: false,
-    typingPreview: true,
-    theme: 'ciemny',
-  });
+  const [preferences, setPreferences] = useState(() => loadChatPreferences());
   const [invitations, setInvitations] = useState([]);
   const [invitationsLoading, setInvitationsLoading] = useState(false);
   const [invitationsError, setInvitationsError] = useState('');
@@ -51,6 +46,10 @@ function ChatPage() {
   const [isWindowFocused, setIsWindowFocused] = useState(() =>
     typeof document !== 'undefined' ? document.hasFocus() : true,
   );
+
+  useEffect(() => {
+    saveChatPreferences(preferences);
+  }, [preferences]);
 
   const getMessageSenderId = useCallback((message) => {
     return (
